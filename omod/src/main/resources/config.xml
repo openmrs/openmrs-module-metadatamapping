@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.2//EN" "http://resources.openmrs.org/doctype/config-1.2.dtd"> -->
+<module configVersion="1.2">
+
+	<!-- Base Module Properties -->
+	<id>conceptpubsub</id>
+	<name>Concept Pub Sub</name>
+	<version>@MODULE_VERSION@</version>
+	<package>org.openmrs.module.@MODULE_ID@</package>
+	<author>Rafal Korytkowski</author>
+	<description>
+	</description>
+
+	<activator>@MODULE_PACKAGE@.ConceptPubSubActivator</activator>
+
+	<updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL>
+
+	<!-- /Metadata Sharing Properties -->
+
+	<require_version>1.6</require_version>
+
+	<!-- Extensions -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>@MODULE_PACKAGE@.web.extension.html.AdminList</class>
+	</extension>
+
+	<mappingFiles>
+	</mappingFiles>
+
+	<!-- Required Privileges -->
+	<privilege>
+		<name>Concept Pub Sub</name>
+		<description>Allows user to prepare concepts for publishing/subscribing</description>
+	</privilege>
+	<!-- /Required Privileges -->
+
+	<!-- Required Global Properties -->
+	
+	<!-- /Required Global Properties -->
+
+	<!-- Internationalization -->
+	<!-- All message codes should start with @MODULE_ID@.* -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<!-- /Internationalization -->
+
+</module>
+

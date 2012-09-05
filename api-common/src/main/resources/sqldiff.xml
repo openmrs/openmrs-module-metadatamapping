@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqldiff PUBLIC "-//OpenMRS//DTD OpenMRS SQL Diff Config 1.0//EN" "http://resources.openmrs.org/doctype/sqldiff-1.0.dtd">
+
+<sqldiff version="1.0">
+		
+	<!-- <diff>
+		<version>1.0</version>
+		<author>Rafal Korytkowski</author>
+		<date>September 5th 2012</date>
+		<description>
+ 		</description>
+		<sql>
+			
+		</sql>
+	</diff> -->
+	
+</sqldiff>
