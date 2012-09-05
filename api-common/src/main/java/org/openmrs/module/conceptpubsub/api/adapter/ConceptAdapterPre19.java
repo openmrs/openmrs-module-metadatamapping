@@ -19,7 +19,7 @@ import org.openmrs.ConceptSource;
 import org.openmrs.api.context.Context;
 
 /**
- *
+ * Provides support for the Concept class pre OpenMRS 1.9.
  */
 public class ConceptAdapterPre19 implements ConceptAdapter {
 	

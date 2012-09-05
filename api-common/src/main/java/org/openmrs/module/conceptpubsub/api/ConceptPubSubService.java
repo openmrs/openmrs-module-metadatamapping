@@ -21,7 +21,7 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 
 /**
- *
+ * The main service of the module.
  */
 public interface ConceptPubSubService extends OpenmrsService {
 	

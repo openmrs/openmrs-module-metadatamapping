@@ -15,12 +15,13 @@ package org.openmrs.module.conceptpubsub;
 
 import org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapterPost19;
 import org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl;
+import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * Instantiates beans for OpenMRS 1.9 and later.
  */
 @Configuration
 public class ConceptPubSubConfigurationPost19 {
@@ -29,7 +30,14 @@ public class ConceptPubSubConfigurationPost19 {
 	private ConceptPubSubServiceImpl conceptPubSubService;
 	
 	@Bean
-	public ConceptAdapterPost19 ConceptAdapterPost19() {
+	public ConceptAdapterPost19 getConceptAdapterPost19() {
+		try {
+			OpenmrsClassLoader.getInstance().loadClass("org.openmrs.ConceptReferenceTerm");
+		}
+		catch (ClassNotFoundException e) {
+			return null;
+		}
+		
 		ConceptAdapterPost19 conceptAdapter = new ConceptAdapterPost19();
 		
 		conceptPubSubService.setConceptAdapter(conceptAdapter);

@@ -22,14 +22,10 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 
 /**
- *
+ * Provides support for the Concept class post OpenMRS 1.9.
  */
 public class ConceptAdapterPost19 implements ConceptAdapter {
 	
-	/**
-	 * @see org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapter#addMappingToConcept(org.openmrs.Concept,
-	 *      org.openmrs.ConceptSource)
-	 */
 	@Override
 	public void addMappingToConcept(Concept concept, ConceptSource source) {
 		boolean foundSource = false;

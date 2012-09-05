@@ -18,7 +18,7 @@ import org.openmrs.ConceptSource;
 
 
 /**
- *
+ * Provides support for the Concept class from different OpenMRS versions.
  */
 public interface ConceptAdapter {
 

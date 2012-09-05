@@ -14,8 +14,7 @@
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>
-				<value>org.openmrs.module.conceptpubsub.api.ConceptPubSubService
-				</value>
+				<value>org.openmrs.module.conceptpubsub.api.ConceptPubSubService</value>
 				<bean
 					class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 					<property name="transactionManager">
@@ -23,7 +22,7 @@
 					</property>
 					<property name="target">
 						<bean
-							class="org.openmrs.module.metadatasharing.api.ConceptPubSubService" />
+							class="org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl" />
 					</property>
 					<property name="preInterceptors">
 						<ref bean="serviceInterceptors" />

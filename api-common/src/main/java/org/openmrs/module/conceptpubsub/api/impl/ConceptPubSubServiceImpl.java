@@ -90,45 +90,39 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 		}
 		
 		final ConceptSource source = new ConceptSource();
-		source.setName(implementationId.getImplementationId() + ConceptPubSub.SELF_SOURCE_NAME_POSTFIX);
-		source.setDescription(ConceptPubSub.SELF_SOURCE_DESCRIPTION_PREFIX + implementationId.getImplementationId());
+		source.setName(implementationId.getImplementationId() + ConceptPubSub.LOCAL_SOURCE_NAME_POSTFIX);
+		source.setDescription(ConceptPubSub.LOCAL_SOURCE_DESCRIPTION_PREFIX + implementationId.getImplementationId());
 		
 		Context.getConceptService().saveConceptSource(source);
 		
 		Context.getAdministrationService().saveGlobalProperty(
-		    new GlobalProperty(ConceptPubSub.SELF_SOURCE_UUID_GP, source.getUuid()));
+		    new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, source.getUuid()));
 		
 		return source;
 	}
 	
-	/**
-	 * @see org.openmrs.module.conceptpubsub.api.ConceptPubSubService#getLocalSource()
-	 */
 	@Override
 	@Transactional(readOnly = true)
 	public ConceptSource getLocalSource() {
-		final String sourceUuid = Context.getAdministrationService()
-		        .getGlobalProperty(ConceptPubSub.SELF_SOURCE_UUID_GP, "");
+		final String sourceUuid = Context.getAdministrationService().getGlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP,
+		    "");
 		
 		if (StringUtils.isEmpty(sourceUuid)) {
-			throw new APIException("Self concept source is not set in the " + ConceptPubSub.SELF_SOURCE_UUID_GP
+			throw new APIException("Local concept source is not set in the " + ConceptPubSub.LOCAL_SOURCE_UUID_GP
 			        + " global property. Call createLocalSourceFromImplementationId to have it set automatically.");
 		} else {
 			final ConceptSource source = Context.getConceptService().getConceptSourceByUuid(sourceUuid);
 			
 			if (source == null) {
-				throw new APIException("Self concept source [" + sourceUuid + "] set in the "
-				        + ConceptPubSub.SELF_SOURCE_UUID_GP + " global property does not exist. Set the global property to "
-				        + "an existing concept source.");
+				throw new APIException("Local concept source [" + sourceUuid + "] set in the "
+				        + ConceptPubSub.LOCAL_SOURCE_UUID_GP
+				        + " global property does not exist. Set the global property to " + "an existing concept source.");
 			}
 			
 			return source;
 		}
 	}
 	
-	/**
-	 * @see org.openmrs.module.conceptpubsub.api.ConceptPubSubService#addLocalMappingToConcept(org.openmrs.Concept)
-	 */
 	@Override
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {

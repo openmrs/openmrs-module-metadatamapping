@@ -13,15 +13,17 @@
  */
 package org.openmrs.module.conceptpubsub;
 
-
 /**
- *
+ * Contains constants used by the module.
  */
 public class ConceptPubSub {
-
-	public static final String SELF_SOURCE_UUID_GP = "conceptpubsub.selfConceptSourceUuid";
-	public static final String SELF_SOURCE_DESCRIPTION_PREFIX = "Source for concepts published by ";
-	public static final String SELF_SOURCE_NAME_POSTFIX = "-dict";
+	
+	public static final String LOCAL_SOURCE_UUID_GP = "conceptpubsub.localConceptSourceUuid";
+	
+	public static final String LOCAL_SOURCE_DESCRIPTION_PREFIX = "Source for concepts published by ";
+	
+	public static final String LOCAL_SOURCE_NAME_POSTFIX = "-dict";
+	
 	public static final String SUBSCRIBED_TO_SOURCE_UUIDS_GP = "conceptpubsub.subscribedToConceptSourceUuids";
 	
 }
