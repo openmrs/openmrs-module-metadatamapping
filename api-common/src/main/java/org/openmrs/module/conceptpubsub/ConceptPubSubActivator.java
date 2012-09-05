@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.conceptpubsub.api;
+package org.openmrs.module.conceptpubsub;
 
 import org.openmrs.module.Activator;
 
