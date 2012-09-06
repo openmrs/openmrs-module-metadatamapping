@@ -23,13 +23,13 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Instantiates beans for OpenMRS 1.9 and later.
  */
-@Configuration
+@Configuration(value = "conceptpubsub.ConceptPubSubConfigurationPost19")
 public class ConceptPubSubConfigurationPost19 {
 	
 	@Autowired
-	private ConceptPubSubServiceImpl conceptPubSubService;
+	private ConceptPubSubServiceImpl service;
 	
-	@Bean
+	@Bean(name = "conceptpubsub.ConceptAdapterPost19")
 	public ConceptAdapterPost19 getConceptAdapterPost19() {
 		try {
 			OpenmrsClassLoader.getInstance().loadClass("org.openmrs.ConceptReferenceTerm");
@@ -40,7 +40,7 @@ public class ConceptPubSubConfigurationPost19 {
 		
 		ConceptAdapterPost19 conceptAdapter = new ConceptAdapterPost19();
 		
-		conceptPubSubService.setConceptAdapter(conceptAdapter);
+		service.setConceptAdapter(conceptAdapter);
 		
 		return conceptAdapter;
 	}

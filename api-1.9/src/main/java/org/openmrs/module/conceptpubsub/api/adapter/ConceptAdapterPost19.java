@@ -20,9 +20,13 @@ import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.conceptpubsub.ConceptPubSubConfigurationPost19;
 
 /**
  * Provides support for the Concept class post OpenMRS 1.9.
+ * <p>
+ * It's registered in {@link ConceptPubSubConfigurationPost19} when running on OpenMRS 1.9 and
+ * later.
  */
 public class ConceptAdapterPost19 implements ConceptAdapter {
 	

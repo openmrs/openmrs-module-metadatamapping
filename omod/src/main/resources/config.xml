@@ -19,25 +19,12 @@
 
 	<require_version>1.6</require_version>
 
-	<!-- Extensions -->
-	<extension>
-		<point>org.openmrs.admin.list</point>
-		<class>@MODULE_PACKAGE@.web.extension.html.AdminList</class>
-	</extension>
-
-	<mappingFiles>
-	</mappingFiles>
-
 	<!-- Required Privileges -->
 	<privilege>
 		<name>Concept Pub Sub</name>
-		<description>Allows user to prepare concepts for publishing/subscribing</description>
+		<description>Allows the user to prepare concepts for publishing/subscribing</description>
 	</privilege>
 	<!-- /Required Privileges -->
-
-	<!-- Required Global Properties -->
-	
-	<!-- /Required Global Properties -->
 
 	<!-- Internationalization -->
 	<!-- All message codes should start with @MODULE_ID@.* -->

@@ -18,27 +18,119 @@ import java.util.Set;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.APIException;
-import org.openmrs.api.OpenmrsService;
+import org.openmrs.api.ConceptService;
+import org.openmrs.module.conceptpubsub.ConceptPubSub;
+import org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapter;
 
 /**
- * The main service of the module.
+ * The service.
  */
-public interface ConceptPubSubService extends OpenmrsService {
+public interface ConceptPubSubService {
 	
-	Concept getConcept(Integer id) throws APIException;
+	/**
+	 * Creates a local concept source from the implementation Id.
+	 * <p>
+	 * The local source is in a format 'implementationId-dict'. The '-dict' postfix is defined in
+	 * {@link ConceptPubSub#LOCAL_SOURCE_NAME_POSTFIX}.
+	 * 
+	 * @return the local source
+	 * @throws APIException if the local source could not be created
+	 * @should
+	 */
+	ConceptSource createLocalSourceFromImplementationId();
 	
-	Concept getConcept(String mapping) throws APIException;
+	/**
+	 * Returns a configured local concept source.
+	 * <p>
+	 * The local source is read from the {@link ConceptPubSub#LOCAL_SOURCE_UUID_GP} global property.
+	 * 
+	 * @return the local source
+	 * @throws APIException if the local source is not configured
+	 * @should return local source if gp set
+	 * @should fail if gp is not set
+	 */
+	ConceptSource getLocalSource();
 	
-	boolean isLocalConcept(Concept concept) throws APIException;
+	/**
+	 * Adds local mapping to the given concept.
+	 * <p>
+	 * A mapping in a format 'localSource:concetpId' is added to a concept if there is no other
+	 * mapping to the local source in the concept.
+	 * <p>
+	 * The concept is saved at the end.
+	 * <p>
+	 * It delegates to {@link ConceptAdapter#addMappingToConcept(Concept, ConceptSource)}.
+	 * 
+	 * @param concept
+	 * @throws APIException if the local source is not configured
+	 * @should add mapping if not found
+	 * @should not add mapping if found
+	 * @should fail if local source not configured
+	 */
+	void addLocalMappingToConcept(Concept concept);
 	
-	Set<ConceptSource> getSubscribedSources() throws APIException;
+	/**
+	 * Adds local mappings to all concepts in the system.
+	 * <p>
+	 * It iterates over all concept and calls {@link #addLocalMappingToConcept(Concept)}.
+	 * 
+	 * @throws APIException
+	 * @should delegate for all concepts
+	 */
+	void addLocalMappingsToAllConcepts();
 	
-	void addLocalMappingsToAllConcepts() throws APIException;
+	/**
+	 * Returns sources to which you are subscribed.
+	 * 
+	 * @return the set of sources or the empty set if nothing found
+	 * @throws APIException
+	 * @should return set if gp defined
+	 * @should return empty set if gp not defined
+	 */
+	Set<ConceptSource> getSubscribedSources();
 	
-	void addLocalMappingToConcept(Concept concept) throws APIException;
+	/**
+	 * Determines if the given concept is local.
+	 * <p>
+	 * A concept is local if it does not contain a source returned by
+	 * {@link #getSubscribedSources()}.
+	 * 
+	 * @param the concept
+	 * @return true if local
+	 * @throws APIException
+	 * @should return true if local
+	 * @should return false if not local
+	 */
+	boolean isLocalConcept(Concept concept);
 	
-	ConceptSource getLocalSource() throws APIException;
+	/**
+	 * Returns a concept by mapping in a format (1) 'source:code' or (2) 'conceptId'.
+	 * <p>
+	 * It delegates to {@link ConceptService#getConceptByMapping(String, String)} in case (1) and to
+	 * {@link #getConcept(Integer)} in case (2).
+	 * 
+	 * @param mapping
+	 * @return the concept or null if not found
+	 * @throws APIException
+	 * @should return non retired if retired also found by mapping
+	 * @should return retired if no other found by mapping
+	 * @should delegate if id provided
+	 * @should return null if nothing found
+	 */
+	Concept getConcept(String mapping);
 	
-	ConceptSource createLocalSourceFromImplementationId() throws APIException;
+	/**
+	 * Delegates to {@link ConceptService#getConcept(Integer)}.
+	 * <p>
+	 * It is a convenience method in case id is passed as an integer and not a string.
+	 * 
+	 * @param id
+	 * @return the concept or null if not found
+	 * @throws APIException
+	 * @should return non retired
+	 * @should return retired
+	 * @should return null if not found
+	 */
+	Concept getConcept(Integer id);
 	
 }

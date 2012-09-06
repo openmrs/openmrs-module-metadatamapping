@@ -17,10 +17,12 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.context.Context;
+import org.springframework.stereotype.Component;
 
 /**
  * Provides support for the Concept class pre OpenMRS 1.9.
  */
+@Component("conceptpubsub.ConceptAdapterPre19")
 public class ConceptAdapterPre19 implements ConceptAdapter {
 	
 	@Override
