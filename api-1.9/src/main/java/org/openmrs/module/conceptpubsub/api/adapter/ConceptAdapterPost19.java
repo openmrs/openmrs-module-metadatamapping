@@ -31,7 +31,7 @@ import org.openmrs.module.conceptpubsub.ConceptPubSubConfigurationPost19;
 public class ConceptAdapterPost19 implements ConceptAdapter {
 	
 	@Override
-	public void addMappingToConcept(Concept concept, ConceptSource source) {
+	public void addMappingToConceptIfNotPresent(final Concept concept, final ConceptSource source, final String code) {
 		boolean foundSource = false;
 		for (ConceptMap map : concept.getConceptMappings()) {
 			if (source.equals(map.getConceptReferenceTerm().getConceptSource())) {
@@ -42,8 +42,6 @@ public class ConceptAdapterPost19 implements ConceptAdapter {
 		
 		if (!foundSource) {
 			final ConceptService conceptService = Context.getConceptService();
-			
-			final String code = concept.getId().toString();
 			
 			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
 			if (term == null) {

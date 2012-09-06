@@ -119,7 +119,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
-		conceptAdapter.addMappingToConcept(concept, localSource);
+		conceptAdapter.addMappingToConceptIfNotPresent(concept, localSource, concept.getId().toString());
 	}
 	
 	@Override
@@ -146,11 +146,12 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public Set<ConceptSource> getSubscribedSources() {
 		final String sourceUuidsList = adminService.getGlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP,
 		    "");
-		final String[] sourceUuids = sourceUuidsList.split(",");
 		
-		if (sourceUuids.length == 0) {
+		if (StringUtils.isBlank(sourceUuidsList)) {
 			return Collections.emptySet();
 		}
+		
+		final String[] sourceUuids = sourceUuidsList.split(",");
 		
 		final Set<ConceptSource> subscribedToSources = new HashSet<ConceptSource>();
 		for (String sourceUuid : sourceUuids) {
@@ -165,9 +166,11 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public boolean isLocalConcept(final Concept concept) {
 		final Set<ConceptSource> subscribedSources = getSubscribedSources();
 		
-		for (ConceptMap map : concept.getConceptMappings()) {
-			if (subscribedSources.contains(map.getSource())) {
-				return false;
+		if (concept.getConceptMappings() != null) {
+			for (ConceptMap map : concept.getConceptMappings()) {
+				if (subscribedSources.contains(map.getSource())) {
+					return false;
+				}
 			}
 		}
 		
@@ -202,7 +205,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 				        + "' must be an integer.", e);
 			}
 			
-			return Context.getConceptService().getConceptByMapping(source, code);
+			return Context.getConceptService().getConceptByMapping(code, source);
 		} else {
 			throw new IllegalArgumentException("Mapping '" + mapping + "' must contain only one ':'");
 		}

@@ -13,10 +13,23 @@
  */
 package org.openmrs.module.conceptpubsub.api;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.ConceptSource;
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.conceptpubsub.ConceptPubSub;
+import org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapter;
 import org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +49,35 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("conceptService")
 	private ConceptService conceptService;
 	
+	@Autowired
+	private ConceptAdapter conceptAdapter;
+	
+	private ConceptSource localeSource;
+	
+	@Before
+	public void setupLocalSource() {
+		localeSource = new ConceptSource();
+		localeSource.setName("my-dict");
+		conceptService.saveConceptSource(localeSource);
+		
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, localeSource.getUuid()));
+	}
+	
 	/**
 	 * @see ConceptPubSubServiceImpl#addLocalMappingToConcept(Concept)
 	 * @verifies add mapping if not found
 	 */
 	@Test
 	public void addLocalMappingToConcept_shouldAddMappingIfNotFound() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(3);
+		int mapsCount = concept.getConceptMappings().size();
 		
+		//when
+		service.addLocalMappingToConcept(concept);
+		
+		//then
+		Assert.assertEquals(mapsCount + 1, concept.getConceptMappings().size());
 	}
 	
 	/**
@@ -51,25 +86,36 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void addLocalMappingToConcept_shouldNotAddMappingIfFound() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(3);
+		int mapsCount = concept.getConceptMappings().size();
+		service.addLocalMappingToConcept(concept);
+		Assert.assertEquals(mapsCount + 1, concept.getConceptMappings().size());
 		
+		//when
+		service.addLocalMappingToConcept(concept);
+		
+		//then
+		Assert.assertEquals(mapsCount + 1, concept.getConceptMappings().size());
 	}
 	
 	/**
 	 * @see ConceptPubSubServiceImpl#addLocalMappingToConcept(Concept)
 	 * @verifies fail if local source not configured
 	 */
-	@Test
+	@Test(expected = APIException.class)
 	public void addLocalMappingToConcept_shouldFailIfLocalSourceNotConfigured() throws Exception {
+		Context.clearSession();
 		
-	}
-	
-	/**
-	 * @see ConceptPubSubServiceImpl#createLocalSourceFromImplementationId()
-	 * @verifies
-	 */
-	@Test
-	public void createLocalSourceFromImplementationId_should() throws Exception {
+		//given
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, ""));
+		Concept concept = conceptService.getConcept(3);
 		
+		//when
+		service.addLocalMappingToConcept(concept);
+		
+		//then
+		Assert.fail();
 	}
 	
 	/**
@@ -78,7 +124,16 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnNonRetired() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(3);
+		concept.setRetired(false);
+		conceptService.saveConcept(concept);
 		
+		//when
+		Concept foundConcept = service.getConcept(3);
+		
+		//then
+		Assert.assertEquals(concept, foundConcept);
 	}
 	
 	/**
@@ -87,7 +142,15 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnRetired() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(3);
+		conceptService.retireConcept(concept, "to test...");
 		
+		//when
+		Concept foundConcept = service.getConcept(3);
+		
+		//then
+		Assert.assertEquals(concept, foundConcept);
 	}
 	
 	/**
@@ -96,7 +159,15 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnNullIfNotFound() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(1);
+		Assert.assertNull(concept);
 		
+		//when
+		Concept foundConcept = service.getConcept(1);
+		
+		//then
+		Assert.assertNull(foundConcept);
 	}
 	
 	/**
@@ -105,7 +176,21 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnNonRetiredIfRetiredAlsoFoundByMapping() throws Exception {
+		//given
+		Concept concept = conceptService.getConcept(4);
+		conceptAdapter.addMappingToConceptIfNotPresent(concept, localeSource, "3");
+		Concept retiredConcept1 = conceptService.getConcept(3);
+		conceptService.retireConcept(retiredConcept1, "to test...");
+		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept1, localeSource, "3");
+		Concept retiredConcept2 = conceptService.getConcept(5);
+		conceptService.retireConcept(retiredConcept2, "to test...");
+		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept2, localeSource, "3");
 		
+		//when
+		Concept foundConcept = service.getConcept("my-dict:3");
+		
+		//then
+		Assert.assertEquals(concept, foundConcept);
 	}
 	
 	/**
@@ -114,16 +199,25 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnRetiredIfNoOtherFoundByMapping() throws Exception {
+		//given
+		Concept retiredConcept1 = conceptService.getConcept(3);
+		conceptService.retireConcept(retiredConcept1, "to test...");
+		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept1, localeSource, "3");
+		Concept retiredConcept2 = conceptService.getConcept(5);
+		conceptService.retireConcept(retiredConcept2, "to test...");
+		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept2, localeSource, "3");
+		Concept retiredConcept3 = conceptService.getConcept(4);
+		conceptService.retireConcept(retiredConcept3, "to test...");
+		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept3, localeSource, "3");
+		Set<Concept> retiredConcepts = new HashSet<Concept>();
+		retiredConcepts.addAll(Arrays.asList(retiredConcept1, retiredConcept2, retiredConcept3));
 		
-	}
-	
-	/**
-	 * @see ConceptPubSubServiceImpl#getConcept(String)
-	 * @verifies delegate if id provided
-	 */
-	@Test
-	public void getConcept_shouldDelegateIfIdProvided() throws Exception {
+		//when
+		Concept foundConcept = service.getConcept("my-dict:3");
 		
+		//then
+		Assert.assertNotNull(foundConcept);
+		Assert.assertTrue(retiredConcepts.contains(foundConcept));
 	}
 	
 	/**
@@ -132,7 +226,13 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getConcept_shouldReturnNullIfNothingFound() throws Exception {
+		//given
 		
+		//when
+		Concept foundConcept = service.getConcept("non-exisitng-concept-source:1234");
+		
+		//then
+		Assert.assertNull(foundConcept);
 	}
 	
 	/**
@@ -141,16 +241,31 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getLocalSource_shouldReturnLocalSourceIfGpSet() throws Exception {
+		//given
 		
+		//when
+		ConceptSource source = service.getLocalSource();
+		
+		//then
+		Assert.assertEquals(localeSource, source);
 	}
 	
 	/**
 	 * @see ConceptPubSubServiceImpl#getLocalSource()
 	 * @verifies fail if gp is not set
 	 */
-	@Test
+	@Test(expected = APIException.class)
 	public void getLocalSource_shouldFailIfGpIsNotSet() throws Exception {
+		Context.clearSession();
 		
+		//given
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, ""));
+		
+		//when
+		service.getLocalSource();
+		
+		//then
+		Assert.fail();
 	}
 	
 	/**
@@ -159,7 +274,24 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getSubscribedSources_shouldReturnSetIfGpDefined() throws Exception {
+		//given
+		ConceptSource source1 = new ConceptSource();
+		source1.setName("their-dict");
+		conceptService.saveConceptSource(source1);
+		ConceptSource source2 = new ConceptSource();
+		source2.setName("their-2nd-dict");
+		conceptService.saveConceptSource(source2);
 		
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		        + ", " + source2.getUuid()));
+		
+		//when
+		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
+		
+		//then
+		Assert.assertEquals(2, subscribedSources.size());
+		Assert.assertTrue(subscribedSources.contains(source1));
+		Assert.assertTrue(subscribedSources.contains(source2));
 	}
 	
 	/**
@@ -168,7 +300,13 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getSubscribedSources_shouldReturnEmptySetIfGpNotDefined() throws Exception {
+		//given
 		
+		//when
+		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
+		
+		//then
+		Assert.assertEquals(0, subscribedSources.size());
 	}
 	
 	/**
@@ -177,7 +315,24 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void isLocalConcept_shouldReturnTrueIfLocal() throws Exception {
+		//given
+		ConceptSource source1 = new ConceptSource();
+		source1.setName("their-dict");
+		conceptService.saveConceptSource(source1);
+		ConceptSource source2 = new ConceptSource();
+		source2.setName("their-2nd-dict");
+		conceptService.saveConceptSource(source2);
 		
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		        + ", " + source2.getUuid()));
+		
+		Concept concept = conceptService.getConcept(3);
+		
+		//when
+		boolean localConcept = service.isLocalConcept(concept);
+		
+		//then
+		Assert.assertTrue(localConcept);
 	}
 	
 	/**
@@ -186,6 +341,24 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void isLocalConcept_shouldReturnFalseIfNotLocal() throws Exception {
+		//given
+		ConceptSource source1 = new ConceptSource();
+		source1.setName("their-dict");
+		conceptService.saveConceptSource(source1);
+		ConceptSource source2 = new ConceptSource();
+		source2.setName("their-2nd-dict");
+		conceptService.saveConceptSource(source2);
 		
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		        + ", " + source2.getUuid()));
+		
+		Concept concept = conceptService.getConcept(3);
+		conceptAdapter.addMappingToConceptIfNotPresent(concept, source2, concept.getId().toString());
+		
+		//when
+		boolean localConcept = service.isLocalConcept(concept);
+		
+		//then
+		Assert.assertFalse(localConcept);
 	}
 }

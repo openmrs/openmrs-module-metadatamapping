@@ -19,6 +19,7 @@ import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * Instantiates beans for OpenMRS 1.9 and later.
@@ -30,6 +31,7 @@ public class ConceptPubSubConfigurationPost19 {
 	private ConceptPubSubServiceImpl service;
 	
 	@Bean(name = "conceptpubsub.ConceptAdapterPost19")
+	@Primary
 	public ConceptAdapterPost19 getConceptAdapterPost19() {
 		try {
 			OpenmrsClassLoader.getInstance().loadClass("org.openmrs.ConceptReferenceTerm");

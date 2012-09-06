@@ -59,7 +59,7 @@ public interface ConceptPubSubService {
 	 * <p>
 	 * The concept is saved at the end.
 	 * <p>
-	 * It delegates to {@link ConceptAdapter#addMappingToConcept(Concept, ConceptSource)}.
+	 * It delegates to {@link ConceptAdapter#addMappingToConceptIfNotPresent(Concept, ConceptSource, String)}.
 	 * 
 	 * @param concept
 	 * @throws APIException if the local source is not configured

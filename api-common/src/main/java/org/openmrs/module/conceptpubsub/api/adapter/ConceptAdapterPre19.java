@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 public class ConceptAdapterPre19 implements ConceptAdapter {
 	
 	@Override
-	public void addMappingToConcept(final Concept concept, final ConceptSource source) {
+	public void addMappingToConceptIfNotPresent(final Concept concept, final ConceptSource source, String code) {
 		boolean foundSource = false;
 		for (ConceptMap map : concept.getConceptMappings()) {
 			if (source.equals(map.getSource())) {
@@ -38,7 +38,7 @@ public class ConceptAdapterPre19 implements ConceptAdapter {
 		if (!foundSource) {
 			final ConceptMap map = new ConceptMap();
 			map.setSource(source);
-			map.setSourceCode(concept.getId().toString());
+			map.setSourceCode(code);
 			
 			concept.addConceptMapping(map);
 			
