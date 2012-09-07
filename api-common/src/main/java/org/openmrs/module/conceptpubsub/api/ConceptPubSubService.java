@@ -59,7 +59,8 @@ public interface ConceptPubSubService {
 	 * <p>
 	 * The concept is saved at the end.
 	 * <p>
-	 * It delegates to {@link ConceptAdapter#addMappingToConceptIfSourceNotPresent(Concept, ConceptSource, String)}.
+	 * It delegates to
+	 * {@link ConceptAdapter#addMappingToConceptIfSourceNotPresent(Concept, ConceptSource, String)}.
 	 * 
 	 * @param concept
 	 * @throws APIException if the local source is not configured
@@ -132,11 +133,26 @@ public interface ConceptPubSubService {
 	 * @should return null if not found
 	 */
 	Concept getConcept(Integer id);
-
+	
+	/**
+	 * Purges a local mapping if present in the concept.
+	 * 
+	 * @param concept
+	 */
 	void purgeLocalMappingInConcept(final Concept concept);
-
+	
+	/**
+	 * Unretires a local mapping if present in the concept.
+	 * 
+	 * @param concept
+	 */
 	void unretireLocalMappingInConcept(final Concept concept);
-
+	
+	/**
+	 * Retires a local mapping if present in the concept.
+	 * 
+	 * @param concept
+	 */
 	void retireLocalMappingInConcept(final Concept concept);
 	
 }
