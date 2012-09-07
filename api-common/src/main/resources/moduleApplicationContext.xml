@@ -14,7 +14,6 @@
 		<property name="conceptService" ref="conceptService" />
 		<property name="adminService" ref="adminService" />
 		<property name="dao" ref="conceptpubsub.ConceptPubSubDAO" />
-		<property name="conceptAdapter" ref="conceptpubsub.ConceptAdapterPre19" />
 	</bean>
 
 	<bean id="conceptpubsub.ConceptPubSubService"
@@ -34,6 +33,4 @@
 		</property>
 	</bean>
 	
-	<context:component-scan base-package="@MODULE_PACKAGE@" />
-
 </beans>

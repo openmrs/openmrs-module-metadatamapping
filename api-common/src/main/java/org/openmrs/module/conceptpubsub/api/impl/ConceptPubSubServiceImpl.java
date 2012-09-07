@@ -35,6 +35,7 @@ import org.openmrs.module.conceptpubsub.ConceptPubSub;
 import org.openmrs.module.conceptpubsub.api.ConceptPubSubService;
 import org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapter;
 import org.openmrs.module.conceptpubsub.api.db.ConceptPubSubDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -50,13 +51,10 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	
 	private ConceptPubSubDAO dao;
 	
+	@Autowired
 	private ConceptAdapter conceptAdapter;
 	
 	private int batchSize = 1000;
-	
-	public void setConceptAdapter(ConceptAdapter adapter) {
-		this.conceptAdapter = adapter;
-	}
 	
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
@@ -240,4 +238,6 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public Concept getConcept(final Integer id) {
 		return conceptService.getConcept(id);
 	}
+
+	
 }

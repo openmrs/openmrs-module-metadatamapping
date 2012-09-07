@@ -65,17 +65,6 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, localeSource.getUuid()));
 	}
 	
-	@Test
-	public void test() throws Exception {
-		InputStreamReader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("messages.properties"), "UTF-8");
-		BufferedReader buf = new BufferedReader(reader);
-		String line = buf.readLine();
-		while(line != null) {
-			System.out.print(line);
-			line = buf.readLine();
-		}
-	}
-	
 	/**
 	 * @see ConceptPubSubServiceImpl#addLocalMappingToConcept(Concept)
 	 * @verifies add mapping if not found

@@ -14,9 +14,7 @@
 package org.openmrs.module.conceptpubsub;
 
 import org.openmrs.module.conceptpubsub.api.adapter.ConceptAdapterPost19;
-import org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl;
 import org.openmrs.util.OpenmrsClassLoader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -26,9 +24,6 @@ import org.springframework.context.annotation.Primary;
  */
 @Configuration(value = "conceptpubsub.ConceptPubSubConfigurationPost19")
 public class ConceptPubSubConfigurationPost19 {
-	
-	@Autowired
-	private ConceptPubSubServiceImpl service;
 	
 	@Bean(name = "conceptpubsub.ConceptAdapterPost19")
 	@Primary
@@ -40,11 +35,7 @@ public class ConceptPubSubConfigurationPost19 {
 			return null;
 		}
 		
-		ConceptAdapterPost19 conceptAdapter = new ConceptAdapterPost19();
-		
-		service.setConceptAdapter(conceptAdapter);
-		
-		return conceptAdapter;
+		return new ConceptAdapterPost19();
 	}
 	
 }
