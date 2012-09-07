@@ -114,6 +114,18 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
+	public boolean isLocalSourceConfigured() {
+		final String sourceUuid = adminService.getGlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, "");
+		if (!StringUtils.isBlank(sourceUuid)) {
+			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
+			return (source != null);
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
@@ -124,35 +136,35 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	
 	@Override
 	@Transactional
-    public void retireLocalMappingInConcept(final Concept concept) {
+	public void markLocalMappingRetiredInConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.retireMapping(concept, localSource, concept.getId().toString());
 	}
 	
 	@Override
 	@Transactional
-    public void unretireLocalMappingInConcept(final Concept concept) {
+	public void markLocalMappingUnretiredInConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.unretireMapping(concept, localSource, concept.getId().toString());
 	}
 	
 	@Override
 	@Transactional
-    public void purgeLocalMappingInConcept(final Concept concept) {
+	public void purgeLocalMappingInConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.purgeMapping(concept, localSource, concept.getId().toString());
 	}
 	
 	@Override
 	@Transactional
-	public void addLocalMappingsToAllConcepts() {
+	public void addLocalMappingToAllConcepts() {
 		int position = 0;
 		List<Concept> concepts = dao.getConcepts(position, batchSize);
 		while (true) {
 			for (Concept concept : concepts) {
 				addLocalMappingToConcept(concept);
 				if (concept.isRetired()) {
-					retireLocalMappingInConcept(concept);
+					markLocalMappingRetiredInConcept(concept);
 				}
 			}
 			
@@ -238,6 +250,5 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public Concept getConcept(final Integer id) {
 		return conceptService.getConcept(id);
 	}
-
 	
 }

@@ -52,6 +52,13 @@ public interface ConceptPubSubService {
 	ConceptSource getLocalSource();
 	
 	/**
+	 * Returns true if local source is configured.
+	 * 
+	 * @return true if configured
+	 */
+	boolean isLocalSourceConfigured();
+	
+	/**
 	 * Adds local mapping to the given concept.
 	 * <p>
 	 * A mapping in a format 'localSource:concetpId' is added to a concept if there is no other
@@ -78,7 +85,7 @@ public interface ConceptPubSubService {
 	 * @throws APIException
 	 * @should delegate for all concepts
 	 */
-	void addLocalMappingsToAllConcepts();
+	void addLocalMappingToAllConcepts();
 	
 	/**
 	 * Returns sources to which you are subscribed.
@@ -139,20 +146,20 @@ public interface ConceptPubSubService {
 	 * 
 	 * @param concept
 	 */
-	void purgeLocalMappingInConcept(final Concept concept);
+	void purgeLocalMappingInConcept(Concept concept);
 	
 	/**
 	 * Unretires a local mapping if present in the concept.
 	 * 
 	 * @param concept
 	 */
-	void unretireLocalMappingInConcept(final Concept concept);
+	void markLocalMappingUnretiredInConcept(Concept concept);
 	
 	/**
 	 * Retires a local mapping if present in the concept.
 	 * 
 	 * @param concept
 	 */
-	void retireLocalMappingInConcept(final Concept concept);
+	void markLocalMappingRetiredInConcept(Concept concept);
 	
 }
