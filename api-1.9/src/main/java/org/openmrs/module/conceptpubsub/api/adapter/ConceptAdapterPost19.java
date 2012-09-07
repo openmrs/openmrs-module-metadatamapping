@@ -31,36 +31,79 @@ import org.openmrs.module.conceptpubsub.ConceptPubSubConfigurationPost19;
 public class ConceptAdapterPost19 implements ConceptAdapter {
 	
 	@Override
-	public void addMappingToConceptIfNotPresent(final Concept concept, final ConceptSource source, final String code) {
-		boolean foundSource = false;
-		for (ConceptMap map : concept.getConceptMappings()) {
-			if (source.equals(map.getConceptReferenceTerm().getConceptSource())) {
-				foundSource = true;
-				break;
-			}
+	public void addMapping(Concept concept, ConceptSource source, String code) {
+		final ConceptService conceptService = Context.getConceptService();
+		
+		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
+		if (term == null) {
+			term = new ConceptReferenceTerm();
+			term.setConceptSource(source);
+			term.setCode(code);
+			
+			conceptService.saveConceptReferenceTerm(term);
 		}
 		
-		if (!foundSource) {
-			final ConceptService conceptService = Context.getConceptService();
-			
-			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
-			if (term == null) {
-				term = new ConceptReferenceTerm();
-				term.setConceptSource(source);
-				term.setCode(code);
-				
-				conceptService.saveConceptReferenceTerm(term);
+		final ConceptMap map = new ConceptMap();
+		map.setConceptReferenceTerm(term);
+		
+		ConceptMapType mapType = conceptService.getConceptMapTypeByName("SAME-AS");
+		map.setConceptMapType(mapType);
+		
+		concept.addConceptMapping(map);
+		
+		conceptService.saveConcept(concept);
+	}
+	
+	@Override
+	public boolean hasMappingToSource(Concept concept, ConceptSource source) {
+		for (ConceptMap map : concept.getConceptMappings()) {
+			if (source.equals(map.getConceptReferenceTerm().getConceptSource())) {
+				return true;
 			}
-			
-			final ConceptMap map = new ConceptMap();
-			map.setConceptReferenceTerm(term);
-			
-			ConceptMapType mapType = conceptService.getConceptMapTypeByName("SAME-AS");
-			map.setConceptMapType(mapType);
-			
-			concept.addConceptMapping(map);
-			
-			conceptService.saveConcept(concept);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean hasMapping(Concept concept, ConceptSource source, String code) {
+		for (ConceptMap map : concept.getConceptMappings()) {
+			if (source.equals(map.getConceptReferenceTerm().getConceptSource())) {
+				if (code.equals(map.getConceptReferenceTerm().getCode())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public void retireMapping(Concept concept, ConceptSource source, String code) {
+		if (hasMapping(concept, source, code)) {
+			final ConceptService conceptService = Context.getConceptService();
+			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
+			if (!term.isRetired()) {
+				conceptService.retireConceptReferenceTerm(term, "Retired with concept: " + concept.getUuid());
+			}
+		}
+	}
+	
+	@Override
+	public void unretireMapping(Concept concept, ConceptSource source, String code) {
+		if (hasMapping(concept, source, code)) {
+			final ConceptService conceptService = Context.getConceptService();
+			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
+			if (term.isRetired()) { 
+				conceptService.unretireConceptReferenceTerm(term);
+			}
+		}
+	}
+	
+	@Override
+	public void purgeMapping(Concept concept, ConceptSource source, String code) {
+		if (hasMapping(concept, source, code)) {
+			final ConceptService conceptService = Context.getConceptService();
+			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
+			conceptService.purgeConceptReferenceTerm(term);
 		}
 	}
 }

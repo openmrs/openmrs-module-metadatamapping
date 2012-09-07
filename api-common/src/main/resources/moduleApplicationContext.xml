@@ -7,10 +7,8 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd
            http://www.springframework.org/schema/util
-           http://www.springframework.org/schema/util/spring-util-2.0.xsd">
-
-	<context:component-scan base-package="@MODULE_PACKAGE@" />
-
+           http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+           
 	<bean id="conceptpubsub.ConceptPubSubServiceImpl"
 		class="org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl">
 		<property name="conceptService" ref="conceptService" />
@@ -35,5 +33,7 @@
 			</list>
 		</property>
 	</bean>
+	
+	<context:component-scan base-package="@MODULE_PACKAGE@" />
 
 </beans>

@@ -119,7 +119,30 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {
 		final ConceptSource localSource = getLocalSource();
-		conceptAdapter.addMappingToConceptIfNotPresent(concept, localSource, concept.getId().toString());
+		if (!conceptAdapter.hasMappingToSource(concept, localSource)) {
+			conceptAdapter.addMapping(concept, localSource, concept.getId().toString());
+		}
+	}
+	
+	@Override
+	@Transactional
+    public void retireLocalMappingInConcept(final Concept concept) {
+		final ConceptSource localSource = getLocalSource();
+		conceptAdapter.retireMapping(concept, localSource, concept.getId().toString());
+	}
+	
+	@Override
+	@Transactional
+    public void unretireLocalMappingInConcept(final Concept concept) {
+		final ConceptSource localSource = getLocalSource();
+		conceptAdapter.unretireMapping(concept, localSource, concept.getId().toString());
+	}
+	
+	@Override
+	@Transactional
+    public void purgeLocalMappingInConcept(final Concept concept) {
+		final ConceptSource localSource = getLocalSource();
+		conceptAdapter.purgeMapping(concept, localSource, concept.getId().toString());
 	}
 	
 	@Override
@@ -130,6 +153,9 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 		while (true) {
 			for (Concept concept : concepts) {
 				addLocalMappingToConcept(concept);
+				if (concept.isRetired()) {
+					retireLocalMappingInConcept(concept);
+				}
 			}
 			
 			if (concepts.size() == batchSize) {
@@ -144,8 +170,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Override
 	@Transactional(readOnly = true)
 	public Set<ConceptSource> getSubscribedSources() {
-		final String sourceUuidsList = adminService.getGlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP,
-		    "");
+		final String sourceUuidsList = adminService.getGlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, "");
 		
 		if (StringUtils.isBlank(sourceUuidsList)) {
 			return Collections.emptySet();

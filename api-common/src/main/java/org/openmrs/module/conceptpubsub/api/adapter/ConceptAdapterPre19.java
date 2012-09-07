@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.conceptpubsub.api.adapter;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
@@ -26,23 +29,64 @@ import org.springframework.stereotype.Component;
 public class ConceptAdapterPre19 implements ConceptAdapter {
 	
 	@Override
-	public void addMappingToConceptIfNotPresent(final Concept concept, final ConceptSource source, String code) {
-		boolean foundSource = false;
+	public void addMapping(Concept concept, ConceptSource source, String code) {
+		final ConceptMap map = new ConceptMap();
+		map.setSource(source);
+		map.setSourceCode(code);
+		
+		concept.addConceptMapping(map);
+		
+		Context.getConceptService().saveConcept(concept);
+	}
+	
+	@Override
+	public boolean hasMappingToSource(Concept concept, ConceptSource source) {
 		for (ConceptMap map : concept.getConceptMappings()) {
 			if (source.equals(map.getSource())) {
-				foundSource = true;
-				break;
+				return true;
 			}
 		}
-		
-		if (!foundSource) {
-			final ConceptMap map = new ConceptMap();
-			map.setSource(source);
-			map.setSourceCode(code);
-			
-			concept.addConceptMapping(map);
-			
-			Context.getConceptService().saveConcept(concept);
-		}
+		return false;
 	}
+	
+	@Override
+	public boolean hasMapping(Concept concept, ConceptSource source, String code) {
+		for (ConceptMap map : concept.getConceptMappings()) {
+			if (source.equals(map.getSource())) {
+				if (code.equals(map.getSourceCode())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public void retireMapping(Concept concept, ConceptSource source, String code) {
+		//Cannot retire in pre-1.9
+	}
+	
+	@Override
+	public void unretireMapping(Concept concept, ConceptSource source, String code) {
+		//Cannot unretire in pre-1.9
+	}
+
+    @Override
+    public void purgeMapping(Concept concept, ConceptSource source, String code) {
+    	Collection<ConceptMap> maps = concept.getConceptMappings();
+    	if (maps == null) {
+    		return;
+    	}
+    	
+    	Iterator<ConceptMap> it = maps.iterator();
+    	while(it.hasNext()) {
+    		ConceptMap map = it.next();
+    		if (source.equals(map.getSource())) {
+    			if (code.equals(map.getSourceCode())) {
+    				it.remove();
+    				break;
+    			}
+    		}
+    	}
+    }
 }

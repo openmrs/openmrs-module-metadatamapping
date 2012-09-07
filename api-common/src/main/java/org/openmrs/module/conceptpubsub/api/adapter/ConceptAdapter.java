@@ -22,6 +22,15 @@ import org.openmrs.ConceptSource;
  */
 public interface ConceptAdapter {
 
-	void addMappingToConceptIfNotPresent(Concept concept, ConceptSource source, String code);
+	void addMapping(Concept concept, ConceptSource source, String code);
 	
+	boolean hasMappingToSource(Concept concept, ConceptSource source);
+	
+	boolean hasMapping(Concept concept, ConceptSource source, String code);
+	
+	void retireMapping(Concept concept, ConceptSource source, String code);
+	
+	void unretireMapping(Concept concept, ConceptSource source, String code);
+	
+	void purgeMapping(Concept concept, ConceptSource source, String code);
 }

@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.conceptpubsub.api;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -61,6 +63,17 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		conceptService.saveConceptSource(localeSource);
 		
 		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, localeSource.getUuid()));
+	}
+	
+	@Test
+	public void test() throws Exception {
+		InputStreamReader reader = new InputStreamReader(ClassLoader.getSystemResourceAsStream("messages.properties"), "UTF-8");
+		BufferedReader buf = new BufferedReader(reader);
+		String line = buf.readLine();
+		while(line != null) {
+			System.out.print(line);
+			line = buf.readLine();
+		}
 	}
 	
 	/**
@@ -178,13 +191,13 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 	public void getConcept_shouldReturnNonRetiredIfRetiredAlsoFoundByMapping() throws Exception {
 		//given
 		Concept concept = conceptService.getConcept(4);
-		conceptAdapter.addMappingToConceptIfNotPresent(concept, localeSource, "3");
+		conceptAdapter.addMapping(concept, localeSource, "3");
 		Concept retiredConcept1 = conceptService.getConcept(3);
 		conceptService.retireConcept(retiredConcept1, "to test...");
-		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept1, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept1, localeSource, "3");
 		Concept retiredConcept2 = conceptService.getConcept(5);
 		conceptService.retireConcept(retiredConcept2, "to test...");
-		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept2, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept2, localeSource, "3");
 		
 		//when
 		Concept foundConcept = service.getConcept("my-dict:3");
@@ -202,13 +215,13 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		Concept retiredConcept1 = conceptService.getConcept(3);
 		conceptService.retireConcept(retiredConcept1, "to test...");
-		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept1, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept1, localeSource, "3");
 		Concept retiredConcept2 = conceptService.getConcept(5);
 		conceptService.retireConcept(retiredConcept2, "to test...");
-		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept2, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept2, localeSource, "3");
 		Concept retiredConcept3 = conceptService.getConcept(4);
 		conceptService.retireConcept(retiredConcept3, "to test...");
-		conceptAdapter.addMappingToConceptIfNotPresent(retiredConcept3, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept3, localeSource, "3");
 		Set<Concept> retiredConcepts = new HashSet<Concept>();
 		retiredConcepts.addAll(Arrays.asList(retiredConcept1, retiredConcept2, retiredConcept3));
 		
@@ -353,7 +366,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		        + ", " + source2.getUuid()));
 		
 		Concept concept = conceptService.getConcept(3);
-		conceptAdapter.addMappingToConceptIfNotPresent(concept, source2, concept.getId().toString());
+		conceptAdapter.addMapping(concept, source2, concept.getId().toString());
 		
 		//when
 		boolean localConcept = service.isLocalConcept(concept);
