@@ -43,6 +43,8 @@ public class ConceptAdapterPost19 implements ConceptAdapter {
 			conceptService.saveConceptReferenceTerm(term);
 		}
 		
+		term.setRetired(concept.isRetired());
+		
 		final ConceptMap map = new ConceptMap();
 		map.setConceptReferenceTerm(term);
 		
