@@ -87,7 +87,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 		
 		conceptService.saveConceptSource(source);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, source.getUuid()));
+		setLocalConceptSource(source.getUuid());
 		
 		return source;
 	}
@@ -95,17 +95,17 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Override
 	@Transactional(readOnly = true)
 	public ConceptSource getLocalSource() {
-		final String sourceUuid = adminService.getGlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, "");
+		final String sourceUuid = adminService.getGlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, "");
 		
 		if (StringUtils.isEmpty(sourceUuid)) {
-			throw new APIException("Local concept source is not set in the " + ConceptPubSub.LOCAL_SOURCE_UUID_GP
+			throw new APIException("Local concept source is not set in the " + ConceptPubSub.GP_LOCAL_SOURCE_UUID
 			        + " global property. Call createLocalSourceFromImplementationId to have it set automatically.");
 		} else {
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
 			
 			if (source == null) {
 				throw new APIException("Local concept source [" + sourceUuid + "] set in the "
-				        + ConceptPubSub.LOCAL_SOURCE_UUID_GP
+				        + ConceptPubSub.GP_LOCAL_SOURCE_UUID
 				        + " global property does not exist. Set the global property to " + "an existing concept source.");
 			}
 			
@@ -116,7 +116,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Override
 	@Transactional(readOnly = true)
 	public boolean isLocalSourceConfigured() {
-		final String sourceUuid = adminService.getGlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, "");
+		final String sourceUuid = adminService.getGlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, "");
 		if (!StringUtils.isBlank(sourceUuid)) {
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
 			return (source != null);
@@ -180,7 +180,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	@Override
 	@Transactional(readOnly = true)
 	public Set<ConceptSource> getSubscribedSources() {
-		final String sourceUuidsList = adminService.getGlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, "");
+		final String sourceUuidsList = adminService.getGlobalProperty(ConceptPubSub.GP_SUBSCRIBED_TO_SOURCE_UUIDS, "");
 		
 		if (StringUtils.isBlank(sourceUuidsList)) {
 			return Collections.emptySet();
@@ -250,5 +250,10 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public Concept getConcept(final Integer id) {
 		return conceptService.getConcept(id);
 	}
+
+	@Override
+    public void setLocalConceptSource(String uuid) {
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, uuid));
+    }
 	
 }

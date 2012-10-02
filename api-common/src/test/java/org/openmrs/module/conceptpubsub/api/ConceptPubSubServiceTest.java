@@ -60,7 +60,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		localeSource.setName("my-dict");
 		conceptService.saveConceptSource(localeSource);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, localeSource.getUuid()));
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, localeSource.getUuid()));
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 		
 		//given
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, ""));
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, ""));
 		Concept concept = conceptService.getConcept(3);
 		
 		//when
@@ -259,7 +259,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		Context.clearSession();
 		
 		//given
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, ""));
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, ""));
 		
 		//when
 		service.getLocalSource();
@@ -282,7 +282,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_SUBSCRIBED_TO_SOURCE_UUIDS, source1.getUuid()
 		        + ", " + source2.getUuid()));
 		
 		//when
@@ -323,7 +323,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_SUBSCRIBED_TO_SOURCE_UUIDS, source1.getUuid()
 		        + ", " + source2.getUuid()));
 		
 		Concept concept = conceptService.getConcept(3);
@@ -349,7 +349,7 @@ public class ConceptPubSubServiceTest extends BaseModuleContextSensitiveTest {
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.SUBSCRIBED_TO_SOURCE_UUIDS_GP, source1.getUuid()
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_SUBSCRIBED_TO_SOURCE_UUIDS, source1.getUuid()
 		        + ", " + source2.getUuid()));
 		
 		Concept concept = conceptService.getConcept(3);
