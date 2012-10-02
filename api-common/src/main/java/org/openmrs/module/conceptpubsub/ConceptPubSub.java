@@ -13,17 +13,37 @@
  */
 package org.openmrs.module.conceptpubsub;
 
+import org.openmrs.api.context.Context;
+
 /**
  * Contains constants used by the module.
  */
 public class ConceptPubSub {
 	
-	public static final String LOCAL_SOURCE_UUID_GP = "conceptpubsub.localConceptSourceUuid";
+	public static final String MODULE_ID = "conceptpubsub";
+	
+	public static final String GP_LOCAL_SOURCE_UUID = MODULE_ID + ".localConceptSourceUuid";
 	
 	public static final String LOCAL_SOURCE_DESCRIPTION_PREFIX = "Source for concepts published by ";
 	
 	public static final String LOCAL_SOURCE_NAME_POSTFIX = "-dict";
 	
-	public static final String SUBSCRIBED_TO_SOURCE_UUIDS_GP = "conceptpubsub.subscribedToConceptSourceUuids";
+	public static final String GP_SUBSCRIBED_TO_SOURCE_UUIDS = MODULE_ID + ".subscribedToConceptSourceUuids";
+	
+	public static final String MODULE_PATH = "/module/" + MODULE_ID;
+	
+	/**
+	 * Global property name, specifies whether the concept mappings to the local dictionary should
+	 * be created when exporting concepts
+	 */
+	public static final String GP_ADD_LOCAL_MAPPINGS = MODULE_ID + ".addLocalMappings";
+	
+	/**
+	 * @return true if the user has chosen to add local mappings
+	 */
+	public static boolean isAddLocalMappings() {
+		String addLocalMappings = Context.getAdministrationService().getGlobalProperty(GP_ADD_LOCAL_MAPPINGS);
+		return Boolean.valueOf(addLocalMappings);
+	}
 	
 }

@@ -162,4 +162,13 @@ public interface ConceptPubSubService {
 	 */
 	void markLocalMappingRetiredInConcept(Concept concept);
 	
+	/**
+	 * Sets the local concept source to the source with the given uuid.
+	 * 
+	 * @see ConceptPubSub#GP_ADD_LOCAL_MAPPINGS
+	 * @see #createLocalSourceFromImplementationId()
+	 * @param uuid a ConceptSource uuid
+	 */
+	void setLocalConceptSource(String uuid);
+	
 }

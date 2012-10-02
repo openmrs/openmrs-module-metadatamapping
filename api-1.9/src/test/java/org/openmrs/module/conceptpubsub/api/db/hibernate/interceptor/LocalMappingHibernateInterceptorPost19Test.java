@@ -56,7 +56,7 @@ public class LocalMappingHibernateInterceptorPost19Test extends BaseModuleContex
 		localeSource.setName("my-dict");
 		conceptService.saveConceptSource(localeSource);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.LOCAL_SOURCE_UUID_GP, localeSource.getUuid()));
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, localeSource.getUuid()));
 	}
 	
 	@Test
