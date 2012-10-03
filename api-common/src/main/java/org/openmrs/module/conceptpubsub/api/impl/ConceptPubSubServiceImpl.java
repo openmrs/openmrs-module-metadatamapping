@@ -87,7 +87,7 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 		
 		conceptService.saveConceptSource(source);
 		
-		setLocalConceptSource(source.getUuid());
+		setLocalConceptSource(source);
 		
 		return source;
 	}
@@ -252,8 +252,8 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	}
 
 	@Override
-    public void setLocalConceptSource(String uuid) {
-		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, uuid));
+    public void setLocalConceptSource(ConceptSource conceptSource) {
+		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, conceptSource.getUuid()));
     }
 	
 }

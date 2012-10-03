@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.conceptpubsub.web.bean.validator;
 
+import org.apache.commons.lang.StringUtils;
+import org.openmrs.ConceptSource;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.conceptpubsub.ConceptPubSub;
 import org.openmrs.module.conceptpubsub.web.bean.ConfigureForm;
 import org.springframework.stereotype.Component;
@@ -46,5 +50,13 @@ public class ConfigureFormValidator implements Validator {
 			ValidationUtils.rejectIfEmpty(errors, "conceptSourceUuid", "conceptpubsub.error.emptyConceptSource");
 		}
 		
-	}	
+		if (!StringUtils.isBlank(configureForm.getConceptSourceUuid())) {
+			ConceptSource source = Context.getService(ConceptService.class).getConceptSourceByUuid(
+			    configureForm.getConceptSourceUuid());
+			if (source == null) {
+				errors.rejectValue("conceptSourceUuid", "conceptpubsub.error.missingConceptSource");
+			}
+		}
+		
+	}
 }

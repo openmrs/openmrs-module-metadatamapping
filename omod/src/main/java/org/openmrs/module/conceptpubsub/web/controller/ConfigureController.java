@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.conceptpubsub.ConceptPubSub;
 import org.openmrs.module.conceptpubsub.api.ConceptPubSubService;
@@ -71,7 +72,12 @@ public class ConfigureController {
 	                            HttpServletRequest request) {
 		validator.validate(configureForm, errors);
 		if (!errors.hasErrors()) {
-			Context.getService(ConceptPubSubService.class).setLocalConceptSource(configureForm.getConceptSourceUuid());
+			if (!StringUtils.isBlank(configureForm.getConceptSourceUuid())) {
+				ConceptSource conceptSource = Context.getService(ConceptService.class).getConceptSourceByUuid(
+				    configureForm.getConceptSourceUuid());
+				
+				Context.getService(ConceptPubSubService.class).setLocalConceptSource(conceptSource);
+			}
 			
 			saveGlobalProperty(ConceptPubSub.GP_ADD_LOCAL_MAPPINGS, configureForm.getAddLocalMappings().toString());
 			

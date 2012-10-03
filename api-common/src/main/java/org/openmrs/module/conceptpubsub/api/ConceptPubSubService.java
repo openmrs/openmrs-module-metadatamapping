@@ -167,8 +167,8 @@ public interface ConceptPubSubService {
 	 * 
 	 * @see ConceptPubSub#GP_ADD_LOCAL_MAPPINGS
 	 * @see #createLocalSourceFromImplementationId()
-	 * @param uuid a ConceptSource uuid
+	 * @param conceptSource
 	 */
-	void setLocalConceptSource(String uuid);
+	void setLocalConceptSource(ConceptSource conceptSource);
 	
 }
