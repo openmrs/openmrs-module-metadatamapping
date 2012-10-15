@@ -59,6 +59,13 @@ public interface ConceptPubSubService {
 	boolean isLocalSourceConfigured();
 	
 	/**
+	 * Returns true if local mappings should be added on export.
+	 * 
+	 * @return true if should add local mappings
+	 */
+	boolean isAddLocalMappingOnExport();
+	
+	/**
 	 * Adds local mapping to the given concept.
 	 * <p>
 	 * A mapping in a format 'localSource:concetpId' is added to a concept if there is no other

@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.conceptpubsub;
 
-import org.openmrs.api.context.Context;
 
 /**
  * Contains constants used by the module.
@@ -37,13 +36,5 @@ public class ConceptPubSub {
 	 * be created when exporting concepts
 	 */
 	public static final String GP_ADD_LOCAL_MAPPINGS = MODULE_ID + ".addLocalMappings";
-	
-	/**
-	 * @return true if the user has chosen to add local mappings
-	 */
-	public static boolean isAddLocalMappings() {
-		String addLocalMappings = Context.getAdministrationService().getGlobalProperty(GP_ADD_LOCAL_MAPPINGS);
-		return Boolean.valueOf(addLocalMappings);
-	}
 	
 }

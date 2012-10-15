@@ -125,6 +125,15 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 		}
 	}
 	
+	/**
+	 * @see org.openmrs.module.conceptpubsub.api.ConceptPubSubService#isAddLocalMappingOnExport()
+	 */
+	@Override
+	public boolean isAddLocalMappingOnExport() {
+		String addLocalMappings = adminService.getGlobalProperty(ConceptPubSub.GP_ADD_LOCAL_MAPPINGS, "");
+		return Boolean.valueOf(addLocalMappings);
+	}
+	
 	@Override
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {
@@ -250,10 +259,10 @@ public class ConceptPubSubServiceImpl extends BaseOpenmrsService implements Conc
 	public Concept getConcept(final Integer id) {
 		return conceptService.getConcept(id);
 	}
-
+	
 	@Override
-    public void setLocalConceptSource(ConceptSource conceptSource) {
+	public void setLocalConceptSource(ConceptSource conceptSource) {
 		adminService.saveGlobalProperty(new GlobalProperty(ConceptPubSub.GP_LOCAL_SOURCE_UUID, conceptSource.getUuid()));
-    }
+	}
 	
 }
