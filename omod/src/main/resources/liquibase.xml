@@ -10,20 +10,20 @@
         for a list of supported elements and attributes
     -->
 
- 	<changeSet id="conceptpubsub-2011-10-04-a" author="bwolfe">
-        <preConditions onFail="MARK_RAN"><sqlCheck expectedResult="0">select count(*) from global_property where property = 'conceptpubsub.addLocalMappings'</sqlCheck></preConditions>
-        <comment>Move MDS property addLocalMappings to conceptpubsub</comment>
+ 	<changeSet id="metadatamapping-2011-10-04-a" author="bwolfe">
+        <preConditions onFail="MARK_RAN"><sqlCheck expectedResult="0">select count(*) from global_property where property = 'metadatamapping.addLocalMappings'</sqlCheck></preConditions>
+        <comment>Move MDS property addLocalMappings to metadatamapping</comment>
         <update tableName="global_property">
-            <column name="property" value="conceptpubsub.addLocalMappings"></column>
+            <column name="property" value="metadatamapping.addLocalMappings"></column>
             <where>property = 'metadatasharing.addLocalMappings'</where>
         </update>
     </changeSet>
     
- 	<changeSet id="conceptpubsub-2011-10-04-b" author="bwolfe">
-        <preConditions onFail="MARK_RAN"><sqlCheck expectedResult="0">select count(*) from global_property where property = 'conceptpubsub.localConceptSourceUuid'</sqlCheck></preConditions>
-        <comment>Move MDS property localConceptSourceUuid to conceptpubsub</comment>
+ 	<changeSet id="metadatamapping-2011-10-04-b" author="bwolfe">
+        <preConditions onFail="MARK_RAN"><sqlCheck expectedResult="0">select count(*) from global_property where property = 'metadatamapping.localConceptSourceUuid'</sqlCheck></preConditions>
+        <comment>Move MDS property localConceptSourceUuid to metadatamapping</comment>
         <update tableName="global_property">
-            <column name="property" value="conceptpubsub.localConceptSourceUuid"></column>
+            <column name="property" value="metadatamapping.localConceptSourceUuid"></column>
             <where>property = 'metadatasharing.systemConceptSource'</where>
         </update>
     </changeSet>

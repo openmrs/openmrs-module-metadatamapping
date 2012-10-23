@@ -34,23 +34,23 @@
 </style>
 
 <h3>
-	<spring:message code="conceptpubsub.configure" />
+	<spring:message code="metadatamapping.configure" />
 </h3>
 
 <springform:form commandName="configureForm">
 	
 		<fieldset>
- 		<legend><spring:message code="conceptpubsub.configure.exporting"/></legend>
+ 		<legend><spring:message code="metadatamapping.configure.exporting"/></legend>
  		<div class="even-configuration-item">
 			<springform:checkbox path="addLocalMappings" id="addLocalMappings" onchange="toggleSourceInfo(this)" />
-			<b><label for="addLocalMappings"><spring:message code="conceptpubsub.addLocalMappings" /></label></b> 
+			<b><label for="addLocalMappings"><spring:message code="metadatamapping.addLocalMappings" /></label></b> 
 			<springform:errors path="addLocalMappings" cssClass="error"/>
 			<div class="indented" id="sourceInfo" <c:if test="${!configureForm.addLocalMappings}">style="display: none"</c:if> >
-				<spring:message code="conceptpubsub.addLocalMappings.description"/>
+				<spring:message code="metadatamapping.addLocalMappings.description"/>
 				
-				<p><spring:message code="conceptpubsub.conceptSource.description.line1" /></p>
+				<p><spring:message code="metadatamapping.conceptSource.description.line1" /></p>
 				<p>
-					<spring:message code="conceptpubsub.conceptSource.description.line2" /> <br />
+					<spring:message code="metadatamapping.conceptSource.description.line2" /> <br />
 					<springform:select path="conceptSourceUuid">
 						<springform:option value="" />
 						<springform:options items="${conceptSources}" itemLabel="name" itemValue="uuid" />
@@ -58,8 +58,8 @@
 					<springform:errors path="conceptSourceUuid" cssClass="error"/> 
 				</p> 
 				<p>
-					<spring:message code="conceptpubsub.ifNot" />, 
-					<a href="../../admin/maintenance/implementationid.form"><spring:message code="conceptpubsub.configureImplementationId" /></a>
+					<spring:message code="metadatamapping.ifNot" />, 
+					<a href="../../admin/maintenance/implementationid.form"><spring:message code="metadatamapping.configureImplementationId" /></a>
 				</p>
 			</div>
 		</div>

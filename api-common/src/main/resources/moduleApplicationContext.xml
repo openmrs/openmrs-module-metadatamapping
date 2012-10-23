@@ -9,16 +9,16 @@
            http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-2.5.xsd">
            
-	<bean id="conceptpubsub.ConceptPubSubServiceImpl"
-		class="org.openmrs.module.conceptpubsub.api.impl.ConceptPubSubServiceImpl">
+	<bean id="metadatamapping.MetadataMappingServiceImpl"
+		class="org.openmrs.module.metadatamapping.api.impl.MetadataMappingServiceImpl">
 		<property name="conceptService" ref="conceptService" />
 		<property name="adminService" ref="adminService" />
-		<property name="dao" ref="conceptpubsub.ConceptPubSubDAO" />
+		<property name="dao" ref="metadatamapping.MetadataMappingDAO" />
 	</bean>
 
-	<bean id="conceptpubsub.ConceptPubSubService"
+	<bean id="metadatamapping.MetadataMappingService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" primary="true">
-		<property name="target" ref="conceptpubsub.ConceptPubSubServiceImpl" />
+		<property name="target" ref="metadatamapping.MetadataMappingServiceImpl" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="preInterceptors" ref="serviceInterceptors" />
 		<property name="transactionAttributeSource" ref="transactionAttributeSource" />
@@ -27,8 +27,8 @@
 	<bean parent="serviceContext">
 		<property name="moduleService">
 			<list>
-				<value>org.openmrs.module.conceptpubsub.api.ConceptPubSubService</value>
-				<ref bean="conceptpubsub.ConceptPubSubService" />
+				<value>org.openmrs.module.metadatamapping.api.MetadataMappingService</value>
+				<ref bean="metadatamapping.MetadataMappingService" />
 			</list>
 		</property>
 	</bean>

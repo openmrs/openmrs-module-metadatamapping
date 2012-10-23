@@ -3,15 +3,15 @@
 <module configVersion="1.2">
 
 	<!-- Base Module Properties -->
-	<id>conceptpubsub</id>
-	<name>Concept Pub Sub</name>
+	<id>metadatamapping</id>
+	<name>Metadata Mapping</name>
 	<version>@MODULE_VERSION@</version>
 	<package>org.openmrs.module.@MODULE_ID@</package>
 	<author>Rafal Korytkowski</author>
 	<description>
 	</description>
 
-	<activator>@MODULE_PACKAGE@.ConceptPubSubActivator</activator>
+	<activator>@MODULE_PACKAGE@.MetadataMappingActivator</activator>
 
 	<updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL>
 
@@ -27,7 +27,7 @@
 
 	<!-- Required Privileges -->
 	<privilege>
-		<name>Concept Pub Sub</name>
+		<name>Metadata Mapping</name>
 		<description>Allows the user to prepare concepts for publishing/subscribing</description>
 	</privilege>
 	<!-- /Required Privileges -->

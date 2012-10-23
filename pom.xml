@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>conceptpubsub</artifactId>
+	<artifactId>metadatamapping</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Concept Pub Sub Module</name>
+	<name>Metadata Mapping Module</name>
 	<description></description>
-	<url>https://wiki.openmrs.org/display/docs/Concept+Pub+Sub+Module</url>
+	<url>https://wiki.openmrs.org/display/docs/Metadata+Mapping+Module</url>
 
 	<developers>
 		<developer>
@@ -25,9 +25,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:https://github.com/rkorytkowski/openmrs-module-conceptpubsub</connection>
-		<developerConnection>scm:git:https://github.com/rkorytkowski/openmrs-module-conceptpubsub</developerConnection>
-		<url>https://github.com/rkorytkowski/openmrs-module-conceptpubsub</url>
+		<connection>scm:git:https://github.com/openmrs/openmrs-module-metadatamapping</connection>
+		<developerConnection>scm:git:https://github.com/openmrs/openmrs-module-metadatamapping</developerConnection>
+		<url>https://github.com/openmrs/openmrs-module-metadatamapping</url>
 		<tag>HEAD</tag>
 	</scm>
 
