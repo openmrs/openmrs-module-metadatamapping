@@ -42,7 +42,8 @@ public interface MetadataMappingService {
 	/**
 	 * Returns a configured local concept source.
 	 * <p>
-	 * The local source is read from the {@link MetadataMapping#LOCAL_SOURCE_UUID_GP} global property.
+	 * The local source is read from the {@link MetadataMapping#LOCAL_SOURCE_UUID_GP} global
+	 * property.
 	 * 
 	 * @return the local source
 	 * @throws APIException if the local source is not configured
@@ -103,6 +104,26 @@ public interface MetadataMappingService {
 	 * @should return empty set if gp not defined
 	 */
 	Set<ConceptSource> getSubscribedSources();
+	
+	/**
+	 * Adds the given source to the subscribed sources list.
+	 * 
+	 * @param conceptSource
+	 * @return true if added or false if already there
+	 * @should add subscribed source
+	 * @should return false if subscribed source present
+	 */
+	boolean addSubscribedSource(ConceptSource conceptSource);
+	
+	/**
+	 * Removes the given source from the subscribed sources list.
+	 * 
+	 * @param conceptSource
+	 * @return true if removed or false if not present
+	 * @should remove subscribed source
+	 * @should return false if subscribed source not present
+	 */
+	boolean removeSubscribedSource(ConceptSource conceptSource);
 	
 	/**
 	 * Determines if the given concept is local.

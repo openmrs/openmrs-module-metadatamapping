@@ -197,13 +197,58 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		
 		final String[] sourceUuids = sourceUuidsList.split(",");
 		
-		final Set<ConceptSource> subscribedToSources = new HashSet<ConceptSource>();
+		final Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>();
 		for (String sourceUuid : sourceUuids) {
 			sourceUuid = sourceUuid.trim();
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
-			subscribedToSources.add(source);
+			if (source != null) {
+				subscribedSources.add(source);
+			}
 		}
-		return subscribedToSources;
+		return Collections.unmodifiableSet(subscribedSources);
+	}
+	
+	@Transactional
+	@Override
+	public boolean addSubscribedSource(ConceptSource conceptSource) {
+		Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>(getSubscribedSources());
+		if (!subscribedSources.add(conceptSource)) {
+			return false;
+		}
+		
+		updateSubscribedSourcesGlobalProperty(subscribedSources);
+		
+		return true;
+	}
+	
+	@Transactional
+	@Override
+	public boolean removeSubscribedSource(ConceptSource conceptSource) {
+		Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>(getSubscribedSources());
+		if (!subscribedSources.remove(conceptSource)) {
+			return false;
+		}
+		
+		updateSubscribedSourcesGlobalProperty(subscribedSources);
+		
+		return true;
+	}
+	
+	private void updateSubscribedSourcesGlobalProperty(Set<ConceptSource> subscribedSources) {
+		GlobalProperty sourceUuidsGP = adminService.getGlobalPropertyObject(MetadataMapping.GP_SUBSCRIBED_TO_SOURCE_UUIDS);
+		
+		if (sourceUuidsGP == null) {
+			sourceUuidsGP = new GlobalProperty(MetadataMapping.GP_SUBSCRIBED_TO_SOURCE_UUIDS, "");
+		}
+		
+		Set<String> sourceUuids = new HashSet<String>();
+		for (ConceptSource subscribedSource : subscribedSources) {
+			sourceUuids.add(subscribedSource.getUuid());
+		}
+		
+		sourceUuidsGP.setPropertyValue(StringUtils.join(sourceUuids, ","));
+		
+		adminService.saveGlobalProperty(sourceUuidsGP);
 	}
 	
 	@Override
