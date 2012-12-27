@@ -137,6 +137,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional
 	public void addLocalMappingToConcept(final Concept concept) {
+		if (concept.getId() == null) {
+			return;
+		}
+		
 		final ConceptSource localSource = getLocalSource();
 		if (!conceptAdapter.hasMappingToSource(concept, localSource)) {
 			conceptAdapter.addMapping(concept, localSource, concept.getId().toString());
@@ -146,6 +150,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional
 	public void markLocalMappingRetiredInConcept(final Concept concept) {
+		if (concept.getId() == null) {
+			return;
+		}
+		
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.retireMapping(concept, localSource, concept.getId().toString());
 	}
@@ -153,6 +161,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional
 	public void markLocalMappingUnretiredInConcept(final Concept concept) {
+		if (concept.getId() == null) {
+			return;
+		}
+		
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.unretireMapping(concept, localSource, concept.getId().toString());
 	}
@@ -160,6 +172,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional
 	public void purgeLocalMappingInConcept(final Concept concept) {
+		if (concept.getId() == null) {
+			return;
+		}
+		
 		final ConceptSource localSource = getLocalSource();
 		conceptAdapter.purgeMapping(concept, localSource, concept.getId().toString());
 	}
