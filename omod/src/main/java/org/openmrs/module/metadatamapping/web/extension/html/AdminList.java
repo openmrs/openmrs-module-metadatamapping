@@ -52,11 +52,13 @@ public class AdminList extends AdministrationSectionExt {
 	public Map<String, String> getLinks() {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		
-		if (Context.getService(MetadataMappingService.class).isLocalSourceConfigured()) {
-			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
-		} else {
+		MetadataMappingService service = Context.getService(MetadataMappingService.class);
+		
+		if (service.isAddLocalMappingOnExport() && !service.isLocalSourceConfigured()) {
 			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID
-			        + ".configure.rec");
+		        + ".configure.rec");
+		} else {
+			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
 		}
 		
 		return map;
