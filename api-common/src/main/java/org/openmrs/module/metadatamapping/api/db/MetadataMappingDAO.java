@@ -37,8 +37,8 @@ public class MetadataMappingDAO {
 	/**
 	 * Allows to iterate over concepts in batches.
 	 * 
-	 * @param firstResult
-	 * @param maxResults
+	 * @param firstResult first result index
+	 * @param maxResults maximum number of results
 	 * @return the list of concepts
 	 */
 	@Transactional(readOnly = true)
