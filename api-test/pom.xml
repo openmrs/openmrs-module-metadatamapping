@@ -43,5 +43,20 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+				<artifactId>maven-java-formatter-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

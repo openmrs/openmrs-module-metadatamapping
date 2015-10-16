@@ -75,7 +75,7 @@
 	<properties>
 		<openMRSVersion>1.6.6</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+		<javaComplianceVersion>1.6</javaComplianceVersion>
 		<MODULE_ID>${project.parent.artifactId}</MODULE_ID>
 		<MODULE_NAME>${project.parent.name}</MODULE_NAME>
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
@@ -268,8 +268,8 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<target>1.6</target>
-						<source>1.6</source>
+						<target>${javaComplianceVersion}</target>
+						<source>${javaComplianceVersion}</source>
 					</configuration>
 				</plugin>
 				
@@ -382,10 +382,51 @@
 										<ignore />
 									</action>
 								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											com.googlecode.maven-java-formatter-plugin
+										</groupId>
+										<artifactId>
+											maven-java-formatter-plugin
+										</artifactId>
+										<versionRange>
+											[0.3,)
+										</versionRange>
+										<goals>
+											<goal>format</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				
+				<plugin>
+					<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+					<artifactId>maven-java-formatter-plugin</artifactId>
+					<version>0.3</version>
+					<configuration>
+						<compilerSource>${javaComplianceVersion}</compilerSource>
+						<compilerCompliance>${javaComplianceVersion}</compilerCompliance>
+						<compilerTargetPlatform>${javaComplianceVersion}</compilerTargetPlatform>
+						<configFile>eclipse/OpenMRSFormatter.xml</configFile>
+						<overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>org.openmrs.tools</groupId>
+							<artifactId>openmrs-tools</artifactId>
+							<!-- NOTE: openmrs-tools version need not be linked to openmrs-api version -->
+							<version>1.11.3</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			
 			</plugins>
 		</pluginManagement>
 	</build>
