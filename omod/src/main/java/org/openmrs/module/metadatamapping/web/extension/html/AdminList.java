@@ -55,8 +55,7 @@ public class AdminList extends AdministrationSectionExt {
 		MetadataMappingService service = Context.getService(MetadataMappingService.class);
 		
 		if (service.isAddLocalMappingOnExport() && !service.isLocalSourceConfigured()) {
-			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID
-		        + ".configure.rec");
+			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure.rec");
 		} else {
 			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
 		}

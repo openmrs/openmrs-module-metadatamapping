@@ -70,23 +70,23 @@ public class ConceptAdapterPre19 implements ConceptAdapter {
 	public void unretireMapping(Concept concept, ConceptSource source, String code) {
 		//Cannot unretire in pre-1.9
 	}
-
-    @Override
-    public void purgeMapping(Concept concept, ConceptSource source, String code) {
-    	Collection<ConceptMap> maps = concept.getConceptMappings();
-    	if (maps == null) {
-    		return;
-    	}
-    	
-    	Iterator<ConceptMap> it = maps.iterator();
-    	while(it.hasNext()) {
-    		ConceptMap map = it.next();
-    		if (source.equals(map.getSource())) {
-    			if (code.equals(map.getSourceCode())) {
-    				it.remove();
-    				break;
-    			}
-    		}
-    	}
-    }
+	
+	@Override
+	public void purgeMapping(Concept concept, ConceptSource source, String code) {
+		Collection<ConceptMap> maps = concept.getConceptMappings();
+		if (maps == null) {
+			return;
+		}
+		
+		Iterator<ConceptMap> it = maps.iterator();
+		while (it.hasNext()) {
+			ConceptMap map = it.next();
+			if (source.equals(map.getSource())) {
+				if (code.equals(map.getSourceCode())) {
+					it.remove();
+					break;
+				}
+			}
+		}
+	}
 }

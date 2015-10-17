@@ -16,12 +16,11 @@ package org.openmrs.module.metadatamapping.api.adapter;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 
-
 /**
  * Provides support for the Concept class from different OpenMRS versions.
  */
 public interface ConceptAdapter {
-
+	
 	void addMapping(Concept concept, ConceptSource source, String code);
 	
 	boolean hasMappingToSource(Concept concept, ConceptSource source);

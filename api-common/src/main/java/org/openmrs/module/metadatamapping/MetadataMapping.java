@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.metadatamapping;
 
-
 /**
  * Contains constants used by the module.
  */
