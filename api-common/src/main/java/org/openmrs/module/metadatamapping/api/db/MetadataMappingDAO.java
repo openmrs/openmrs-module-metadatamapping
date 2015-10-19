@@ -15,41 +15,19 @@ package org.openmrs.module.metadatamapping.api.db;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.openmrs.Concept;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The DAO.
  */
-@Component("metadatamapping.MetadataMappingDAO")
-public class MetadataMappingDAO {
-	
-	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+public interface MetadataMappingDAO {
 	
 	/**
 	 * Allows to iterate over concepts in batches.
-	 * 
+	 *
 	 * @param firstResult first result index
 	 * @param maxResults maximum number of results
 	 * @return the list of concepts
 	 */
-	@Transactional(readOnly = true)
-	public List<Concept> getConcepts(final int firstResult, final int maxResults) {
-		final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Concept.class);
-		criteria.addOrder(Order.asc("conceptId"));
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(firstResult);
-		
-		@SuppressWarnings("unchecked")
-		final List<Concept> list = criteria.list();
-		return list;
-	}
+	List<Concept> getConcepts(final int firstResult, final int maxResults);
 }
