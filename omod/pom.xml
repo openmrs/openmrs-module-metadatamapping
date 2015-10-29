@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>metadatamapping</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.1.0-SNAPSHOT</version>
 	</parent>
-
+	
 	<artifactId>metadatamapping-omod</artifactId>
 	<packaging>jar</packaging>
 	<name>Metadata Mapping Module OMOD</name>
 	<description>OMOD project for Metadata Mapping Module</description>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
@@ -33,17 +34,17 @@
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<classifier>tests</classifier>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<finalName>${project.parent.artifactId}-${project.parent.version}</finalName>
-
+		
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -67,7 +68,7 @@
 				<targetPath>web/module</targetPath>
 			</resource>
 		</resources>
-
+		
 		<plugins>
 			<plugin>
 				<groupId>org.openmrs.maven.plugins</groupId>
@@ -90,6 +91,18 @@
 							<includes>**\/*.xml,**\/*.properties</includes>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+				<artifactId>maven-java-formatter-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

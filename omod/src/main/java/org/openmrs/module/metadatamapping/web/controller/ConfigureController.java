@@ -60,16 +60,15 @@ public class ConfigureController {
 		
 		String addLocalMappingsString = Context.getAdministrationService().getGlobalProperty(
 		    MetadataMapping.GP_ADD_LOCAL_MAPPINGS, "true");
-		configureForm
-		        .setAddLocalMappings(Boolean.valueOf((StringUtils.isNotBlank(addLocalMappingsString) ? addLocalMappingsString
-		                : "true")));
+		configureForm.setAddLocalMappings(Boolean
+		        .valueOf((StringUtils.isNotBlank(addLocalMappingsString) ? addLocalMappingsString : "true")));
 		
 		model.addAttribute(configureForm);
 	}
 	
 	@RequestMapping(value = CONFIGURE_PATH, method = RequestMethod.POST)
 	public String configurePost(ConfigureForm configureForm, Errors errors, Model model, HttpSession session,
-	                            HttpServletRequest request) {
+	        HttpServletRequest request) {
 		validator.validate(configureForm, errors);
 		if (!errors.hasErrors()) {
 			if (!StringUtils.isBlank(configureForm.getConceptSourceUuid())) {

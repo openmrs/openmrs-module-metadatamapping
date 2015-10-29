@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- <!DOCTYPE module PUBLIC "-//OpenMRS//DTD OpenMRS Config 1.2//EN" "http://resources.openmrs.org/doctype/config-1.2.dtd"> -->
 <module configVersion="1.2">
-
+	
 	<!-- Base Module Properties -->
 	<id>metadatamapping</id>
 	<name>Metadata Mapping</name>
@@ -10,13 +10,13 @@
 	<author>Rafal Korytkowski</author>
 	<description>
 	</description>
-
+	
 	<activator>@MODULE_PACKAGE@.MetadataMappingActivator</activator>
-
+	
 	<updateURL>https://modules.openmrs.org/modules/download/@MODULE_ID@/update.rdf</updateURL>
-
+	
 	<!-- /Metadata Sharing Properties -->
-
+	
 	<require_version>1.6</require_version>
 	
 	<!-- Extensions -->
@@ -24,7 +24,7 @@
 		<point>org.openmrs.admin.list</point>
 		<class>@MODULE_PACKAGE@.web.extension.html.AdminList</class>
 	</extension>
-
+	
 	<!-- Required Privileges -->
 	<privilege>
 		<name>Metadata Mapping</name>

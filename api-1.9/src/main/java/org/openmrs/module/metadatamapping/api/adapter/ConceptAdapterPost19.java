@@ -94,7 +94,7 @@ public class ConceptAdapterPost19 implements ConceptAdapter {
 		if (hasMapping(concept, source, code)) {
 			final ConceptService conceptService = Context.getConceptService();
 			ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(code, source);
-			if (term.isRetired()) { 
+			if (term.isRetired()) {
 				conceptService.unretireConceptReferenceTerm(term);
 			}
 		}
