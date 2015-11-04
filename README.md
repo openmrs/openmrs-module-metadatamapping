@@ -1,2 +1,2 @@
-openmrs-module-conceptpubsub
-============================
+openmrs-module-metadatamapping
+==============================

@@ -35,14 +35,13 @@ public interface MetadataMappingService {
 	 * 
 	 * @return the local source
 	 * @throws APIException if the local source could not be created
-	 * @should
 	 */
 	ConceptSource createLocalSourceFromImplementationId();
 	
 	/**
 	 * Returns a configured local concept source.
 	 * <p>
-	 * The local source is read from the {@link MetadataMapping#LOCAL_SOURCE_UUID_GP} global
+	 * The local source is read from the {@link MetadataMapping#GP_LOCAL_SOURCE_UUID} global
 	 * property.
 	 * 
 	 * @return the local source
@@ -75,9 +74,9 @@ public interface MetadataMappingService {
 	 * The concept is saved at the end.
 	 * <p>
 	 * It delegates to
-	 * {@link ConceptAdapter#addMappingToConceptIfSourceNotPresent(Concept, ConceptSource, String)}.
+	 * {@link ConceptAdapter#addMapping(Concept, ConceptSource, String)}
 	 * 
-	 * @param concept
+	 * @param concept concept to map
 	 * @throws APIException if the local source is not configured
 	 * @should add mapping if not found
 	 * @should not add mapping if found
@@ -90,7 +89,7 @@ public interface MetadataMappingService {
 	 * <p>
 	 * It iterates over all concept and calls {@link #addLocalMappingToConcept(Concept)}.
 	 * 
-	 * @throws APIException
+	 * @throws APIException reserved for future use
 	 * @should delegate for all concepts
 	 */
 	void addLocalMappingToAllConcepts();
@@ -99,7 +98,7 @@ public interface MetadataMappingService {
 	 * Returns sources to which you are subscribed.
 	 * 
 	 * @return the set of sources or the empty set if nothing found
-	 * @throws APIException
+	 * @throws APIException reserved for future use
 	 * @should return set if gp defined
 	 * @should return empty set if gp not defined
 	 */
@@ -108,7 +107,7 @@ public interface MetadataMappingService {
 	/**
 	 * Adds the given source to the subscribed sources list.
 	 * 
-	 * @param conceptSource
+	 * @param conceptSource source to add
 	 * @return true if added or false if already there
 	 * @should add subscribed source
 	 * @should return false if subscribed source present
@@ -118,7 +117,7 @@ public interface MetadataMappingService {
 	/**
 	 * Removes the given source from the subscribed sources list.
 	 * 
-	 * @param conceptSource
+	 * @param conceptSource source to remove
 	 * @return true if removed or false if not present
 	 * @should remove subscribed source
 	 * @should return false if subscribed source not present
@@ -131,9 +130,9 @@ public interface MetadataMappingService {
 	 * A concept is local if it does not contain a source returned by
 	 * {@link #getSubscribedSources()}.
 	 * 
-	 * @param the concept
+	 * @param concept concept to check
 	 * @return true if local
-	 * @throws APIException
+	 * @throws APIException reserved for future use
 	 * @should return true if local
 	 * @should return false if not local
 	 */
@@ -145,9 +144,9 @@ public interface MetadataMappingService {
 	 * It delegates to {@link ConceptService#getConceptByMapping(String, String)} in case (1) and to
 	 * {@link #getConcept(Integer)} in case (2).
 	 * 
-	 * @param mapping
+	 * @param mapping mapping or identifier of the concept
 	 * @return the concept or null if not found
-	 * @throws APIException
+	 * @throws APIException reserved for future use
 	 * @should return non retired if retired also found by mapping
 	 * @should return retired if no other found by mapping
 	 * @should delegate if id provided
@@ -160,9 +159,9 @@ public interface MetadataMappingService {
 	 * <p>
 	 * It is a convenience method in case id is passed as an integer and not a string.
 	 * 
-	 * @param id
+	 * @param id identifier of the concept
 	 * @return the concept or null if not found
-	 * @throws APIException
+	 * @throws APIException reserved for future use
 	 * @should return non retired
 	 * @should return retired
 	 * @should return null if not found
@@ -172,21 +171,21 @@ public interface MetadataMappingService {
 	/**
 	 * Purges a local mapping if present in the concept.
 	 * 
-	 * @param concept
+	 * @param concept purge the local mapping of this concept
 	 */
 	void purgeLocalMappingInConcept(Concept concept);
 	
 	/**
 	 * Unretires a local mapping if present in the concept.
 	 * 
-	 * @param concept
+	 * @param concept unretire a local mapping for this concept
 	 */
 	void markLocalMappingUnretiredInConcept(Concept concept);
 	
 	/**
 	 * Retires a local mapping if present in the concept.
 	 * 
-	 * @param concept
+	 * @param concept retire a local mapping for this concept
 	 */
 	void markLocalMappingRetiredInConcept(Concept concept);
 	
@@ -195,7 +194,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @see MetadataMapping#GP_ADD_LOCAL_MAPPINGS
 	 * @see #createLocalSourceFromImplementationId()
-	 * @param conceptSource
+	 * @param conceptSource concept source to set
 	 */
 	void setLocalConceptSource(ConceptSource conceptSource);
 	
