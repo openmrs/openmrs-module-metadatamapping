@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+The contents of this file are subject to the OpenMRS Public License
+Version 1.0 (the "License"); you may not use this file except in
+compliance with the License. You may obtain a copy of the License at
+http://license.openmrs.org
+
+Software distributed under the License is distributed on an "AS IS"
+basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+License for the specific language governing rights and limitations
+under the License.
+
+Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+-->
+<!DOCTYPE hibernate-mapping PUBLIC
+		"-//Hibernate/Hibernate Mapping DTD 3.1//EN"
+		"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.openmrs.module.metadatamapping">
+	<class name="org.openmrs.module.metadatamapping.MetadataTermMapping" table="metadatamapping_metadata_term_mapping"
+		   batch-size="25">
+		<id name="metadataTermMappingId" type="java.lang.Integer" column="metadata_term_mapping_id"
+			unsaved-value="undefined">
+			<generator class="org.openmrs.api.db.hibernate.NativeIfNotAssignedIdentityGenerator" />
+		</id>
+		<many-to-one name="metadataSource" class="org.openmrs.module.metadatamapping.MetadataSource" not-null="true">
+			<column name="metadata_source_id" />
+		</many-to-one>
+		<property name="code" type="java.lang.String" column="code" length="255" not-null="true" />
+		<property name="metadataClass" type="java.lang.String" column="metadata_class" length="1024" not-null="true" />
+		<property name="metadataUuid" type="java.lang.String" column="metadata_uuid" length="38"
+				  not-null="true" />
+		
+		<!-- BaseOpenmrsMetadata -->
+		<property name="name" type="java.lang.String" column="name" not-null="true" length="255" />
+		<property name="description" type="java.lang.String" column="description" length="1024" />
+		<many-to-one name="creator" class="org.openmrs.User" not-null="true">
+			<column name="creator" />
+		</many-to-one>
+		<property name="dateCreated" type="java.util.Date" column="date_created" not-null="true" length="19" />
+		<many-to-one name="changedBy" class="org.openmrs.User">
+			<column name="changed_by" />
+		</many-to-one>
+		<property name="dateChanged" type="java.util.Date" column="date_changed" length="19" />
+		<property name="retired" type="java.lang.Boolean" column="retired" length="1" not-null="true" />
+		<property name="dateRetired" type="java.util.Date" column="date_retired" length="19" />
+		<many-to-one name="retiredBy" class="org.openmrs.User">
+			<column name="retired_by" />
+		</many-to-one>
+		<property name="retireReason" type="java.lang.String" column="retire_reason" length="255" />
+		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" not-null="true" />
+		<!-- /BaseOpenmrsMetadata -->
+	</class>
+</hibernate-mapping>
