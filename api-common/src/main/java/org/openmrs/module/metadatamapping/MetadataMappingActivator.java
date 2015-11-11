@@ -13,27 +13,11 @@
  */
 package org.openmrs.module.metadatamapping;
 
-import org.openmrs.module.Activator;
+import org.openmrs.module.BaseModuleActivator;
 
 /**
  * Performs startup and shutdown operations.
  */
-public class MetadataMappingActivator implements Activator {
-	
-	/**
-	 * @see org.openmrs.module.Activator#shutdown()
-	 */
-	@Override
-	public void shutdown() {
-		
-	}
-	
-	/**
-	 * @see org.openmrs.module.Activator#startup()
-	 */
-	@Override
-	public void startup() {
-		
-	}
-	
+public class MetadataMappingActivator extends BaseModuleActivator {
+
 }
