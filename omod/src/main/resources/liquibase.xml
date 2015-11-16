@@ -177,9 +177,23 @@
 		<comment>
 			Add unique constraint on a code withing a source
 		</comment>
-		<addUniqueConstraint constraintName="metadatamapping_metadata_term_code_unique_within_source" 
-							 tableName="metadatamapping_metadata_term_mapping" 
+		<addUniqueConstraint constraintName="metadatamapping_metadata_term_code_unique_within_source"
+							 tableName="metadatamapping_metadata_term_mapping"
 							 columnNames="metadata_source_id,code" />
+	</changeSet>
+	
+	<changeSet id="metadatamapping-2015-11-16-1932" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="metadatamapping_metadata_source_name_unique" />
+			</not>
+		</preConditions>
+		<comment>
+			Add unique constraint on metadata source name
+		</comment>
+		<addUniqueConstraint constraintName="metadatamapping_metadata_source_name_unique"
+							 tableName="metadatamapping_metadata_source"
+							 columnNames="name" />
 	</changeSet>
 
 </databaseChangeLog>
