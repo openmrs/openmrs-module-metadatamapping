@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<!-- ############################################################################################################## -->
+	<!-- Metadata sources -->
+	<!-- ############################################################################################################## -->
+	<metadatamapping_metadata_source metadata_source_id="1"
+									 uuid="df29a160-0add-4598-8ac2-b11a9eb3cdb8"
+									 name="Integration Test Metadata Source 1"
+									 creator="1"
+									 date_created="2015-10-25 17:00:00.0"
+									 retired="false" />
+	<metadatamapping_metadata_source metadata_source_id="2"
+									 uuid="9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1"
+									 name="Integration Test Metadata Source 2"
+									 creator="1"
+									 date_created="2015-10-25 19:00:00.0"
+									 retired="false" />
+	
+	<!-- ############################################################################################################## -->
+	<!-- Metadata terms for source 1 -->
+	<!-- ############################################################################################################## -->
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="1"
+										   uuid="ca6b1024-42e9-48f2-8656-3757527ddf8c"
+										   name="Location Xanadu"
+										   metadata_source_id="1"
+										   code="mdt-xan"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
+										   creator="1"
+										   date_created="2015-10-25 17:00:00.0"
+										   retired="false" />
+	<!-- The Location Never Never Land is retired -->
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="2"
+										   uuid="2d93cda0-1316-4ed1-82ff-47f78068efaa"
+										   name="Location Never Never Land"
+										   metadata_source_id="1"
+										   code="mdt-nnl"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="167ce20c-4785-4285-9119-d197268f7f4a"
+										   creator="1"
+										   date_created="2015-10-25 17:00:00.0"
+										   retired="false" />
+	<!-- The Location Never Never Land is retired -->
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="3"
+										   uuid="a6830197-b0a6-4b21-8b72-de7a1ec9dfab"
+										   name="Location Never Never Land (Term Retired)"
+										   metadata_source_id="1"
+										   code="xyz"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="167ce20c-4785-4285-9119-d197268f7f4a"
+										   creator="1"
+										   date_created="2015-10-25 17:00:00.0"
+										   retired="true"
+										   retired_by="1"
+										   retire_reason="Invalid code"
+										   date_retired="2015-10-25 18:00:00.0" />
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="5"
+										   uuid="c8d56f38-682c-4460-af0b-4cfd5328bedb"
+										   name="Location Xanadu (Term Retired)"
+										   metadata_source_id="1"
+										   code="abc"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
+										   creator="1"
+										   date_created="2015-10-25 17:00:00.0"
+										   retired="true"
+										   retired_by="1"
+										   retire_reason="Invalid code"
+										   date_retired="2015-10-25 18:00:00.0" />
+	
+	<!-- ############################################################################################################## -->
+	<!-- Metadata terms for source 2 -->
+	<!-- ############################################################################################################## -->
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="6"
+										   uuid="08bbe6b9-6240-4e9b-92ab-e3e6c07a0d2c"
+										   name="Location Xanadu"
+										   metadata_source_id="2"
+										   code="mdt-xan"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
+										   creator="1"
+										   date_created="2015-10-28 17:00:00.0"
+										   retired="false" />
+	<!-- The Location Never Never Land is retired -->
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="4"
+										   uuid="a1e82994-7b78-4a40-96e5-b12b09d02b75"
+										   name="Location Never Never Land"
+										   metadata_source_id="2"
+										   code="mdt-nnl"
+										   metadata_class="org.openmrs.Location"
+										   metadata_uuid="167ce20c-4785-4285-9119-d197268f7f4a"
+										   creator="1"
+										   date_created="2015-10-25 19:00:00.0"
+										   retired="false" />
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="7"
+										   uuid="f03b3f7c-e2af-4428-8bdf-c1361f03d6ef"
+										   name="Triomune-30"
+										   metadata_source_id="2"
+										   code="drug-tri"
+										   metadata_class="org.openmrs.Drug"
+										   metadata_uuid="3cfcf118-931c-46f7-8ff6-7b876f0d4202"
+										   creator="1"
+										   date_created="2015-10-28 19:00:00.0"
+										   retired="false" />
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="8"
+										   uuid="7c4d921c-9694-4b5a-a56c-3cfb3b7c7f06"
+										   name="ASPIRIN"
+										   metadata_source_id="2"
+										   code="drug-asp"
+										   metadata_class="org.openmrs.Drug"
+										   metadata_uuid="05ec820a-d297-44e3-be6e-698531d9dd3f"
+										   creator="1"
+										   date_created="2015-10-28 19:00:00.0"
+										   retired="false" />
+</dataset>

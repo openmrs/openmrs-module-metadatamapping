@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.metadatamapping.api.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -26,12 +27,15 @@ import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.ImplementationId;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
+import org.openmrs.module.metadatamapping.MetadataSource;
+import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
 import org.openmrs.module.metadatamapping.api.adapter.ConceptAdapter;
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
@@ -326,4 +330,95 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, conceptSource.getUuid()));
 	}
 	
+	@Override
+	@Transactional
+	public MetadataSource saveMetadataSource(MetadataSource metadataSource) {
+		return dao.saveMetadataSource(metadataSource);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSource getMetadataSource(Integer metadataSourceId) {
+		return dao.getMetadataSource(metadataSourceId);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSource getMetadataSourceByUuid(String metadataSourceUuid) {
+		return dao.getByUuid(MetadataSource.class, metadataSourceUuid);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSource getMetadataSourceByName(String metadataSourceName) {
+		return dao.getMetadataSourceByName(metadataSourceName);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataSource retireMetadataSource(MetadataSource metadataSource, String reason) {
+		// Required values are already set by the injected BaseRetireHandler.
+		return dao.saveMetadataSource(metadataSource);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataTermMapping saveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
+		return dao.saveMetadataTermMapping(metadataTermMapping);
+	}
+	
+	@Override
+	@Transactional
+	public Collection<MetadataTermMapping> saveMetadataTermMappings(Collection<MetadataTermMapping> metadataTermMappings) {
+		return dao.saveMetadataTermMappings(metadataTermMappings);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId) {
+		return dao.getMetadataTermMapping(metadataTermMappingId);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataTermMapping getMetadataTermMappingByUuid(String metadataTermMappingUuid) {
+		return dao.getByUuid(MetadataTermMapping.class, metadataTermMappingUuid);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject) {
+		return dao.getMetadataTermMappings(referredObject);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataTermMapping retireMetadataTermMapping(MetadataTermMapping metadataTermMapping, String reason) {
+		// Required values are already set by the injected BaseRetireHandler.
+		return dao.saveMetadataTermMapping(metadataTermMapping);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
+		return dao.getMetadataTermMapping(metadataSource, metadataTermCode);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
+		return dao.getMetadataTermMappings(metadataSource);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, String metadataSourceName, String metadataTermCode) {
+		return dao.getMetadataItem(type, metadataSourceName, metadataTermCode);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public <T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName) {
+		return dao.getMetadataItems(type, metadataSourceName);
+	}
 }

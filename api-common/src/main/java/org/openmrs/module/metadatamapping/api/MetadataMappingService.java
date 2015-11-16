@@ -13,14 +13,20 @@
  */
 package org.openmrs.module.metadatamapping.api;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
+import org.openmrs.module.metadatamapping.MetadataSource;
+import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.adapter.ConceptAdapter;
+import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 
 /**
  * The service.
@@ -198,4 +204,151 @@ public interface MetadataMappingService {
 	 */
 	void setLocalConceptSource(ConceptSource conceptSource);
 	
+	/**
+	 * Save a new metadata source or update an existing one.
+	 * @param metadataSource object to save
+	 * @return saved object
+	 * @since 1.1
+	 * @should save valid new object
+	 */
+	MetadataSource saveMetadataSource(MetadataSource metadataSource);
+	
+	/**
+	 * Get metadata source with the given id.
+	 * @param metadataSourceId database id of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSource getMetadataSource(Integer metadataSourceId);
+	
+	/**
+	 * Get metadata source with the given uuid. 
+	 * @param metadataSourceUuid uuid of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSource getMetadataSourceByUuid(String metadataSourceUuid);
+	
+	/**
+	 * Get metadata source with the given name. 
+	 * @param metadataSourceName uuid of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSource getMetadataSourceByName(String metadataSourceName);
+	
+	/**
+	 * Retire the object and set required info via an AOP injected method.
+	 * @param metadataSource object to retire
+	 * @param reason reason for retiring the object
+	 * @return retired object
+	 * @since 1.1
+	 * @should retire and set info
+	 */
+	MetadataSource retireMetadataSource(MetadataSource metadataSource, String reason);
+	
+	/**
+	 * Save a new metadata term mapping or update an existing one.
+	 * @param metadataTermMapping object to save
+	 * @return saved object
+	 * @since 1.1
+	 * @should save valid new object
+	 * @should fail if code is not unique within source
+	 */
+	MetadataTermMapping saveMetadataTermMapping(MetadataTermMapping metadataTermMapping);
+	
+	/**
+	 * Batch save for metadata terms mappings.
+	 * @param metadataTermMappings collection of metadata term mappings to save
+	 * @return collections of saved metadata term mappings
+	 * @since 1.1
+	 * @see #saveMetadataTermMapping(MetadataTermMapping)
+	 */
+	Collection<MetadataTermMapping> saveMetadataTermMappings(Collection<MetadataTermMapping> metadataTermMappings);
+	
+	/**
+	 * Get metadata term mapping with the given id.
+	 * @param metadataTermMappingId database id of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId);
+	
+	/**
+	 * Get metadata term mapping with the given uuid. 
+	 * @param metadataTermMappingUuid uuid of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 * @should return matching metadata term mapping
+	 */
+	MetadataTermMapping getMetadataTermMappingByUuid(String metadataTermMappingUuid);
+	
+	/**
+	 * Find all the unretired metadata term mappings that refer to the given metadata object.
+	 * @param referredObject find term mappings that refer to this object
+	 * @return list of matching metadata term mappings
+	 * @since 1.1
+	 * @should return unretired term mappings referring to object
+	 */
+	List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject);
+	
+	/**
+	 * Retire the object and set required info via an AOP injected method.
+	 * @param metadataTermMapping object to retire
+	 * @param reason reason for retiring the object
+	 * @return retired object
+	 * @since 1.1
+	 * @should retire and set info
+	 */
+	MetadataTermMapping retireMetadataTermMapping(MetadataTermMapping metadataTermMapping, String reason);
+	
+	/**
+	 * Get a specific metadata term mapping from a specific source. 
+	 * @param metadataSource source of the term
+	 * @param metadataTermCode code of the term   
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 * @should return a retired term mapping
+	 */
+	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
+	
+	/**
+	 * Get all unretired metadata term mappings in the source.
+	 * @param metadataSource source of the terms
+	 * @return list of terms
+	 * @since 1.1
+	 * @should return only unretired term mappings
+	 */
+	List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource);
+	
+	/**
+	 * Get metadata item referred to by the given metadata term mapping
+	 * @param type type of the metadata item
+	 * @param metadataSourceName metadata source name
+	 * @param metadataTermCode metadata term code
+	 * @param <T> type of the metadata item
+	 * @return metadata item or null, if not found or if either the metadata term mapping or the metadata item itself are 
+	 * retired
+	 * @throws InvalidMetadataTypeException when the requested type does not match the type of the metadata item
+	 * referred to by the metadata term mapping
+	 * @since 1.1
+	 * @should return unretired metadata item for unretired term
+	 * @should not return retired metadata item for unretired term
+	 * @should not return unretired metadata item for retired term
+	 * @should fail on type mismatch
+	 * @should return null if term does not exist
+	 */
+	<T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, String metadataSourceName, String metadataTermCode);
+	
+	/**
+	 * Get metadata items of the given type that are referred to by any metadata term mappings in the given metadata source
+	 * @param type type of the metadata item
+	 * @param metadataSourceName metadata source name
+	 * @param <T> type of the metadata item
+	 * @return list of matching metadata items
+	 * @since 1.1
+	 * @should return unretired metadata items of unretired terms matching type
+	 * @should return nothing if source does not exist
+	 */
+	<T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName);
 }
