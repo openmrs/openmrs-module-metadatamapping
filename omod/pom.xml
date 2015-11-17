@@ -23,14 +23,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-api-test</artifactId>
-			<version>${project.parent.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 		</dependency>
@@ -79,16 +71,16 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>Expand resources</id>
+						<id>Expand moduleApplicationContext and messages</id>
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<phase>generate-resources</phase>
 						<configuration>
 							<includeGroupIds>${project.parent.groupId}</includeGroupIds>
-							<includeArtifactIds>${project.parent.artifactId}-api-common</includeArtifactIds>
-							<includeScope>compile</includeScope>
-							<includes>**\/*.xml,**\/*.properties</includes>
+							<includeArtifactIds>${project.parent.artifactId}-api</includeArtifactIds>
+							<excludeTransitive>true</excludeTransitive>
+							<includes>**/*</includes>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
 						</configuration>
 					</execution>
