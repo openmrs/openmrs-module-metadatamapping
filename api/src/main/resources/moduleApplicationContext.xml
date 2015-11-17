@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+	
+	<bean id="metadatamapping.MetadataMappingServiceImpl"
+		  class="org.openmrs.module.metadatamapping.api.impl.MetadataMappingServiceImpl">
+		<property name="conceptService" ref="conceptService" />
+		<property name="adminService" ref="adminService" />
+		<property name="dao" ref="metadatamapping.MetadataMappingDAO" />
+		<property name="conceptAdapter" ref="metadatamapping.ConceptAdapter" />
+	</bean>
+	
+	<bean id="metadatamapping.MetadataMappingService"
+		  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" primary="true">
+		<property name="target" ref="metadatamapping.MetadataMappingServiceImpl" />
+		<property name="transactionManager" ref="transactionManager" />
+		<property name="preInterceptors" ref="serviceInterceptors" />
+		<property name="transactionAttributeSource" ref="transactionAttributeSource" />
+	</bean>
+	
+	<bean parent="serviceContext">
+		<property name="moduleService">
+			<list>
+				<value>org.openmrs.module.metadatamapping.api.MetadataMappingService</value>
+				<ref bean="metadatamapping.MetadataMappingService" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

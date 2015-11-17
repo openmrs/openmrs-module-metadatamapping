@@ -65,15 +65,11 @@
 	
 	<modules>
 		<module>api</module>
-		<module>api-test</module>
-		<module>api-common</module>
-		<module>api-1.9</module>
 		<module>omod</module>
-		<module>integration-test</module>
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.7.4</openMRSVersion>
+		<openMRSVersion>1.9.8</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaComplianceVersion>1.6</javaComplianceVersion>
 		<MODULE_ID>${project.parent.artifactId}</MODULE_ID>
@@ -416,6 +412,7 @@
 						<compilerTargetPlatform>${javaComplianceVersion}</compilerTargetPlatform>
 						<configFile>eclipse/OpenMRSFormatter.xml</configFile>
 						<overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
+						<lineEnding>LF</lineEnding>
 					</configuration>
 					<dependencies>
 						<dependency>
