@@ -23,8 +23,11 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
+import org.openmrs.module.metadatamapping.MetadataSet;
+import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 
 /**
@@ -350,4 +353,168 @@ public interface MetadataMappingService {
 	 * @should return nothing if source does not exist
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName);
+	
+	/**
+	 * Save a new metadata set or update an existing one.
+	 * @param metadataSet object to save
+	 * @return saved object
+	 * @since 1.1
+	 * @should save valid new object
+	 * @should fail if code is not unique within source
+	 */
+	MetadataSet saveMetadataSet(MetadataSet metadataSet);
+	
+	/**
+	 * Get metadata set with the given id.
+	 * @param metadataSetId database id of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 * @should return a retired set
+	 */
+	MetadataSet getMetadataSet(Integer metadataSetId);
+	
+	/**
+	 * Get metadata set with the given uuid. 
+	 * @param metadataSetUuid uuid of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 * @should return matching metadata set
+	 */
+	MetadataSet getMetadataSetByUuid(String metadataSetUuid);
+	
+	/**
+	 * Get metadata set with the given name. 
+	 * @param metadataSource source of the set
+	 * @param metadataSetCode code of the set   
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSet getMetadataSet(MetadataSource metadataSource, String metadataSetCode);
+	
+	/**
+	 * Retire the metadata set and its members and set required info via an AOP injected method.
+	 * @param metadataSet object to retire
+	 * @param reason reason for retiring the object
+	 * @return retired object
+	 * @since 1.1
+	 * @should retire and set info
+	 * @should retire members
+	 */
+	MetadataSet retireMetadataSet(MetadataSet metadataSet, String reason);
+	
+	/**
+	 * Save a new metadata set member or update an existing one.
+	 * @param metadataSetMember object to save
+	 * @return saved object
+	 * @since 1.1
+	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
+	 */
+	MetadataSetMember saveMetadataSetMember(MetadataSetMember metadataSetMember);
+	
+	/**
+	 * Save a collection of new metadata set members or update an existing ones.
+	 * @param metadataSetMembers collection of objects to save
+	 * @return the same collection with saved objects
+	 * @since 1.1
+	 * @see #saveMetadataSetMember(MetadataSetMember)
+	 */
+	Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers);
+	
+	/**
+	 * Get metadata set member with the given id.
+	 * @param metadataSetMemberId database id of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId);
+	
+	/**
+	 * Get metadata set member with the given uuid. 
+	 * @param metadataSetMemberUuid uuid of the object
+	 * @return object or null, if does not exist
+	 * @since 1.1
+	 */
+	MetadataSetMember getMetadataSetMemberByUuid(String metadataSetMemberUuid);
+	
+	/**
+	 * Get members of a metadata set. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered 
+	 * in ascending order according to said weight. Note that due to differences in database implementations, the order 
+	 * will be unpredictable, if there are null sort weights in the set.
+	 * @param metadataSet metadata set
+	 * @param firstResult zero based index of first result to get 
+	 * @param maxResults maximum number of results to get
+	 * @param retiredHandlingMode handle retired objects using this mode
+	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.1
+	 * @should get members in desired order 1
+	 * @should respect retire fetch mode 1
+	 * @see #getMetadataSetMembers(String, String, int, int, RetiredHandlingMode)
+	 */
+	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode);
+	
+	/**
+	 * Get members of a metadata set. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered 
+	 * in ascending order according to said weight. Note that due to differences in database implementations, the order 
+	 * will be unpredictable, if there are null sort weights in the set.
+	 * @param metadataSourceName name of the source of the set
+	 * @param metadataSetCode code of the set
+	 * @param firstResult zero based index of first result to get 
+	 * @param maxResults maximum number of results to get
+	 * @param retiredHandlingMode handle retired objects using this mode
+	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.1
+	 * @should get members in desired order 2
+	 * @should respect retire fetch mode 2
+	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
+	 */
+	List<MetadataSetMember> getMetadataSetMembers(String metadataSourceName, String metadataSetCode, int firstResult,
+	        int maxResults, RetiredHandlingMode retiredHandlingMode);
+	
+	/**
+	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will 
+	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations, 
+	 * the order  will be unpredictable, if there are null sort weights in the set.
+	 * @param type type of the metadata items
+	 * @param metadataSet metadata set
+	 * @param firstResult zero based index of first result to get 
+	 * @param maxResults maximum number of results to get
+	 * @param <T> type of the metadata items
+	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.1
+	 * @see #getMetadataSetItems(Class, String, String, int, int) 
+	 * @should get unretired metadata items of unretired terms matching type in sort weight order 1
+	 * @should return nothing if set does not exist
+	 */
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+	        int maxResults);
+	
+	/**
+	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will 
+	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations, 
+	 * the order  will be unpredictable, if there are null sort weights in the set.
+	 * @param type type of the metadata items
+	 * @param metadataSourceName name of the source of the set
+	 * @param metadataSetCode code of the set
+	 * @param firstResult zero based index of first result to get 
+	 * @param maxResults maximum number of results to get
+	 * @param <T> type of the metadata items
+	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.1
+	 * @see #getMetadataSetItems(Class, MetadataSet, int, int) 
+	 * @should get unretired metadata items of unretired terms matching type in sort weight order 2
+	 * @should return nothing if set does not exist
+	 */
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, String metadataSourceName,
+	        String metadataSetCode, int firstResult, int maxResults);
+	
+	/**
+	 * Retire the metadata set member and set required info via an AOP injected method.
+	 * @param metadataSetMember object to retire
+	 * @param reason reason for retiring the object
+	 * @return retired object
+	 * @since 1.1
+	 * @should retire and set info
+	 */
+	MetadataSetMember retireMetadataSetMember(MetadataSetMember metadataSetMember, String reason);
 }
