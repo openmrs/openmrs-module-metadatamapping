@@ -57,7 +57,7 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 		MetadataMappingService service = Context.getService(MetadataMappingService.class);
 		
 		FlushMode flushMode = setFlushMode(FlushMode.MANUAL);
-		if (service.isLocalSourceConfigured()) {
+		if (service.isLocalConceptSourceConfigured()) {
 			service.markLocalMappingRetiredInConcept(concept);
 		}
 		setFlushMode(flushMode);
@@ -76,7 +76,7 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 		MetadataMappingService service = Context.getService(MetadataMappingService.class);
 		
 		FlushMode flushMode = setFlushMode(FlushMode.MANUAL);
-		if (service.isLocalSourceConfigured()) {
+		if (service.isLocalConceptSourceConfigured()) {
 			if (concept.isRetired()) {
 				service.markLocalMappingRetiredInConcept(concept);
 			} else {

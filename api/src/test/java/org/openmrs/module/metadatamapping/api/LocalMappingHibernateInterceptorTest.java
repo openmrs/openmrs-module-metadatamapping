@@ -26,7 +26,6 @@ import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
-import org.openmrs.module.metadatamapping.api.MetadataMappingService;
 import org.openmrs.module.metadatamapping.api.db.hibernate.interceptor.LocalMappingHibernateInterceptor;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +48,16 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 	@Qualifier("conceptService")
 	private ConceptService conceptService;
 	
-	private ConceptSource localeSource;
+	private ConceptSource localConceptSource;
 	
 	@Before
-	public void setupLocalSource() {
-		localeSource = new ConceptSource();
-		localeSource.setName("my-dict");
-		conceptService.saveConceptSource(localeSource);
+	public void setupLocalConceptSource() {
+		localConceptSource = new ConceptSource();
+		localConceptSource.setName("my-dict");
+		conceptService.saveConceptSource(localConceptSource);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localeSource.getUuid()));
+		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localConceptSource
+		        .getUuid()));
 	}
 	
 	@Test
@@ -72,14 +72,14 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 		
 		service.addLocalMappingToConcept(concept);
 		
-		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(id.toString(), localeSource);
+		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode(id.toString(), localConceptSource);
 		Assert.assertFalse(term.isRetired());
 		
 		//when
 		conceptService.purgeConcept(concept);
 		
 		//then
-		term = conceptService.getConceptReferenceTermByCode(id.toString(), localeSource);
+		term = conceptService.getConceptReferenceTermByCode(id.toString(), localConceptSource);
 		Assert.assertTrue(term.isRetired());
 	}
 	
@@ -90,14 +90,14 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 		
 		service.addLocalMappingToConcept(concept);
 		
-		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode("3", localeSource);
+		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode("3", localConceptSource);
 		Assert.assertFalse(term.isRetired());
 		
 		//when
 		conceptService.retireConcept(concept, "Testing...");
 		
 		//then
-		term = conceptService.getConceptReferenceTermByCode("3", localeSource);
+		term = conceptService.getConceptReferenceTermByCode("3", localConceptSource);
 		Assert.assertTrue(term.isRetired());
 	}
 	
@@ -109,7 +109,7 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 		
 		service.addLocalMappingToConcept(concept);
 		
-		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode("3", localeSource);
+		ConceptReferenceTerm term = conceptService.getConceptReferenceTermByCode("3", localConceptSource);
 		Assert.assertTrue(term.isRetired());
 		
 		//when
@@ -119,7 +119,7 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 		conceptService.saveConcept(concept);
 		
 		//then
-		term = conceptService.getConceptReferenceTermByCode("3", localeSource);
+		term = conceptService.getConceptReferenceTermByCode("3", localConceptSource);
 		Assert.assertFalse(term.isRetired());
 	}
 }

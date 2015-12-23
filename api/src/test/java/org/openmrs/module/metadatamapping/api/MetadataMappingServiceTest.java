@@ -66,15 +66,16 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	@Qualifier("metadatamapping.ConceptAdapter")
 	private ConceptAdapter conceptAdapter;
 	
-	private ConceptSource localeSource;
+	private ConceptSource localConceptSource;
 	
 	@Before
-	public void setupLocalSource() throws Exception {
-		localeSource = new ConceptSource();
-		localeSource.setName("my-dict");
-		conceptService.saveConceptSource(localeSource);
+	public void setupLocalConceptSource() throws Exception {
+		localConceptSource = new ConceptSource();
+		localConceptSource.setName("my-dict");
+		conceptService.saveConceptSource(localConceptSource);
 		
-		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localeSource.getUuid()));
+		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localConceptSource
+		        .getUuid()));
 		
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}
@@ -194,13 +195,13 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	public void getConcept_shouldReturnNonRetiredIfRetiredAlsoFoundByMapping() throws Exception {
 		//given
 		Concept concept = conceptService.getConcept(4);
-		conceptAdapter.addMapping(concept, localeSource, "3");
+		conceptAdapter.addMapping(concept, localConceptSource, "3");
 		Concept retiredConcept1 = conceptService.getConcept(3);
 		conceptService.retireConcept(retiredConcept1, "to test...");
-		conceptAdapter.addMapping(retiredConcept1, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept1, localConceptSource, "3");
 		Concept retiredConcept2 = conceptService.getConcept(5);
 		conceptService.retireConcept(retiredConcept2, "to test...");
-		conceptAdapter.addMapping(retiredConcept2, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept2, localConceptSource, "3");
 		
 		//when
 		Concept foundConcept = service.getConcept("my-dict:3");
@@ -218,13 +219,13 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		Concept retiredConcept1 = conceptService.getConcept(3);
 		conceptService.retireConcept(retiredConcept1, "to test...");
-		conceptAdapter.addMapping(retiredConcept1, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept1, localConceptSource, "3");
 		Concept retiredConcept2 = conceptService.getConcept(5);
 		conceptService.retireConcept(retiredConcept2, "to test...");
-		conceptAdapter.addMapping(retiredConcept2, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept2, localConceptSource, "3");
 		Concept retiredConcept3 = conceptService.getConcept(4);
 		conceptService.retireConcept(retiredConcept3, "to test...");
-		conceptAdapter.addMapping(retiredConcept3, localeSource, "3");
+		conceptAdapter.addMapping(retiredConcept3, localConceptSource, "3");
 		Set<Concept> retiredConcepts = new HashSet<Concept>();
 		retiredConcepts.addAll(Arrays.asList(retiredConcept1, retiredConcept2, retiredConcept3));
 		
@@ -252,44 +253,44 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see MetadataMappingServiceImpl#getLocalSource()
+	 * @see MetadataMappingServiceImpl#getLocalConceptSource()
 	 * @verifies return local source if gp set
 	 */
 	@Test
-	public void getLocalSource_shouldReturnLocalSourceIfGpSet() throws Exception {
+	public void getLocalConceptSource_shouldReturnLocalConceptSourceIfGpSet() throws Exception {
 		//given
 		
 		//when
-		ConceptSource source = service.getLocalSource();
+		ConceptSource source = service.getLocalConceptSource();
 		
 		//then
-		Assert.assertEquals(localeSource, source);
+		Assert.assertEquals(localConceptSource, source);
 	}
 	
 	/**
-	 * @see MetadataMappingServiceImpl#getLocalSource()
+	 * @see MetadataMappingServiceImpl#getLocalConceptSource()
 	 * @verifies fail if gp is not set
 	 */
 	@Test(expected = APIException.class)
-	public void getLocalSource_shouldFailIfGpIsNotSet() throws Exception {
+	public void getLocalConceptSource_shouldFailIfGpIsNotSet() throws Exception {
 		Context.clearSession();
 		
 		//given
 		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, ""));
 		
 		//when
-		service.getLocalSource();
+		service.getLocalConceptSource();
 		
 		//then
 		Assert.fail();
 	}
 	
 	/**
-	 * @see MetadataMappingServiceImpl#getSubscribedSources()
+	 * @see MetadataMappingServiceImpl#getSubscribedConceptSources()
 	 * @verifies return set if gp defined
 	 */
 	@Test
-	public void getSubscribedSources_shouldReturnSetIfGpDefined() throws Exception {
+	public void getSubscribedConceptSources_shouldReturnSetIfGpDefined() throws Exception {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
@@ -302,27 +303,27 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		        + ", " + source2.getUuid()));
 		
 		//when
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
 		
 		//then
-		Assert.assertEquals(2, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
-		Assert.assertTrue(subscribedSources.contains(source2));
+		Assert.assertEquals(2, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
+		Assert.assertTrue(subscribedConceptSources.contains(source2));
 	}
 	
 	/**
-	 * @see MetadataMappingServiceImpl#getSubscribedSources()
+	 * @see MetadataMappingServiceImpl#getSubscribedConceptSources()
 	 * @verifies return empty set if gp not defined
 	 */
 	@Test
-	public void getSubscribedSources_shouldReturnEmptySetIfGpNotDefined() throws Exception {
+	public void getSubscribedConceptSources_shouldReturnEmptySetIfGpNotDefined() throws Exception {
 		//given
 		
 		//when
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
 		
 		//then
-		Assert.assertEquals(0, subscribedSources.size());
+		Assert.assertEquals(0, subscribedConceptSources.size());
 	}
 	
 	/**
@@ -379,66 +380,66 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	/**
-	 * @see MetadataMappingService#addSubscribedSource(ConceptSource)
-	 * @verifies add subscribed source
+	 * @see MetadataMappingService# addSubscribedConceptSource(ConceptSource)
+	 * @verifies add subscribed concept source
 	 */
 	@Test
-	public void addSubscribedSource_shouldAddSubscribedSource() throws Exception {
+	public void addSubscribedConceptSource_shouldAddSubscribedConceptSource() throws Exception {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
 		conceptService.saveConceptSource(source1);
 		
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
-		Assert.assertEquals(0, subscribedSources.size());
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
+		Assert.assertEquals(0, subscribedConceptSources.size());
 		
 		//when
-		boolean added = service.addSubscribedSource(source1);
+		boolean added = service.addSubscribedConceptSource(source1);
 		
 		//then
 		Assert.assertTrue(added);
 		
-		subscribedSources = service.getSubscribedSources();
+		subscribedConceptSources = service.getSubscribedConceptSources();
 		
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
 	}
 	
 	/**
-	 * @see MetadataMappingService#addSubscribedSource(ConceptSource)
-	 * @verifies return false if subscribed source present
+	 * @see MetadataMappingService# addSubscribedConceptSource(ConceptSource)
+	 * @verifies return false if subscribed concept source present
 	 */
 	@Test
-	public void addSubscribedSource_shouldReturnFalseIfSubscribedSourcePresent() throws Exception {
+	public void addSubscribedConceptSource_shouldReturnFalseIfSubscribedConceptSourcePresent() throws Exception {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
 		conceptService.saveConceptSource(source1);
 		
-		service.addSubscribedSource(source1);
+		service.addSubscribedConceptSource(source1);
 		
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
 		
 		//when
-		boolean added = service.addSubscribedSource(source1);
+		boolean added = service.addSubscribedConceptSource(source1);
 		
 		//then
 		Assert.assertFalse(added);
 		
-		subscribedSources = service.getSubscribedSources();
+		subscribedConceptSources = service.getSubscribedConceptSources();
 		
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
 	}
 	
 	/**
-	 * @see MetadataMappingService#removeSubscribedSource(ConceptSource)
-	 * @verifies remove subscribed source
+	 * @see MetadataMappingService#removeSubscribedConceptSource(ConceptSource)
+	 * @verifies remove subscribed concept source
 	 */
 	@Test
-	public void removeSubscribedSource_shouldRemoveSubscribedSource() throws Exception {
+	public void removeSubscribedConceptSource_shouldRemoveSubscribedConceptSource() throws Exception {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
@@ -447,32 +448,32 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
-		service.addSubscribedSource(source1);
-		service.addSubscribedSource(source2);
+		service.addSubscribedConceptSource(source1);
+		service.addSubscribedConceptSource(source2);
 		
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
-		Assert.assertEquals(2, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
-		Assert.assertTrue(subscribedSources.contains(source2));
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
+		Assert.assertEquals(2, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
+		Assert.assertTrue(subscribedConceptSources.contains(source2));
 		
 		//when
-		boolean removed = service.removeSubscribedSource(source1);
+		boolean removed = service.removeSubscribedConceptSource(source1);
 		
 		//then
 		Assert.assertTrue(removed);
 		
-		subscribedSources = service.getSubscribedSources();
+		subscribedConceptSources = service.getSubscribedConceptSources();
 		
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source2));
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source2));
 	}
 	
 	/**
-	 * @see MetadataMappingService#removeSubscribedSource(ConceptSource)
-	 * @verifies return false if subscribed source not present
+	 * @see MetadataMappingService#removeSubscribedConceptSource(ConceptSource)
+	 * @verifies return false if subscribed concept source not present
 	 */
 	@Test
-	public void removeSubscribedSource_shouldReturnFalseIfSubscribedSourceNotPresent() throws Exception {
+	public void removeSubscribedConceptSource_shouldReturnFalseIfSubscribedConceptSourceNotPresent() throws Exception {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
@@ -481,22 +482,22 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
-		service.addSubscribedSource(source1);
+		service.addSubscribedConceptSource(source1);
 		
-		Set<ConceptSource> subscribedSources = service.getSubscribedSources();
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
+		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
 		
 		//when
-		boolean removed = service.removeSubscribedSource(source2);
+		boolean removed = service.removeSubscribedConceptSource(source2);
 		
 		//then
 		Assert.assertFalse(removed);
 		
-		subscribedSources = service.getSubscribedSources();
+		subscribedConceptSources = service.getSubscribedConceptSources();
 		
-		Assert.assertEquals(1, subscribedSources.size());
-		Assert.assertTrue(subscribedSources.contains(source1));
+		Assert.assertEquals(1, subscribedConceptSources.size());
+		Assert.assertTrue(subscribedConceptSources.contains(source1));
 	}
 	
 	@Test
