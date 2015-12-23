@@ -35,45 +35,45 @@ public interface MetadataMappingService {
 	/**
 	 * Creates a local concept source from the implementation Id.
 	 * <p>
-	 * The local source is in a format 'implementationId-dict'. The '-dict' postfix is defined in
+	 * The local concept source is in a format 'implementationId-dict'. The '-dict' postfix is defined in
 	 * {@link MetadataMapping#LOCAL_SOURCE_NAME_POSTFIX}.
 	 * 
-	 * @return the local source
-	 * @throws APIException if the local source could not be created
+	 * @return the local concept source
+	 * @throws APIException if the local concept source could not be created
 	 */
-	ConceptSource createLocalSourceFromImplementationId();
+	ConceptSource createLocalConceptSourceFromImplementationId();
 	
 	/**
 	 * Returns a configured local concept source.
 	 * <p>
-	 * The local source is read from the {@link MetadataMapping#GP_LOCAL_SOURCE_UUID} global
+	 * The local concept source is read from the {@link MetadataMapping#GP_LOCAL_SOURCE_UUID} global
 	 * property.
 	 * 
-	 * @return the local source
-	 * @throws APIException if the local source is not configured
-	 * @should return local source if gp set
+	 * @return the local concept source
+	 * @throws APIException if the local concept source is not configured
+	 * @should return local concept source if gp set
 	 * @should fail if gp is not set
 	 */
-	ConceptSource getLocalSource();
+	ConceptSource getLocalConceptSource();
 	
 	/**
-	 * Returns true if local source is configured.
+	 * Returns true if local concept source is configured.
 	 * 
 	 * @return true if configured
 	 */
-	boolean isLocalSourceConfigured();
+	boolean isLocalConceptSourceConfigured();
 	
 	/**
-	 * Returns true if local mappings should be added on export.
+	 * Returns true if local mappings should be added to concept on export.
 	 * 
-	 * @return true if should add local mappings
+	 * @return true if should add local mappings to concept on export
 	 */
-	boolean isAddLocalMappingOnExport();
+	boolean isAddLocalMappingToConceptOnExport();
 	
 	/**
 	 * Adds local mapping to the given concept.
 	 * <p>
-	 * A mapping in a format 'localSource:concetpId' is added to a concept if there is no other
+	 * A mapping in a format 'localSource:conceptId' is added to a concept if there is no other
 	 * mapping to the local source in the concept.
 	 * <p>
 	 * The concept is saved at the end.
@@ -107,33 +107,33 @@ public interface MetadataMappingService {
 	 * @should return set if gp defined
 	 * @should return empty set if gp not defined
 	 */
-	Set<ConceptSource> getSubscribedSources();
+	Set<ConceptSource> getSubscribedConceptSources();
 	
 	/**
-	 * Adds the given source to the subscribed sources list.
+	 * Adds the given source to the subscribed concept sources list.
 	 * 
 	 * @param conceptSource source to add
 	 * @return true if added or false if already there
-	 * @should add subscribed source
-	 * @should return false if subscribed source present
+	 * @should add subscribed concept source
+	 * @should return false if subscribed concept source present
 	 */
-	boolean addSubscribedSource(ConceptSource conceptSource);
+	boolean addSubscribedConceptSource(ConceptSource conceptSource);
 	
 	/**
-	 * Removes the given source from the subscribed sources list.
+	 * Removes the given source from the subscribed concept sources list.
 	 * 
 	 * @param conceptSource source to remove
 	 * @return true if removed or false if not present
-	 * @should remove subscribed source
-	 * @should return false if subscribed source not present
+	 * @should remove subscribed concept source
+	 * @should return false if subscribed concept source not present
 	 */
-	boolean removeSubscribedSource(ConceptSource conceptSource);
+	boolean removeSubscribedConceptSource(ConceptSource conceptSource);
 	
 	/**
 	 * Determines if the given concept is local.
 	 * <p>
 	 * A concept is local if it does not contain a source returned by
-	 * {@link #getSubscribedSources()}.
+	 * {@link #getSubscribedConceptSources()}.
 	 * 
 	 * @param concept concept to check
 	 * @return true if local
@@ -198,7 +198,7 @@ public interface MetadataMappingService {
 	 * Sets the local concept source to the source with the given uuid.
 	 * 
 	 * @see MetadataMapping#GP_ADD_LOCAL_MAPPINGS
-	 * @see #createLocalSourceFromImplementationId()
+	 * @see #createLocalConceptSourceFromImplementationId()
 	 * @param conceptSource concept source to set
 	 */
 	void setLocalConceptSource(ConceptSource conceptSource);

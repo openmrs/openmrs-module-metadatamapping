@@ -80,7 +80,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional
-	public ConceptSource createLocalSourceFromImplementationId() {
+	public ConceptSource createLocalConceptSourceFromImplementationId() {
 		ImplementationId implementationId = adminService.getImplementationId();
 		
 		if (implementationId == null) {
@@ -100,12 +100,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
-	public ConceptSource getLocalSource() {
+	public ConceptSource getLocalConceptSource() {
 		final String sourceUuid = adminService.getGlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, "");
 		
 		if (StringUtils.isEmpty(sourceUuid)) {
 			throw new APIException("Local concept source is not set in the " + MetadataMapping.GP_LOCAL_SOURCE_UUID
-			        + " global property. Call createLocalSourceFromImplementationId to have it set automatically.");
+			        + " global property. Call createLocalConceptSourceFromImplementationId to have it set automatically.");
 		} else {
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
 			
@@ -121,7 +121,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
-	public boolean isLocalSourceConfigured() {
+	public boolean isLocalConceptSourceConfigured() {
 		final String sourceUuid = adminService.getGlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, "");
 		if (!StringUtils.isBlank(sourceUuid)) {
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
@@ -132,10 +132,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	/**
-	 * @see org.openmrs.module.metadatamapping.api.MetadataMappingService#isAddLocalMappingOnExport()
+	 * @see org.openmrs.module.metadatamapping.api.MetadataMappingService#isAddLocalMappingToConceptOnExport()
 	 */
 	@Override
-	public boolean isAddLocalMappingOnExport() {
+	public boolean isAddLocalMappingToConceptOnExport() {
 		String addLocalMappings = adminService.getGlobalProperty(MetadataMapping.GP_ADD_LOCAL_MAPPINGS, "");
 		return Boolean.valueOf(addLocalMappings);
 	}
@@ -147,9 +147,9 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			return;
 		}
 		
-		final ConceptSource localSource = getLocalSource();
-		if (!conceptAdapter.hasMappingToSource(concept, localSource)) {
-			conceptAdapter.addMapping(concept, localSource, concept.getId().toString());
+		final ConceptSource localConceptSource = getLocalConceptSource();
+		if (!conceptAdapter.hasMappingToSource(concept, localConceptSource)) {
+			conceptAdapter.addMapping(concept, localConceptSource, concept.getId().toString());
 		}
 	}
 	
@@ -160,8 +160,8 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			return;
 		}
 		
-		final ConceptSource localSource = getLocalSource();
-		conceptAdapter.retireMapping(concept, localSource, concept.getId().toString());
+		final ConceptSource localConceptSource = getLocalConceptSource();
+		conceptAdapter.retireMapping(concept, localConceptSource, concept.getId().toString());
 	}
 	
 	@Override
@@ -171,8 +171,8 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			return;
 		}
 		
-		final ConceptSource localSource = getLocalSource();
-		conceptAdapter.unretireMapping(concept, localSource, concept.getId().toString());
+		final ConceptSource localConceptSource = getLocalConceptSource();
+		conceptAdapter.unretireMapping(concept, localConceptSource, concept.getId().toString());
 	}
 	
 	@Override
@@ -182,8 +182,8 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			return;
 		}
 		
-		final ConceptSource localSource = getLocalSource();
-		conceptAdapter.purgeMapping(concept, localSource, concept.getId().toString());
+		final ConceptSource localConceptSource = getLocalConceptSource();
+		conceptAdapter.purgeMapping(concept, localConceptSource, concept.getId().toString());
 	}
 	
 	@Override
@@ -210,7 +210,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Set<ConceptSource> getSubscribedSources() {
+	public Set<ConceptSource> getSubscribedConceptSources() {
 		final String sourceUuidsList = adminService.getGlobalProperty(MetadataMapping.GP_SUBSCRIBED_TO_SOURCE_UUIDS, "");
 		
 		if (StringUtils.isBlank(sourceUuidsList)) {
@@ -219,44 +219,44 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		
 		final String[] sourceUuids = sourceUuidsList.split(",");
 		
-		final Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>();
+		final Set<ConceptSource> subscribedConceptSources = new HashSet<ConceptSource>();
 		for (String sourceUuid : sourceUuids) {
 			sourceUuid = sourceUuid.trim();
 			final ConceptSource source = conceptService.getConceptSourceByUuid(sourceUuid);
 			if (source != null) {
-				subscribedSources.add(source);
+				subscribedConceptSources.add(source);
 			}
 		}
-		return Collections.unmodifiableSet(subscribedSources);
+		return Collections.unmodifiableSet(subscribedConceptSources);
 	}
 	
 	@Transactional
 	@Override
-	public boolean addSubscribedSource(ConceptSource conceptSource) {
-		Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>(getSubscribedSources());
-		if (!subscribedSources.add(conceptSource)) {
+	public boolean addSubscribedConceptSource(ConceptSource conceptSource) {
+		Set<ConceptSource> subscribedConceptSources = new HashSet<ConceptSource>(getSubscribedConceptSources());
+		if (!subscribedConceptSources.add(conceptSource)) {
 			return false;
 		}
 		
-		updateSubscribedSourcesGlobalProperty(subscribedSources);
+		updateSubscribedConceptSourcesGlobalProperty(subscribedConceptSources);
 		
 		return true;
 	}
 	
 	@Transactional
 	@Override
-	public boolean removeSubscribedSource(ConceptSource conceptSource) {
-		Set<ConceptSource> subscribedSources = new HashSet<ConceptSource>(getSubscribedSources());
-		if (!subscribedSources.remove(conceptSource)) {
+	public boolean removeSubscribedConceptSource(ConceptSource conceptSource) {
+		Set<ConceptSource> subscribedConceptSources = new HashSet<ConceptSource>(getSubscribedConceptSources());
+		if (!subscribedConceptSources.remove(conceptSource)) {
 			return false;
 		}
 		
-		updateSubscribedSourcesGlobalProperty(subscribedSources);
+		updateSubscribedConceptSourcesGlobalProperty(subscribedConceptSources);
 		
 		return true;
 	}
 	
-	private void updateSubscribedSourcesGlobalProperty(Set<ConceptSource> subscribedSources) {
+	private void updateSubscribedConceptSourcesGlobalProperty(Set<ConceptSource> subscribedConceptSources) {
 		GlobalProperty sourceUuidsGP = adminService.getGlobalPropertyObject(MetadataMapping.GP_SUBSCRIBED_TO_SOURCE_UUIDS);
 		
 		if (sourceUuidsGP == null) {
@@ -264,8 +264,8 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		}
 		
 		Set<String> sourceUuids = new HashSet<String>();
-		for (ConceptSource subscribedSource : subscribedSources) {
-			sourceUuids.add(subscribedSource.getUuid());
+		for (ConceptSource subscribedConceptSource : subscribedConceptSources) {
+			sourceUuids.add(subscribedConceptSource.getUuid());
 		}
 		
 		sourceUuidsGP.setPropertyValue(StringUtils.join(sourceUuids, ","));
@@ -275,11 +275,11 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	public boolean isLocalConcept(final Concept concept) {
-		final Set<ConceptSource> subscribedSources = getSubscribedSources();
+		final Set<ConceptSource> subscribedConceptSources = getSubscribedConceptSources();
 		
 		if (concept.getConceptMappings() != null) {
 			for (ConceptMap map : concept.getConceptMappings()) {
-				if (subscribedSources.contains(map.getSource())) {
+				if (subscribedConceptSources.contains(map.getSource())) {
 					return false;
 				}
 			}
