@@ -578,6 +578,28 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@Verifies(value = "save mapping without a referred object", method = "saveMetadataTermMapping(MetadataTermMapping)")
+	public void saveMetadataTermMapping_shouldSaveMappingWithoutReferredObject() {
+		// given
+		MetadataSource metadataSource = new MetadataSource();
+		metadataSource.setName("my-source");
+		
+		MetadataTermMapping metadataTermMapping = new MetadataTermMapping(metadataSource,
+		        "my code without a referred object");
+		metadataTermMapping.setName("some term without a referred object");
+		
+		Assert.assertNull(metadataTermMapping.getId());
+		
+		// when
+		metadataTermMapping = service.saveMetadataTermMapping(metadataTermMapping);
+		
+		// then
+		Assert.assertNotNull(metadataTermMapping.getId());
+		Assert.assertNull(metadataTermMapping.getMetadataClass());
+		Assert.assertNull(metadataTermMapping.getMetadataUuid());
+	}
+	
+	@Test
 	@Verifies(value = "fail if code is not unique within source", method = "saveMetadataTermMapping(MetadataTermMapping)")
 	public void saveMetadataTermMapping_shouldFailIfCodeIsNotUniqueWithinSource() throws Exception {
 		// This case only serves a documentation purpose: the constraint is enforced in the database schema
