@@ -516,6 +516,30 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@Verifies(value = "respect includeRetired flag", method = "MetadataMappingService#getMetadataSources(boolean)")
+	public void getMetadataSources_shouldRespectIncludeRetiredFlag() {
+		// given
+		// data in the test data set
+		
+		// when
+		List<MetadataSource> nonRetiredSources = service.getMetadataSources(false);
+		List<MetadataSource> allSources = service.getMetadataSources(true);
+		
+		// then
+		Assert.assertEquals(2, nonRetiredSources.size());
+		for (MetadataSource metadataSource : nonRetiredSources) {
+			Assert.assertFalse("metadata source " + metadataSource.getId() + " is not retired", metadataSource.isRetired());
+		}
+		
+		Assert.assertEquals(3, allSources.size());
+		allSources.removeAll(nonRetiredSources);
+		Assert.assertEquals("after non-retired source have been removed, only retired sources remain", 1, allSources.size());
+		for (MetadataSource metadataSource : allSources) {
+			Assert.assertTrue("metadata source " + metadataSource.getId() + " is retired", metadataSource.isRetired());
+		}
+	}
+	
+	@Test
 	@Verifies(value = "retire and set info", method = "retireMetadataSource(MetadataSource, String)")
 	public void retireMetadataSource_shouldRetireAndSetInfo() {
 		// given

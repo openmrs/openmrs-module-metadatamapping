@@ -214,6 +214,15 @@ public interface MetadataMappingService {
 	MetadataSource saveMetadataSource(MetadataSource metadataSource);
 	
 	/**
+	 * Get metadata sources.
+	 * @param includeRetired if true, will return also retired metadata sources
+	 * @return list of metadata source
+	 * @since 1.1
+	 * @should respect includeRetired flag
+	 */
+	List<MetadataSource> getMetadataSources(boolean includeRetired);
+	
+	/**
 	 * Get metadata source with the given id.
 	 * @param metadataSourceId database id of the object
 	 * @return object or null, if does not exist

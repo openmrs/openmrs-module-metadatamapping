@@ -340,6 +340,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
+	public List<MetadataSource> getMetadataSources(boolean includeRetired) {
+		return dao.getMetadataSources(includeRetired);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public MetadataSource getMetadataSource(Integer metadataSourceId) {
 		return dao.getMetadataSource(metadataSourceId);
 	}
