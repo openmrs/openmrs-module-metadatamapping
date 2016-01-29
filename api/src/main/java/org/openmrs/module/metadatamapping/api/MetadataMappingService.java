@@ -26,6 +26,7 @@ import org.openmrs.module.metadatamapping.MetadataMapping;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
+import org.openmrs.module.metadatamapping.api.wrapper.ConceptAdapter;
 
 /**
  * The service.

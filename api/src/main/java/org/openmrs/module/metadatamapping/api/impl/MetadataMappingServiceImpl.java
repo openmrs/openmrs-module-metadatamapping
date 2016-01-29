@@ -279,7 +279,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		
 		if (concept.getConceptMappings() != null) {
 			for (ConceptMap map : concept.getConceptMappings()) {
-				if (subscribedConceptSources.contains(map.getSource())) {
+				if (subscribedConceptSources.contains(map.getConceptReferenceTerm().getConceptSource())) {
 					return false;
 				}
 			}
