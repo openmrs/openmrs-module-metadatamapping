@@ -16,6 +16,7 @@ package org.openmrs.module.metadatamapping;
 import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
+import org.openmrs.module.metadatamapping.util.StateUtil;
 
 /**
  * Maps a "term" withing a specific namespace or "source" to a local metadata object. {@link #getCode()} is the public 
@@ -35,9 +36,10 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	/**
-	 * Default constructor needed by Hibernate but is private as others should not use it.
+	 * Construct a new metadata term mapping.
+	 * @see #MetadataTermMapping(MetadataSource, String, OpenmrsMetadata) 
 	 */
-	private MetadataTermMapping() {
+	public MetadataTermMapping() {
 	}
 	
 	/**
@@ -97,8 +99,10 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	
 	/**
 	 * @param metadataSource source of this term, may not be null
+	 * @throws IllegalStateException when already set   
 	 */
 	public void setMetadataSource(MetadataSource metadataSource) {
+		StateUtil.mustNotChangeIfSet(this.metadataSource, metadataSource, "metadataSource may not be changed");
 		ArgUtil.notNull(metadataSource, "metadataSource");
 		this.metadataSource = metadataSource;
 	}
