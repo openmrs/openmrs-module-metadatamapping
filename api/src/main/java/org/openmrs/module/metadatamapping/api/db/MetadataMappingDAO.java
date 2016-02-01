@@ -44,6 +44,13 @@ public interface MetadataMappingDAO {
 	MetadataSource saveMetadataSource(MetadataSource metadataSource);
 	
 	/**
+	 * Get metadata sources.
+	 * @param includeRetired if true, will return also retired metadata sources
+	 * @return list of metadata source
+	 */
+	List<MetadataSource> getMetadataSources(boolean includeRetired);
+	
+	/**
 	 * Get metadata source with the given id.
 	 * @param metadataSourceId database id of the object
 	 * @return object or null, if does not exist

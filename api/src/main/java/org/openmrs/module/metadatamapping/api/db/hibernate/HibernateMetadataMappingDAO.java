@@ -66,6 +66,18 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
+	public List<MetadataSource> getMetadataSources(boolean includeRetired) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSource.class);
+		if (!includeRetired) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		criteria.addOrder(Order.asc("name"));
+		criteria.addOrder(Order.asc("id"));
+		return criteria.list();
+	}
+	
+	@Override
 	public MetadataSource getMetadataSource(Integer metadataSourceId) {
 		return (MetadataSource) sessionFactory.getCurrentSession().get(MetadataSource.class, metadataSourceId);
 	}
