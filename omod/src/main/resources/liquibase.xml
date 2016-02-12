@@ -278,5 +278,19 @@
 			<column name="code" />
 		</createIndex>
 	</changeSet>
+	
+	<changeSet id="metadatamapping-2016-02-12-1646" author="kosmik">
+		<!-- NOTE: No precondition needed as delete operations always succeed even if matching rows do not exist. -->
+		<comment>
+			Drop deprecated privilege 'Metadata Mapping' from roles and available privileges.
+		</comment>
+		
+		<delete tableName="role_privilege">
+			<where>privilege = 'Metadata Mapping'</where>
+		</delete>
+		<delete tableName="privilege">
+			<where>privilege = 'Metadata Mapping'</where>
+		</delete>
+	</changeSet>
 
 </databaseChangeLog>
