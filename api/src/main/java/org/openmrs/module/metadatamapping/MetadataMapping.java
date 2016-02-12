@@ -30,6 +30,10 @@ public class MetadataMapping {
 	
 	public static final String MODULE_PATH = "/module/" + MODULE_ID;
 	
+	public static final String PRIVILEGE_MANAGE = "Manage Metadata Mapping";
+	
+	public static final String PRIVILEGE_VIEW_METADATA = "View Metadata Via Mapping";
+	
 	/**
 	 * Global property name, specifies whether the concept mappings to the local dictionary should
 	 * be created when exporting concepts

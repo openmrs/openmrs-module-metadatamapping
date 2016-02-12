@@ -30,6 +30,14 @@
 	</extension>
 
 	<!-- Required Privileges -->
+	<privilege>
+		<name>Manage Metadata Mapping</name>
+		<description>Able to manage metadata mappings</description>
+	</privilege>
+	<privilege>
+		<name>View Metadata Via Mapping</name>
+		<description>Able to view metadata via a mapping</description>
+	</privilege>
 	<!-- /Required Privileges -->
 
 	<globalProperty>
