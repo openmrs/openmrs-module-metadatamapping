@@ -195,5 +195,61 @@
 							 tableName="metadatamapping_metadata_source"
 							 columnNames="name" />
 	</changeSet>
+	
+	<changeSet id="metadatamapping-2016-02-07-1310-a" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="metadatamapping_idx_mdtm_retired" />
+			</not>
+		</preConditions>
+		<comment>
+			Add index on metadata term mapping retired
+		</comment>
+		<createIndex tableName="metadatamapping_metadata_term_mapping" indexName="metadatamapping_idx_mdtm_retired">
+			<column name="retired" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="metadatamapping-2016-02-07-1310-b" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="metadatamapping_idx_mdtm_mdclass" />
+			</not>
+		</preConditions>
+		<comment>
+			Add index on metadata term mapping metadata class
+		</comment>
+		<createIndex tableName="metadatamapping_metadata_term_mapping" indexName="metadatamapping_idx_mdtm_mdclass">
+			<column name="metadata_class" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="metadatamapping-2016-02-07-1310-c" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="metadatamapping_idx_mdtm_mdsource" />
+			</not>
+		</preConditions>
+		<comment>
+			Add index on metadata term mapping source
+		</comment>
+		<createIndex tableName="metadatamapping_metadata_term_mapping" indexName="metadatamapping_idx_mdtm_mdsource">
+			<column name="metadata_source_id" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="metadatamapping-2016-02-07-1310-d" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="metadatamapping_idx_mdtm_code" />
+			</not>
+		</preConditions>
+		<comment>
+			Add index on metadata term mapping code
+		</comment>
+		<createIndex tableName="metadatamapping_metadata_term_mapping" indexName="metadatamapping_idx_mdtm_code">
+			<column name="code" />
+		</createIndex>
+	</changeSet>
 
 </databaseChangeLog>
