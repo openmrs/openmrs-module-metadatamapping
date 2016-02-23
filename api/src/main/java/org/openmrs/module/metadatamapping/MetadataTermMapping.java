@@ -57,6 +57,20 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	}
 	
 	/**
+	 * Construct a new metadata term mapping without reference to an OpenmrsMetadata object.
+	 * @param metadataSource defines the namespace of this term, may not be null
+	 * @param metadataTermCode code of this term within metadataSource, may not be null
+	 * @since 1.1
+	 */
+	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
+		this();
+		ArgUtil.notNull(metadataSource, "metadataSource");
+		ArgUtil.notNull(metadataTermCode, "metadataTermCode");
+		setMetadataSource(metadataSource);
+		setCode(metadataTermCode);
+	}
+	
+	/**
 	 * Delegates to {@link #getMetadataTermMappingId()}
 	 * @return locally unique identifier for the object
 	 */
