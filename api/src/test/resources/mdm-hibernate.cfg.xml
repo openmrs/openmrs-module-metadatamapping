@@ -6,6 +6,6 @@
 <hibernate-configuration>
 	<session-factory>
 		<mapping resource="MetadataSource.hbm.xml" />
-		<mapping resource="MetadataTerm.hbm.xml" />
+		<mapping resource="MetadataTermMapping.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
