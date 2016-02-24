@@ -20,6 +20,7 @@ import java.util.Set;
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.OpenmrsMetadata;
+import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
@@ -42,6 +43,7 @@ public interface MetadataMappingService {
 	 * @return the local concept source
 	 * @throws APIException if the local concept source could not be created
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	ConceptSource createLocalConceptSourceFromImplementationId();
 	
 	/**
@@ -55,6 +57,7 @@ public interface MetadataMappingService {
 	 * @should return local concept source if gp set
 	 * @should fail if gp is not set
 	 */
+	@Authorized()
 	ConceptSource getLocalConceptSource();
 	
 	/**
@@ -62,6 +65,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @return true if configured
 	 */
+	@Authorized()
 	boolean isLocalConceptSourceConfigured();
 	
 	/**
@@ -69,6 +73,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @return true if should add local mappings to concept on export
 	 */
+	@Authorized()
 	boolean isAddLocalMappingToConceptOnExport();
 	
 	/**
@@ -88,6 +93,7 @@ public interface MetadataMappingService {
 	 * @should not add mapping if found
 	 * @should fail if local source not configured
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void addLocalMappingToConcept(Concept concept);
 	
 	/**
@@ -98,6 +104,7 @@ public interface MetadataMappingService {
 	 * @throws APIException reserved for future use
 	 * @should delegate for all concepts
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void addLocalMappingToAllConcepts();
 	
 	/**
@@ -108,6 +115,7 @@ public interface MetadataMappingService {
 	 * @should return set if gp defined
 	 * @should return empty set if gp not defined
 	 */
+	@Authorized()
 	Set<ConceptSource> getSubscribedConceptSources();
 	
 	/**
@@ -118,6 +126,7 @@ public interface MetadataMappingService {
 	 * @should add subscribed concept source
 	 * @should return false if subscribed concept source present
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	boolean addSubscribedConceptSource(ConceptSource conceptSource);
 	
 	/**
@@ -128,6 +137,7 @@ public interface MetadataMappingService {
 	 * @should remove subscribed concept source
 	 * @should return false if subscribed concept source not present
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	boolean removeSubscribedConceptSource(ConceptSource conceptSource);
 	
 	/**
@@ -142,6 +152,7 @@ public interface MetadataMappingService {
 	 * @should return true if local
 	 * @should return false if not local
 	 */
+	@Authorized()
 	boolean isLocalConcept(Concept concept);
 	
 	/**
@@ -158,6 +169,7 @@ public interface MetadataMappingService {
 	 * @should delegate if id provided
 	 * @should return null if nothing found
 	 */
+	@Authorized()
 	Concept getConcept(String mapping);
 	
 	/**
@@ -172,6 +184,7 @@ public interface MetadataMappingService {
 	 * @should return retired
 	 * @should return null if not found
 	 */
+	@Authorized()
 	Concept getConcept(Integer id);
 	
 	/**
@@ -179,6 +192,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @param concept purge the local mapping of this concept
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void purgeLocalMappingInConcept(Concept concept);
 	
 	/**
@@ -186,6 +200,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @param concept unretire a local mapping for this concept
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void markLocalMappingUnretiredInConcept(Concept concept);
 	
 	/**
@@ -193,6 +208,7 @@ public interface MetadataMappingService {
 	 * 
 	 * @param concept retire a local mapping for this concept
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void markLocalMappingRetiredInConcept(Concept concept);
 	
 	/**
@@ -202,6 +218,7 @@ public interface MetadataMappingService {
 	 * @see #createLocalConceptSourceFromImplementationId()
 	 * @param conceptSource concept source to set
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	void setLocalConceptSource(ConceptSource conceptSource);
 	
 	/**
@@ -211,6 +228,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should save valid new object
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSource saveMetadataSource(MetadataSource metadataSource);
 	
 	/**
@@ -220,6 +238,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should respect includeRetired flag
 	 */
+	@Authorized()
 	List<MetadataSource> getMetadataSources(boolean includeRetired);
 	
 	/**
@@ -228,6 +247,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.1
 	 */
+	@Authorized()
 	MetadataSource getMetadataSource(Integer metadataSourceId);
 	
 	/**
@@ -236,6 +256,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.1
 	 */
+	@Authorized()
 	MetadataSource getMetadataSourceByUuid(String metadataSourceUuid);
 	
 	/**
@@ -244,6 +265,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.1
 	 */
+	@Authorized()
 	MetadataSource getMetadataSourceByName(String metadataSourceName);
 	
 	/**
@@ -254,6 +276,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should retire and set info
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSource retireMetadataSource(MetadataSource metadataSource, String reason);
 	
 	/**
@@ -264,6 +287,7 @@ public interface MetadataMappingService {
 	 * @should save valid new object
 	 * @should fail if code is not unique within source
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataTermMapping saveMetadataTermMapping(MetadataTermMapping metadataTermMapping);
 	
 	/**
@@ -273,6 +297,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @see #saveMetadataTermMapping(MetadataTermMapping)
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	Collection<MetadataTermMapping> saveMetadataTermMappings(Collection<MetadataTermMapping> metadataTermMappings);
 	
 	/**
@@ -281,6 +306,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.1
 	 */
+	@Authorized()
 	MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId);
 	
 	/**
@@ -290,6 +316,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should return matching metadata term mapping
 	 */
+	@Authorized()
 	MetadataTermMapping getMetadataTermMappingByUuid(String metadataTermMappingUuid);
 	
 	/**
@@ -299,6 +326,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should return unretired term mappings referring to object
 	 */
+	@Authorized()
 	List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject);
 	
 	/**
@@ -309,6 +337,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should retire and set info
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataTermMapping retireMetadataTermMapping(MetadataTermMapping metadataTermMapping, String reason);
 	
 	/**
@@ -319,6 +348,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should return a retired term mapping
 	 */
+	@Authorized()
 	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
 	
 	/**
@@ -328,6 +358,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should return only unretired term mappings
 	 */
+	@Authorized()
 	List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource);
 	
 	/**
@@ -347,6 +378,7 @@ public interface MetadataMappingService {
 	 * @should fail on type mismatch
 	 * @should return null if term does not exist
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, String metadataSourceName, String metadataTermCode);
 	
 	/**
@@ -359,5 +391,6 @@ public interface MetadataMappingService {
 	 * @should return unretired metadata items of unretired terms matching type
 	 * @should return nothing if source does not exist
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName);
 }
