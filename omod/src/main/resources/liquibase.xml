@@ -4,12 +4,12 @@
 				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-	
+
 	<!--
 		See http://www.liquibase.org/manual/home#available_database_refactorings
 		for a list of supported elements and attributes
 	-->
-	
+
 	<changeSet id="metadatamapping-2011-10-04-a" author="bwolfe">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from global_property where property =
@@ -22,7 +22,7 @@
 			<where>property = 'metadatasharing.addLocalMappings'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2011-10-04-b" author="bwolfe">
 		<preConditions onFail="MARK_RAN">
 			<sqlCheck expectedResult="0">select count(*) from global_property where property =
@@ -35,7 +35,7 @@
 			<where>property = 'metadatasharing.systemConceptSource'</where>
 		</update>
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2015-10-11-1834" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -47,7 +47,7 @@
 			<column name="metadata_source_id" autoIncrement="true" type="int">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			
+
 			<!-- columns for OpenMRSMetadata -->
 			<column name="name" type="varchar(255)">
 				<constraints nullable="false" />
@@ -74,7 +74,7 @@
 			</column>
 			<!-- /columns for OpenMRSMetadata -->
 		</createTable>
-		
+
 		<!-- constraints for OpenMRSMetadata -->
 		<addForeignKeyConstraint constraintName="metadatamapping_metadata_source_creator"
 								 baseTableName="metadatamapping_metadata_source"
@@ -93,7 +93,7 @@
 								 referencedColumnNames="user_id" />
 		<!-- /constraints for OpenMRSMetadata -->
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2015-10-11-1835" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -142,13 +142,13 @@
 				<constraints nullable="false" unique="true" />
 			</column>
 		</createTable>
-		
+
 		<addForeignKeyConstraint constraintName="metadatamapping_metadata_term_mapping_metadata_source_id"
 								 baseTableName="metadatamapping_metadata_term_mapping"
 								 baseColumnNames="metadata_source_id"
 								 referencedTableName="metadatamapping_metadata_source"
 								 referencedColumnNames="metadata_source_id" />
-		
+
 		<!-- constraints for OpenMRSMetadata -->
 		<addForeignKeyConstraint constraintName="metadatamapping_metadata_term_mapping_creator"
 								 baseTableName="metadatamapping_metadata_term_mapping"
@@ -167,7 +167,7 @@
 								 referencedColumnNames="user_id" />
 		<!-- /constraints for OpenMRSMetadata -->
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2015-10-25-1124" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -181,7 +181,7 @@
 							 tableName="metadatamapping_metadata_term_mapping"
 							 columnNames="metadata_source_id,code" />
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2015-11-16-1932" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -195,34 +195,35 @@
 							 tableName="metadatamapping_metadata_source"
 							 columnNames="name" />
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2016-01-06-0800" author="jasonvena">
 		<preConditions onFail="MARK_RAN">
 			<columnExists tableName="metadatamapping_metadata_term_mapping"
 						  columnName="metadata_class" />
 		</preConditions>
 		<comment>
-			Make MetadataTermMapping.metadataClass optional. We follow the openmrs convention of checking if the column exists.
+			Make MetadataTermMapping.metadataClass optional. We follow the openmrs convention of checking if the column
+			exists.
 		</comment>
 		<dropNotNullConstraint tableName="metadatamapping_metadata_term_mapping"
 							   columnName="metadata_class"
 							   columnDataType="varchar(1024)" />
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2016-01-06-0801" author="jasonvena">
 		<preConditions onFail="MARK_RAN">
 			<columnExists tableName="metadatamapping_metadata_term_mapping"
 						  columnName="metadata_uuid" />
 		</preConditions>
 		<comment>
-			Make MetadataTermMapping.metadataUuid optional. We follow the openmrs convention of checking if the column exists.
+			Make MetadataTermMapping.metadataUuid optional. We follow the openmrs convention of checking if the column
+			exists.
 		</comment>
 		<dropNotNullConstraint tableName="metadatamapping_metadata_term_mapping"
 							   columnName="metadata_uuid"
 							   columnDataType="varchar(38)" />
 	</changeSet>
-	
-	
+
 	<changeSet id="metadatamapping-2016-02-07-1310-a" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -236,21 +237,39 @@
 			<column name="retired" />
 		</createIndex>
 	</changeSet>
-	
-	<changeSet id="metadatamapping-2016-02-07-1310-b" author="kosmik">
+
+	<changeSet id="metadatamapping-2016-02-07-1310-b-mysql" author="kosmik">
 		<preConditions onFail="MARK_RAN">
+			<!-- Note that we can only have one precondition and must skip the usual openmrs convention of
+			checking whether the index already exists or not. -->
+			<dbms type="mysql" />
+		</preConditions>
+		<comment>
+			For mysql, add a prefix index on metadata term mapping metadata class, since there is a hard length limit
+			on varchar indexes starting from mysql 5.6.
+		</comment>
+		<!-- For details on the length limit, see: https://dev.mysql.com/doc/refman/5.6/en/innodb-restrictions.html -->
+		<sql>
+			create index metadatamapping_idx_mdtm_mdclass on metadatamapping_metadata_term_mapping(metadata_class(255));
+		</sql>
+	</changeSet>
+
+	<changeSet id="metadatamapping-2016-02-07-1310-b-non-mysql" author="kosmik">
+		<preConditions onFail="MARK_RAN">
+			<!-- Note that we can only have one precondition and must skip the usual openmrs convention of
+			checking whether the index already exists or not. -->
 			<not>
-				<indexExists indexName="metadatamapping_idx_mdtm_mdclass" />
+				<dbms type="mysql" />
 			</not>
 		</preConditions>
 		<comment>
-			Add index on metadata term mapping metadata class
+			Add index on metadata term mapping metadata class for any other dbms than mysql.
 		</comment>
 		<createIndex tableName="metadatamapping_metadata_term_mapping" indexName="metadatamapping_idx_mdtm_mdclass">
 			<column name="metadata_class" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2016-02-07-1310-c" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -264,7 +283,7 @@
 			<column name="metadata_source_id" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2016-02-07-1310-d" author="kosmik">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -278,13 +297,13 @@
 			<column name="code" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="metadatamapping-2016-02-12-1646" author="kosmik">
 		<!-- NOTE: No precondition needed as delete operations always succeed even if matching rows do not exist. -->
 		<comment>
 			Drop deprecated privilege 'Metadata Mapping' from roles and available privileges.
 		</comment>
-		
+
 		<delete tableName="role_privilege">
 			<where>privilege = 'Metadata Mapping'</where>
 		</delete>
