@@ -14,6 +14,7 @@
 package org.openmrs.module.metadatamapping.api.db.hibernate.interceptor;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.FlushMode;
@@ -90,10 +91,29 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 	
 	private FlushMode setFlushMode(FlushMode flushMode) {
 		//We need to get sessionFactory lazily here, because when the interceptor is instantiated Hibenate is not yet ready to work.
-		SessionFactory sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory");
-		FlushMode previousFlushMode = sessionFactory.getCurrentSession().getFlushMode();
-		sessionFactory.getCurrentSession().setFlushMode(flushMode);
+		FlushMode previousFlushMode = getCurrentSession().getFlushMode();
+		getCurrentSession().setFlushMode(flushMode);
 		return previousFlushMode;
 	}
 	
+	/**
+	 * Gets the current hibernate session while taking care of the hibernate 3 and 4 differences.
+	 * 
+	 * @return the current hibernate session.
+	 */
+	private org.hibernate.Session getCurrentSession() {
+		SessionFactory sessionFactory = (SessionFactory) applicationContext.getBean("sessionFactory");
+		try {
+			return sessionFactory.getCurrentSession();
+		}
+		catch (NoSuchMethodError ex) {
+			try {
+				Method method = sessionFactory.getClass().getMethod("getCurrentSession", null);
+				return (org.hibernate.Session) method.invoke(sessionFactory, null);
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Failed to get the current hibernate session", e);
+			}
+		}
+	}
 }

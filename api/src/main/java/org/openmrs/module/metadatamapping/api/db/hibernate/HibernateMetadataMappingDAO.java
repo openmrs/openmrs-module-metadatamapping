@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.metadatamapping.api.db.hibernate;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Concept> getConcepts(final int firstResult, final int maxResults) {
-		final Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Concept.class);
+		final Criteria criteria = getCurrentSession().createCriteria(Concept.class);
 		criteria.addOrder(Order.asc("conceptId"));
 		criteria.setMaxResults(maxResults);
 		criteria.setFirstResult(firstResult);
@@ -61,14 +62,14 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataSource saveMetadataSource(MetadataSource metadataSource) {
-		sessionFactory.getCurrentSession().saveOrUpdate(metadataSource);
+		getCurrentSession().saveOrUpdate(metadataSource);
 		return metadataSource;
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MetadataSource> getMetadataSources(boolean includeRetired) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSource.class);
+		Criteria criteria = getCurrentSession().createCriteria(MetadataSource.class);
 		if (!includeRetired) {
 			criteria.add(Restrictions.eq("retired", false));
 		}
@@ -79,12 +80,12 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataSource getMetadataSource(Integer metadataSourceId) {
-		return (MetadataSource) sessionFactory.getCurrentSession().get(MetadataSource.class, metadataSourceId);
+		return (MetadataSource) getCurrentSession().get(MetadataSource.class, metadataSourceId);
 	}
 	
 	@Override
 	public MetadataSource getMetadataSourceByName(String metadataSourceName) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSource.class);
+		Criteria criteria = getCurrentSession().createCriteria(MetadataSource.class);
 		criteria.add(Restrictions.eq("name", metadataSourceName));
 		return (MetadataSource) criteria.uniqueResult();
 	}
@@ -104,8 +105,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId) {
-		return (MetadataTermMapping) sessionFactory.getCurrentSession()
-		        .get(MetadataTermMapping.class, metadataTermMappingId);
+		return (MetadataTermMapping) getCurrentSession().get(MetadataTermMapping.class, metadataTermMappingId);
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	@Override
 	@SuppressWarnings(value = "unchecked")
 	public List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataTermMapping.class);
+		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
 		
 		criteria.add(Restrictions.eq("metadataUuid", referredObject.getUuid()));
 		// Filtering on metadataClass should be redundant as uuids should be globally unique but better be on the safe side.
@@ -132,7 +132,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataTermMapping.class);
+		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
 		criteria.add(Restrictions.eq("metadataSource", metadataSource));
 		criteria.add(Restrictions.eq("code", metadataTermCode));
 		return (MetadataTermMapping) criteria.uniqueResult();
@@ -141,7 +141,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataTermMapping.class);
+		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
 		criteria.add(Restrictions.eq("metadataSource", metadataSource));
 		criteria.add(Restrictions.eq("retired", false));
 		return criteria.list();
@@ -182,20 +182,20 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	private MetadataTermMapping internalSaveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
-		sessionFactory.getCurrentSession().saveOrUpdate(metadataTermMapping);
+		getCurrentSession().saveOrUpdate(metadataTermMapping);
 		return metadataTermMapping;
 	}
 	
 	@SuppressWarnings(value = "unchecked")
 	private <T extends OpenmrsObject> T internalGetByUuid(Class<T> openmrsObjectClass, String uuid) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(openmrsObjectClass);
+		Criteria criteria = getCurrentSession().createCriteria(openmrsObjectClass);
 		criteria.add(Restrictions.eq("uuid", uuid));
 		return (T) criteria.uniqueResult();
 	}
 	
 	private Criteria createSourceMetadataTermCriteria(String metadataSourceName, Class<?> metadataClass,
 	        String metadataTermCode) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataTermMapping.class).add(
+		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class).add(
 		    Restrictions.eq("retired", false));
 		if (metadataClass != null) {
 			criteria.add(Restrictions.eq("metadataClass", metadataClass.getCanonicalName()));
@@ -207,5 +207,25 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		criteria = criteria.createCriteria("metadataSource").add(Restrictions.eq("name", metadataSourceName));
 		
 		return criteria;
+	}
+	
+	/**
+	 * Gets the current hibernate session while taking care of the hibernate 3 and 4 differences.
+	 * 
+	 * @return the current hibernate session.
+	 */
+	private org.hibernate.Session getCurrentSession() {
+		try {
+			return sessionFactory.getCurrentSession();
+		}
+		catch (NoSuchMethodError ex) {
+			try {
+				Method method = sessionFactory.getClass().getMethod("getCurrentSession", null);
+				return (org.hibernate.Session) method.invoke(sessionFactory, null);
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Failed to get the current hibernate session", e);
+			}
+		}
 	}
 }
