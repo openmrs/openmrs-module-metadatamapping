@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.metadatamapping.web.controller;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +48,20 @@ public class ConfigureController {
 	
 	@ModelAttribute("conceptSources")
 	public List<ConceptSource> getConceptSources() {
-		return Context.getConceptService().getAllConceptSources();
+		try {
+			ConceptService service = Context.getConceptService();
+			try {
+				return service.getAllConceptSources();
+			}
+			catch (NoSuchMethodError ex) {
+				Method method = Context.getConceptService().getClass().getMethod("getAllConceptSources",
+				    new Class[] { boolean.class });
+				return (List<ConceptSource>) method.invoke(service, true);
+			}
+		}
+		catch (Exception ex) {
+			throw new RuntimeException("Failed to get all concept sources", ex);
+		}
 	}
 	
 	@RequestMapping(value = CONFIGURE_PATH, method = RequestMethod.GET)
