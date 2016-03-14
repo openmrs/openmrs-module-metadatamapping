@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>metadatamapping</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
@@ -10,7 +10,7 @@
 	<name>Metadata Mapping Module</name>
 	<description />
 	<url>https://wiki.openmrs.org/display/docs/Metadata+Mapping+Module</url>
-	
+
 	<developers>
 		<developer>
 			<id>rkorytkowski</id>
@@ -18,19 +18,19 @@
 			<organization>OpenMRS</organization>
 		</developer>
 	</developers>
-	
+
 	<organization>
 		<name>OpenMRS</name>
 		<url>http://openmrs.org</url>
 	</organization>
-	
+
 	<scm>
 		<connection>scm:git:https://github.com/openmrs/openmrs-module-metadatamapping</connection>
 		<developerConnection>scm:git:https://github.com/openmrs/openmrs-module-metadatamapping</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-metadatamapping</url>
 		<tag>HEAD</tag>
 	</scm>
-	
+
 	<distributionManagement>
 		<repository>
 			<id>openmrs-repo-modules</id>
@@ -43,7 +43,7 @@
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
 			<id>openmrs-repo</id>
@@ -51,7 +51,7 @@
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
 		</repository>
 	</repositories>
-	
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>openmrs-repo</id>
@@ -62,12 +62,12 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
 	<modules>
 		<module>api</module>
 		<module>omod</module>
 	</modules>
-	
+
 	<properties>
 		<openMRSVersion>1.9.8</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -77,7 +77,7 @@
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -87,7 +87,7 @@
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.openmrs.web</groupId>
 				<artifactId>openmrs-web</artifactId>
@@ -95,7 +95,7 @@
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
@@ -104,7 +104,7 @@
 				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.openmrs.web</groupId>
 				<artifactId>openmrs-web</artifactId>
@@ -113,7 +113,7 @@
 				<type>jar</type>
 				<scope>test</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.openmrs.test</groupId>
 				<artifactId>openmrs-test</artifactId>
@@ -121,7 +121,7 @@
 				<type>pom</type>
 				<scope>test</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-all</artifactId>
@@ -130,31 +130,31 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<classifier>tests</classifier>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>release</id>
@@ -199,7 +199,7 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -237,7 +237,7 @@
 				</includes>
 			</testResource>
 		</testResources>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -257,7 +257,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -268,7 +268,7 @@
 						<source>${javaComplianceVersion}</source>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
@@ -280,7 +280,7 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.openmrs.maven.plugins</groupId>
 					<artifactId>maven-openmrs-plugin</artifactId>
@@ -303,29 +303,31 @@
 						</execution>
 					</executions>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>2.3.2</version>
+					<version>2.5</version>
 					<configuration>
 						<useReleaseProfile>false</useReleaseProfile>
 						<arguments>-Prelease</arguments>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagNameFormat>@{project.version}</tagNameFormat>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.12</version>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -401,7 +403,7 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>com.googlecode.maven-java-formatter-plugin</groupId>
 					<artifactId>maven-java-formatter-plugin</artifactId>
@@ -423,7 +425,7 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-			
+
 			</plugins>
 		</pluginManagement>
 	</build>
