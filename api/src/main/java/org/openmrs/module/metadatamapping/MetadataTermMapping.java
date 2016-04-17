@@ -23,7 +23,7 @@ import org.openmrs.module.metadatamapping.util.ArgUtil;
  * @since 1.1
  */
 public class MetadataTermMapping extends BaseOpenmrsMetadata {
-
+	
 	/**
 	 * Reference to a metadata object, i.e. a tuple of a canonical class name and a uuid.
 	 * @since 1.1
@@ -33,7 +33,7 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 		private String referenceCanonicalClassName;
 		
 		private String referenceUuid;
-
+		
 		/**
 		 * Construct a new reference.
 		 * @param referenceCanonicalClassName canonical class name of referred object
@@ -45,14 +45,14 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 			this.referenceCanonicalClassName = referenceCanonicalClassName;
 			this.referenceUuid = referenceUuid;
 		}
-
+		
 		/**
 		 * @return canonical class name of referred object
 		 */
 		public String getReferenceCanonicalClassName() {
 			return referenceCanonicalClassName;
 		}
-
+		
 		/**
 		 * @return uuid of referred object
 		 */
@@ -72,9 +72,9 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	/**
-	 * Default constructor needed by Hibernate but is private as others should not use it.
+	 * Construct a new metadata term mapping. Make sure to specify {@link #setMetadataSource} and {@link #setCode}.
 	 */
-	private MetadataTermMapping() {
+	public MetadataTermMapping() {
 	}
 	
 	/**
