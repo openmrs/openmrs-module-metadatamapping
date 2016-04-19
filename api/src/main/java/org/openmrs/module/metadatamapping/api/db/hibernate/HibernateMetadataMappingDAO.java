@@ -27,6 +27,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,17 +116,38 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	@SuppressWarnings(value = "unchecked")
-	public List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject) {
+	public List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria) {
 		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
 		
-		criteria.add(Restrictions.eq("metadataUuid", referredObject.getUuid()));
-		// Filtering on metadataClass should be redundant as uuids should be globally unique but better be on the safe side.
-		criteria.add(Restrictions.eq("metadataClass", referredObject.getClass().getCanonicalName()));
-		criteria.add(Restrictions.eq("retired", false));
+		// Filtering on metadataClass should be redundant as uuids should be globally unique but better be on the safe
+		// side.
+		if (searchCriteria.getReferredObject() != null) {
+			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getReferredObject().getUuid()));
+			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getReferredObject().getClass().getCanonicalName()));
+		} else if (searchCriteria.getReferredObjectReference() != null) {
+			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getReferredObjectReference().getReferenceUuid()));
+			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getReferredObjectReference()
+			        .getReferenceCanonicalClassName()));
+		}
+		
+		if (!searchCriteria.isIncludeAll()) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		
+		if (searchCriteria.getMetadataSource() != null) {
+			criteria.add(Restrictions.eq("metadataSource", searchCriteria.getMetadataSource()));
+		}
 		
 		// Set ordering so as to ensure a consistent ordering of the results on consecutive invocations
 		criteria.addOrder(Order.asc("metadataSource"));
 		criteria.addOrder(Order.asc("metadataTermMappingId"));
+		
+		if (searchCriteria.getFirstResult() != null) {
+			criteria.setFirstResult(searchCriteria.getFirstResult());
+		}
+		if (searchCriteria.getMaxResults() != null) {
+			criteria.setMaxResults(searchCriteria.getMaxResults());
+		}
 		
 		return criteria.list();
 	}
@@ -136,15 +158,6 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		criteria.add(Restrictions.eq("metadataSource", metadataSource));
 		criteria.add(Restrictions.eq("code", metadataTermCode));
 		return (MetadataTermMapping) criteria.uniqueResult();
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
-		criteria.add(Restrictions.eq("metadataSource", metadataSource));
-		criteria.add(Restrictions.eq("retired", false));
-		return criteria.list();
 	}
 	
 	@Override
@@ -211,7 +224,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	/**
 	 * Gets the current hibernate session while taking care of the hibernate 3 and 4 differences.
-	 * 
+	 *
 	 * @return the current hibernate session.
 	 */
 	private org.hibernate.Session getCurrentSession() {

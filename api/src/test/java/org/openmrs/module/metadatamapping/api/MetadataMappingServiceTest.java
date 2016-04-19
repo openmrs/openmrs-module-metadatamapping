@@ -637,7 +637,72 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "return unretired term mappings referring to object", method = "getMetadataTermMappings(OpenmrsMetadata)")
+	@Verifies(value = "return term mappings matching every criteria", method = "getMetadataTermMappings"
+	        + "(MetadataTermMappingSearchCriteria)")
+	public void getMetadataTermMappings_shouldReturnTermMappingsMatchingEveryCriteria() {
+		// given
+		// data in the test data set, and the following
+		MetadataTermMappingSearchCriteriaBuilder searchCriteriaBuilder = new MetadataTermMappingSearchCriteriaBuilder();
+		// when
+		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder
+		        .createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(6, termMappings.size());
+		
+		// given
+		searchCriteriaBuilder.setIncludeAll(true);
+		// when
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(8, termMappings.size());
+		
+		// given
+		searchCriteriaBuilder.setMaxResults(2);
+		// when
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(2, termMappings.size());
+		Assert.assertEquals("mdt-xan", termMappings.get(0).getCode());
+		
+		// given
+		searchCriteriaBuilder.setFirstResult(2);
+		searchCriteriaBuilder.setMaxResults(3);
+		// when
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(3, termMappings.size());
+		Assert.assertEquals("xyz", termMappings.get(0).getCode());
+		Assert.assertEquals("mdt-nnl", termMappings.get(2).getCode());
+		
+		// given
+		Location neverNeverLand = locationService.getLocationByUuid("167ce20c-4785-4285-9119-d197268f7f4a");
+		searchCriteriaBuilder.setReferredObject(neverNeverLand);
+		searchCriteriaBuilder.setIncludeAll(false);
+		searchCriteriaBuilder.setFirstResult(0);
+		searchCriteriaBuilder.setMaxResults(null);
+		// when
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(2, termMappings.size());
+		Assert.assertEquals("Integration Test Metadata Source 1", termMappings.get(0).getMetadataSource().getName());
+		Assert.assertEquals("mdt-nnl", termMappings.get(0).getCode());
+		Assert.assertEquals("Integration Test Metadata Source 2", termMappings.get(1).getMetadataSource().getName());
+		Assert.assertEquals("mdt-nnl", termMappings.get(1).getCode());
+		
+		// given
+		searchCriteriaBuilder.setMetadataSource(service.getMetadataSourceByName("Integration Test Metadata Source 2"));
+		// when
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		// then
+		Assert.assertEquals(1, termMappings.size());
+		Assert.assertEquals("Integration Test Metadata Source 2", termMappings.get(0).getMetadataSource().getName());
+		Assert.assertEquals("mdt-nnl", termMappings.get(0).getCode());
+	}
+	
+	@Test
+	@Verifies(value = "return unretired term mappings referring to object", method = "getMetadataTermMappings"
+	        + "(OpenmrsMetadata)")
+	@SuppressWarnings("deprecation")
 	public void getMetadataTermMappings_shouldReturnUnretiredTermMappingsReferringToObject() {
 		// given
 		// data in the test data set, and the following
@@ -649,7 +714,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertEquals(2, neverNeverLandTermMappings.size());
 		
-		// The test case makes an assumption on the order of the terms 
+		// The test case makes an assumption on the order of the terms
 		MetadataTermMapping termFromSource1 = neverNeverLandTermMappings.get(0);
 		MetadataTermMapping termFromSource2 = neverNeverLandTermMappings.get(1);
 		
@@ -678,6 +743,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	@Verifies(value = "return only unretired term mappings", method = "getMetadataTermMappings(MetadataSource)")
+	@SuppressWarnings("deprecation")
 	public void getMetadataTermMappings_shouldReturnOnlyUnretiredTermMappings() {
 		// given
 		// data in the test data set, and the following
@@ -697,7 +763,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "return unretired metadata item for unretired term", method = "getMetadataItem(Class, String, String)")
+	@Verifies(value = "return unretired metadata item for unretired term", method = "getMetadataItem(Class, String, "
+	        + "String)")
 	public void getMetadataItem_shouldReturnUnretiredMetadataItemForUnretiredTerm() {
 		// given
 		// data in the test data set, and the following
@@ -715,7 +782,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "not return retired metadata item for unretired term", method = "getMetadataItem(Class, String, String)")
+	@Verifies(value = "not return retired metadata item for unretired term", method = "getMetadataItem(Class, String, "
+	        + "String)")
 	public void getMetadataItem_shouldNotReturnRetiredMetadataItemForUnretiredTerm() {
 		// given
 		// data in the test data set, and the following
@@ -732,7 +800,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "not return unretired metadata item for retired term", method = "getMetadataItem(Class, String, String)")
+	@Verifies(value = "not return unretired metadata item for retired term", method = "getMetadataItem(Class, String, "
+	        + "String)")
 	public void getMetadataItem_shouldNotReturnUnretiredMetadataItemForRetiredTerm() {
 		// given
 		// data in the test data set, and the following
@@ -781,7 +850,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "return unretired metadata items of unretired terms matching type", method = "getMetadataItems(Class, String)")
+	@Verifies(value = "return unretired metadata items of unretired terms matching type", method = "getMetadataItems(Class,"
+	        + " String)")
 	public void getMetadataItems_shouldReturnUnretiredMetadataItemsOfUnretiredTermsMatchingType() {
 		// given
 		// data in the test data set, and the following

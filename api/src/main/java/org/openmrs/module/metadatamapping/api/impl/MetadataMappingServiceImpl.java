@@ -37,6 +37,8 @@ import org.openmrs.module.metadatamapping.MetadataMapping;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
+import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.wrapper.ConceptAdapter;
 import org.springframework.transaction.annotation.Transactional;
@@ -395,8 +397,16 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
+	public List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria) {
+		return dao.getMetadataTermMappings(searchCriteria);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject) {
-		return dao.getMetadataTermMappings(referredObject);
+		MetadataTermMappingSearchCriteria searchCriteria = new MetadataTermMappingSearchCriteriaBuilder().setIncludeAll(
+		    false).setReferredObject(referredObject).createMetadataTermMappingSearchCriteria();
+		return dao.getMetadataTermMappings(searchCriteria);
 	}
 	
 	@Override
@@ -415,7 +425,9 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
-		return dao.getMetadataTermMappings(metadataSource);
+		MetadataTermMappingSearchCriteria searchCriteria = new MetadataTermMappingSearchCriteriaBuilder().setIncludeAll(
+		    false).setMetadataSource(metadataSource).createMetadataTermMappingSearchCriteria();
+		return dao.getMetadataTermMappings(searchCriteria);
 	}
 	
 	@Override

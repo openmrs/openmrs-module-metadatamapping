@@ -21,6 +21,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 
 /**
  * The DAO.
@@ -95,13 +96,12 @@ public interface MetadataMappingDAO {
 	<T extends OpenmrsObject> T getByUuid(Class<T> openmrsObjectClass, String uuid);
 	
 	/**
-	 * Find all the unretired metadata term mappings that refer to the given metadata object.
-	 * @param referredObject find term mappings that refer to this object
-	 * @return list of matching metadata term mappings
+	 * Find all the metadata term mappings that match the given criteria.
+	 * @param searchCriteria find term mappings matching these criteria
+	 * @return list of metadata term mappings
 	 * @since 1.1
-	 * @should return unretired terms referring to object
 	 */
-	List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject);
+	List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria);
 	
 	/**
 	 * Get a specific metadata term mapping from a specific source. 
@@ -110,13 +110,6 @@ public interface MetadataMappingDAO {
 	 * @return object or null, if does not exist
 	 */
 	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
-	
-	/**
-	 * Get all unretired term mappings in the source.
-	 * @param metadataSource source of the terms
-	 * @return list of terms
-	 */
-	List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource);
 	
 	/**
 	 * Get metadata item referred to by the given metadata term mapping

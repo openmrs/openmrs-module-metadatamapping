@@ -320,13 +320,25 @@ public interface MetadataMappingService {
 	MetadataTermMapping getMetadataTermMappingByUuid(String metadataTermMappingUuid);
 	
 	/**
+	 * Find all the metadata term mappings that match the given criteria.
+	 * @param searchCriteria find term mappings matching these criteria
+	 * @return list of metadata term mappings
+	 * @since 1.1
+	 * @should return term mappings matching every criteria
+	 */
+	@Authorized()
+	List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria);
+	
+	/**
 	 * Find all the unretired metadata term mappings that refer to the given metadata object.
 	 * @param referredObject find term mappings that refer to this object
 	 * @return list of matching metadata term mappings
 	 * @since 1.1
 	 * @should return unretired term mappings referring to object
+	 * @deprecated Use {@link #getMetadataTermMappings(MetadataTermMappingSearchCriteria)} instead
 	 */
 	@Authorized()
+	@Deprecated
 	List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject);
 	
 	/**
@@ -357,8 +369,10 @@ public interface MetadataMappingService {
 	 * @return list of terms
 	 * @since 1.1
 	 * @should return only unretired term mappings
+	 * @deprecated Use {@link #getMetadataTermMappings(MetadataTermMappingSearchCriteria)} instead
 	 */
 	@Authorized()
+	@Deprecated
 	List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource);
 	
 	/**
