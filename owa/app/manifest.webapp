@@ -1,0 +1,19 @@
+{
+  "version": "1.2.0-SNAPSHOT",
+  "name": "Metadata Mapping",
+  "description": "GUI for OpenMRS Metadata Mapping module",
+  "launch_path": "index.html",
+  "icons": {
+    "48": "/img/omrs-button.png"
+  },
+  "developer": {
+    "name": "openmrs",
+    "url": "https://github.com/openmrs/openmrs-module-metadatamapping"
+  },
+  "default_locale": "en",
+    "activities": {
+      "openmrs": {
+        "href": "*"
+      }
+    }
+}
