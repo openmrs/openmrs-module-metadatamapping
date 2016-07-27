@@ -84,7 +84,7 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	/**
 	 * @return search criteria with the values set to this builder
 	 */
-	public MetadataTermMappingSearchCriteria createMetadataTermMappingSearchCriteria() {
+	public MetadataTermMappingSearchCriteria build() {
 		if (referredObject != null) {
 			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource, referredObject);
 		} else {

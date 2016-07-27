@@ -233,11 +233,9 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		}
 		
 		boolean hasMore = false;
-		searchCriteriaBuilder.setFirstResult(firstResult).setMaxResults(maxResults + 1)
-		        .createMetadataTermMappingSearchCriteria();
+		searchCriteriaBuilder.setFirstResult(firstResult).setMaxResults(maxResults + 1).build();
 		
-		List<MetadataTermMapping> metadataTermMappings = getService().getMetadataTermMappings(
-		    searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		List<MetadataTermMapping> metadataTermMappings = getService().getMetadataTermMappings(searchCriteriaBuilder.build());
 		if (metadataTermMappings.size() > maxResults) {
 			hasMore = true;
 			metadataTermMappings = metadataTermMappings.subList(0, maxResults);

@@ -405,7 +405,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject) {
 		MetadataTermMappingSearchCriteria searchCriteria = new MetadataTermMappingSearchCriteriaBuilder().setIncludeAll(
-		    false).setReferredObject(referredObject).createMetadataTermMappingSearchCriteria();
+		    false).setReferredObject(referredObject).build();
 		return dao.getMetadataTermMappings(searchCriteria);
 	}
 	
@@ -426,7 +426,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
 		MetadataTermMappingSearchCriteria searchCriteria = new MetadataTermMappingSearchCriteriaBuilder().setIncludeAll(
-		    false).setMetadataSource(metadataSource).createMetadataTermMappingSearchCriteria();
+		    false).setMetadataSource(metadataSource).build();
 		return dao.getMetadataTermMappings(searchCriteria);
 	}
 	

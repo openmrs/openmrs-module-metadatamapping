@@ -644,22 +644,21 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// data in the test data set, and the following
 		MetadataTermMappingSearchCriteriaBuilder searchCriteriaBuilder = new MetadataTermMappingSearchCriteriaBuilder();
 		// when
-		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder
-		        .createMetadataTermMappingSearchCriteria());
+		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(6, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setIncludeAll(true);
 		// when
-		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(8, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setMaxResults(2);
 		// when
-		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(2, termMappings.size());
 		Assert.assertEquals("mdt-xan", termMappings.get(0).getCode());
@@ -668,7 +667,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		searchCriteriaBuilder.setFirstResult(2);
 		searchCriteriaBuilder.setMaxResults(3);
 		// when
-		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(3, termMappings.size());
 		Assert.assertEquals("xyz", termMappings.get(0).getCode());
@@ -681,7 +680,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		searchCriteriaBuilder.setFirstResult(0);
 		searchCriteriaBuilder.setMaxResults(null);
 		// when
-		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(2, termMappings.size());
 		Assert.assertEquals("Integration Test Metadata Source 1", termMappings.get(0).getMetadataSource().getName());
@@ -692,7 +691,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// given
 		searchCriteriaBuilder.setMetadataSource(service.getMetadataSourceByName("Integration Test Metadata Source 2"));
 		// when
-		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.createMetadataTermMappingSearchCriteria());
+		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
 		Assert.assertEquals(1, termMappings.size());
 		Assert.assertEquals("Integration Test Metadata Source 2", termMappings.get(0).getMetadataSource().getName());
