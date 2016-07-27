@@ -27,6 +27,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
@@ -69,13 +70,27 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MetadataSource> getMetadataSources(boolean includeRetired) {
+	public List<MetadataSource> getMetadataSources(MetadataSourceSearchCriteria searchCriteria) {
 		Criteria criteria = getCurrentSession().createCriteria(MetadataSource.class);
-		if (!includeRetired) {
+		
+		if (!searchCriteria.isIncludeAll()) {
 			criteria.add(Restrictions.eq("retired", false));
 		}
+		
+		if (searchCriteria.getSourceName() != null) {
+			criteria.add(Restrictions.eq("name", searchCriteria.getSourceName()));
+		}
+		
 		criteria.addOrder(Order.asc("name"));
 		criteria.addOrder(Order.asc("id"));
+		
+		if (searchCriteria.getFirstResult() != null) {
+			criteria.setFirstResult(searchCriteria.getFirstResult());
+		}
+		if (searchCriteria.getMaxResults() != null) {
+			criteria.setMaxResults(searchCriteria.getMaxResults());
+		}
+		
 		return criteria.list();
 	}
 	

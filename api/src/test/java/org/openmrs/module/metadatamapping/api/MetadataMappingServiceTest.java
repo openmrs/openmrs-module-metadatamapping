@@ -522,8 +522,13 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// data in the test data set
 		
 		// when
-		List<MetadataSource> nonRetiredSources = service.getMetadataSources(false);
-		List<MetadataSource> allSources = service.getMetadataSources(true);
+		MetadataSourceSearchCriteriaBuilder searchCriteriaBuilder = new MetadataSourceSearchCriteriaBuilder();
+		
+		searchCriteriaBuilder.setIncludeAll(false);
+		List<MetadataSource> nonRetiredSources = service.getMetadataSources(searchCriteriaBuilder.build());
+		
+		searchCriteriaBuilder.setIncludeAll(true);
+		List<MetadataSource> allSources = service.getMetadataSources(searchCriteriaBuilder.build());
 		
 		// then
 		Assert.assertEquals(2, nonRetiredSources.size());

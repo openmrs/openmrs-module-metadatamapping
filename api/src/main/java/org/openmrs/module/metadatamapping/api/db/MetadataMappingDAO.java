@@ -21,6 +21,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 
 /**
@@ -46,10 +47,10 @@ public interface MetadataMappingDAO {
 	
 	/**
 	 * Get metadata sources.
-	 * @param includeRetired if true, will return also retired metadata sources
-	 * @return list of metadata source
+	 * @param searchCriteria find sources matching these criteria
+	 * @return list of metadata sources
 	 */
-	List<MetadataSource> getMetadataSources(boolean includeRetired);
+	List<MetadataSource> getMetadataSources(MetadataSourceSearchCriteria searchCriteria);
 	
 	/**
 	 * Get metadata source with the given id.

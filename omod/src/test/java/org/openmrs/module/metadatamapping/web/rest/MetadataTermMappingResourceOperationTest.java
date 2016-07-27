@@ -111,7 +111,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		Object object = getExactlyOneObjectFromSearchResponse(results);
+		Object object = ResourceTestUtils.getExactlyOneObjectFromSearchResponse(results);
 		assertEquals("f03b3f7c-e2af-4428-8bdf-c1361f03d6ef", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
@@ -126,7 +126,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		Object object = getExactlyOneObjectFromSearchResponse(results);
+		Object object = ResourceTestUtils.getExactlyOneObjectFromSearchResponse(results);
 		assertEquals("f03b3f7c-e2af-4428-8bdf-c1361f03d6ef", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
@@ -142,7 +142,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		Object object = getExactlyOneObjectFromSearchResponse(results);
+		Object object = ResourceTestUtils.getExactlyOneObjectFromSearchResponse(results);
 		assertEquals("08bbe6b9-6240-4e9b-92ab-e3e6c07a0d2c", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
@@ -264,12 +264,5 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	private String getMetadataSourceNameProperty(Object metadataTermResult) throws Exception {
 		Object metadataSource = PropertyUtils.getProperty(metadataTermResult, "metadataSource");
 		return (String) PropertyUtils.getProperty(metadataSource, "display");
-	}
-	
-	private Object getExactlyOneObjectFromSearchResponse(SimpleObject responseData) {
-		assertNotNull(responseData);
-		List<SimpleObject> results = responseData.get("results");
-		assertEquals("response should contain exactly one search result", 1, results.size());
-		return results.get(0);
 	}
 }

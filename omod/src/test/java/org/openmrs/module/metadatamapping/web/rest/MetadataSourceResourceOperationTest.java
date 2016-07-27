@@ -79,19 +79,20 @@ public class MetadataSourceResourceOperationTest extends MainResourceControllerT
 	}
 	
 	@Test
-	public void getSingle_shouldGetByName() throws Exception {
+	public void search_shouldMatchByName() throws Exception {
 		// given
 		// test data
 		
 		// when
 		// NOTE: Space characters as part of request url may seem dangerous but here we assume
 		// than in an actual http request the client would take of url escaping, if necessary.
-		SimpleObject getResponseData = deserialize(handle(newGetRequest(getURI() + "/Integration Test Metadata Source 2")));
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("name", "Integration Test Metadata Source 2");
+		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		assertNotNull(getResponseData);
-		assertEquals("9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1", PropertyUtils.getProperty(getResponseData, "uuid"));
-		assertEquals("Integration Test Metadata Source 2", PropertyUtils.getProperty(getResponseData, "name"));
+		Object object = ResourceTestUtils.getExactlyOneObjectFromSearchResponse(results);
+		assertEquals("9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
 	@Test

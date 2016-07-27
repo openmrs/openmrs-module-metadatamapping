@@ -37,6 +37,8 @@ import org.openmrs.module.metadatamapping.MetadataMapping;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
+import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
@@ -343,7 +345,13 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Override
 	@Transactional(readOnly = true)
 	public List<MetadataSource> getMetadataSources(boolean includeRetired) {
-		return dao.getMetadataSources(includeRetired);
+		return dao.getMetadataSources(new MetadataSourceSearchCriteriaBuilder().setIncludeAll(includeRetired).build());
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataSource> getMetadataSources(MetadataSourceSearchCriteria searchCriteria) {
+		return dao.getMetadataSources(searchCriteria);
 	}
 	
 	@Override

@@ -1,8 +1,12 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.web.controller.MetadataMappingRestController;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -11,22 +15,20 @@ import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentat
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
+import org.openmrs.module.webservices.rest.web.resource.impl.AlreadyPaged;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
 @Resource(name = RestConstants.VERSION_1 + MetadataMappingRestController.METADATA_MAPPING_REST_NAMESPACE + "/metadatasource", supportedClass = MetadataSource.class, supportedOpenmrsVersions = {
         "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*" })
 public class MetadataSourceResource extends MetadataDelegatingCrudResource<MetadataSource> {
 	
+	public static final String PARAM_SOURCE_NAME = "name";
+	
 	@Override
 	public MetadataSource getByUniqueId(String uniqueId) {
-		MetadataSource metadataSource = getService().getMetadataSourceByUuid(uniqueId);
-		if (metadataSource == null) {
-			metadataSource = getService().getMetadataSourceByName(uniqueId);
-		}
-		return metadataSource;
+		return getService().getMetadataSourceByUuid(uniqueId);
 	}
 	
 	@Override
@@ -82,7 +84,36 @@ public class MetadataSourceResource extends MetadataDelegatingCrudResource<Metad
 	}
 	
 	private PageableResult getPageableResult(RequestContext context) {
-		return new NeedsPaging<MetadataSource>(getService().getMetadataSources(context.getIncludeAll()), context);
+		MetadataSourceSearchCriteriaBuilder searchCriteriaBuilder = new MetadataSourceSearchCriteriaBuilder();
+		
+		if (context.getIncludeAll()) {
+			searchCriteriaBuilder.setIncludeAll(true);
+		}
+		
+		String metadataSourceName = context.getParameter(PARAM_SOURCE_NAME);
+		if (StringUtils.isNotBlank(metadataSourceName)) {
+			searchCriteriaBuilder.setSourceName(metadataSourceName);
+		}
+		
+		Integer firstResult = context.getStartIndex();
+		if (firstResult == null) {
+			firstResult = 0;
+		}
+		Integer maxResults = context.getLimit();
+		if (maxResults == null) {
+			maxResults = 10;
+		}
+		
+		boolean hasMore = false;
+		searchCriteriaBuilder.setFirstResult(firstResult).setMaxResults(maxResults + 1).build();
+		
+		List<MetadataSource> metadataSources = getService().getMetadataSources(searchCriteriaBuilder.build());
+		if (metadataSources.size() > maxResults) {
+			hasMore = true;
+			metadataSources = metadataSources.subList(0, maxResults);
+		}
+		
+		return new AlreadyPaged<MetadataSource>(context, metadataSources, hasMore);
 	}
 	
 	private MetadataMappingService getService() {
