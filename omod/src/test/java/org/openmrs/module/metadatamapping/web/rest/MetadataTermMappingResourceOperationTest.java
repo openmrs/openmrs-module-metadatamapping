@@ -131,34 +131,9 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		assertEquals("08bbe6b9-6240-4e9b-92ab-e3e6c07a0d2c", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
-	@Test
-	public void search_shouldReturnZeroObjectsWithUnknownSourceName() throws Exception {
-		// given
-		MockHttpServletRequest request = newGetRequest(getURI());
-		request.setParameter("code", "drug-tri");
-		request.setParameter("sourceName", "Unknown Source Name");
-		
-		// when
-		SimpleObject results = deserialize(handle(request));
-		
-		// then
-		assertTrue(emptyResultsInSearchResponse(results));
-	}
-	
-	@Test
-	public void search_shouldReturnZeroObjectsWithUnknownSourceUuid() throws Exception {
-		// given
-		MockHttpServletRequest request = newGetRequest(getURI());
-		request.setParameter("code", "drug-tri");
-		request.setParameter("sourceUuid", "1234-unknown-uuid");
-		
-		// when
-		SimpleObject results = deserialize(handle(request));
-		
-		// then
-		assertTrue(emptyResultsInSearchResponse(results));
-	}
-	
+	/**
+	 * Test all the search parameters not already tested by other test cases.
+	 */
 	@Test
 	public void search_shouldSupportAllSearchParameters() throws Exception {
 		// given
@@ -281,11 +256,5 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		List<SimpleObject> results = responseData.get("results");
 		assertEquals("response should contain exactly one search result", 1, results.size());
 		return results.get(0);
-	}
-	
-	private boolean emptyResultsInSearchResponse(SimpleObject responseData) {
-		assertNotNull(responseData);
-		List<SimpleObject> results = responseData.get("results");
-		return results.size() == 0;
 	}
 }
