@@ -116,6 +116,21 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	}
 	
 	@Test
+	public void search_shouldMatchWithName() throws Exception {
+		// given
+		// test data
+		
+		// when
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("name", "Triomune-30");
+		SimpleObject results = deserialize(handle(request));
+		
+		// then
+		Object object = getExactlyOneObjectFromSearchResponse(results);
+		assertEquals("f03b3f7c-e2af-4428-8bdf-c1361f03d6ef", PropertyUtils.getProperty(object, "uuid"));
+	}
+	
+	@Test
 	public void search_shouldMatchWithCodeAndSourceName() throws Exception {
 		// given
 		// test data

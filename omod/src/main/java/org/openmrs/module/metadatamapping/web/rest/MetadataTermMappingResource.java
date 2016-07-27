@@ -36,6 +36,8 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 	
 	public static final String PARAM_TERM_CODE = "code";
 	
+	public static final String PARAM_TERM_NAME = "name";
+	
 	public static final String PARAM_SOURCE_NAME = "sourceName";
 	
 	public static final String PARAM_SOURCE_UUID = "sourceUuid";
@@ -189,6 +191,11 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		String metadataTermCode = context.getParameter(PARAM_TERM_CODE);
 		if (StringUtils.isNotBlank(metadataTermCode)) {
 			searchCriteriaBuilder.setMetadataTermCode(metadataTermCode);
+		}
+		
+		String metadataTermName = context.getParameter(PARAM_TERM_NAME);
+		if (StringUtils.isNotBlank(metadataTermName)) {
+			searchCriteriaBuilder.setMetadataTermName(metadataTermName);
 		}
 		
 		String referredObjectClassName = context.getParameter(PARAM_REFERENCE_CLASS);
