@@ -17,6 +17,8 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	
 	private MetadataSource metadataSource;
 	
+	private String metadataTermCode;
+	
 	private OpenmrsMetadata referredObject;
 	
 	private MetadataReference referredObjectReference;
@@ -58,6 +60,15 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	}
 	
 	/**
+	 * @param metadataTermCode only get term mappings with this code
+	 * @return this builder
+	 */
+	public MetadataTermMappingSearchCriteriaBuilder setMetadataTermCode(String metadataTermCode) {
+		this.metadataTermCode = metadataTermCode;
+		return this;
+	}
+	
+	/**
 	 * @param referredObject only get term mappings that refer to this metadata object
 	 * @return this builder
 	 */
@@ -86,10 +97,11 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	 */
 	public MetadataTermMappingSearchCriteria build() {
 		if (referredObject != null) {
-			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource, referredObject);
+			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource,
+			        metadataTermCode, referredObject);
 		} else {
 			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource,
-			        referredObjectReference);
+			        metadataTermCode, referredObjectReference);
 		}
 	}
 }

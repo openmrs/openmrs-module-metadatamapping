@@ -2,6 +2,7 @@ package org.openmrs.module.metadatamapping.web.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -14,11 +15,9 @@ import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.ExpectedException;
 
 /**
  * Test different REST api operations on {@link org.openmrs.module.metadatamapping.MetadataTermMapping}.
@@ -101,61 +100,63 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	}
 	
 	@Test
-	public void getSingle_shouldGetWithCodeAndSourceUuid() throws Exception {
+	public void search_shouldMatchWithCodeAndSourceUuid() throws Exception {
 		// given
 		// test data
 		
 		// when
-		MockHttpServletRequest request = newGetRequest(getURI() + "/drug-tri");
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("code", "drug-tri");
 		request.setParameter("sourceUuid", "9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
-		SimpleObject getResponseData = deserialize(handle(request));
+		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		assertNotNull(getResponseData);
-		assertEquals("Triomune-30", PropertyUtils.getProperty(getResponseData, "name"));
+		Object object = getExactlyOneObjectFromSearchResponse(results);
+		assertEquals("f03b3f7c-e2af-4428-8bdf-c1361f03d6ef", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
 	@Test
-	public void getSingle_shouldGetWithCodeAndSourceName() throws Exception {
+	public void search_shouldMatchWithCodeAndSourceName() throws Exception {
 		// given
 		// test data
 		
 		// when
-		MockHttpServletRequest request = newGetRequest(getURI() + "/mdt-xan");
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("code", "mdt-xan");
 		request.setParameter("sourceName", "Integration Test Metadata Source 2");
-		SimpleObject getResponseData = deserialize(handle(request));
+		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		assertNotNull(getResponseData);
-		assertEquals("Location Xanadu", PropertyUtils.getProperty(getResponseData, "name"));
+		Object object = getExactlyOneObjectFromSearchResponse(results);
+		assertEquals("08bbe6b9-6240-4e9b-92ab-e3e6c07a0d2c", PropertyUtils.getProperty(object, "uuid"));
 	}
 	
 	@Test
-	@ExpectedException(ObjectNotFoundException.class)
-	public void getSingle_should404WithUnknownSourceName() throws Exception {
+	public void search_shouldReturnZeroObjectsWithUnknownSourceName() throws Exception {
 		// given
-		MockHttpServletRequest request = newGetRequest(getURI() + "/drug-tri");
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("code", "drug-tri");
 		request.setParameter("sourceName", "Unknown Source Name");
 		
 		// when
-		handle(request);
+		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		// should fail
+		assertTrue(emptyResultsInSearchResponse(results));
 	}
 	
 	@Test
-	@ExpectedException(ObjectNotFoundException.class)
-	public void getSingle_should404WithUnknownSourceUuid() throws Exception {
+	public void search_shouldReturnZeroObjectsWithUnknownSourceUuid() throws Exception {
 		// given
-		MockHttpServletRequest request = newGetRequest(getURI() + "/drug-tri");
+		MockHttpServletRequest request = newGetRequest(getURI());
+		request.setParameter("code", "drug-tri");
 		request.setParameter("sourceUuid", "1234-unknown-uuid");
 		
 		// when
-		handle(request);
+		SimpleObject results = deserialize(handle(request));
 		
 		// then
-		// should fail
+		assertTrue(emptyResultsInSearchResponse(results));
 	}
 	
 	@Test
@@ -273,5 +274,18 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	private String getMetadataSourceNameProperty(Object metadataTermResult) throws Exception {
 		Object metadataSource = PropertyUtils.getProperty(metadataTermResult, "metadataSource");
 		return (String) PropertyUtils.getProperty(metadataSource, "display");
+	}
+	
+	private Object getExactlyOneObjectFromSearchResponse(SimpleObject responseData) {
+		assertNotNull(responseData);
+		List<SimpleObject> results = responseData.get("results");
+		assertEquals("response should contain exactly one search result", 1, results.size());
+		return results.get(0);
+	}
+	
+	private boolean emptyResultsInSearchResponse(SimpleObject responseData) {
+		assertNotNull(responseData);
+		List<SimpleObject> results = responseData.get("results");
+		return results.size() == 0;
 	}
 }

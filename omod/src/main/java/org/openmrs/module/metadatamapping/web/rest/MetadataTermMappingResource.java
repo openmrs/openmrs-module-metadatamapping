@@ -26,7 +26,6 @@ import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.AlreadyPaged;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
 import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingCrudResource;
-import org.openmrs.module.webservices.rest.web.response.ObjectNotFoundException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
@@ -35,6 +34,8 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
         "1.10.*", "1.11.*", "1.12.*", "2.0.*" })
 public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<MetadataTermMapping> {
 	
+	public static final String PARAM_TERM_CODE = "code";
+	
 	public static final String PARAM_SOURCE_NAME = "sourceName";
 	
 	public static final String PARAM_SOURCE_UUID = "sourceUuid";
@@ -42,37 +43,6 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 	public static final String PARAM_REFERENCE_CLASS = "refClass";
 	
 	public static final String PARAM_REFERENCE_UUID = "refUuid";
-	
-	@Override
-	public Object retrieve(String uniqueIdentifier, RequestContext context) throws ResponseException {
-		MetadataTermMapping delegate;
-		if (context.getParameter(PARAM_SOURCE_UUID) != null || context.getParameter(PARAM_SOURCE_NAME) != null) {
-			MetadataSource source;
-			if (context.getParameter(PARAM_SOURCE_UUID) != null) {
-				source = getService().getMetadataSourceByUuid(context.getParameter(PARAM_SOURCE_UUID));
-			} else {
-				source = getService().getMetadataSourceByName(context.getParameter(PARAM_SOURCE_NAME));
-			}
-			
-			if (source == null) {
-				throw new ObjectNotFoundException();
-			}
-			
-			delegate = getService().getMetadataTermMapping(source, uniqueIdentifier);
-		} else {
-			delegate = getService().getMetadataTermMappingByUuid(uniqueIdentifier);
-		}
-		
-		if (delegate == null) {
-			throw new ObjectNotFoundException();
-		}
-		
-		SimpleObject delegateRepresentation = asRepresentation(delegate, context.getRepresentation());
-		if (hasTypesDefined()) {
-			delegateRepresentation.add(RestConstants.PROPERTY_FOR_TYPE, getTypeName(delegate));
-		}
-		return delegateRepresentation;
-	}
 	
 	@Override
 	public MetadataTermMapping getByUniqueId(String uniqueId) {
@@ -214,6 +184,11 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 			} else {
 				searchCriteriaBuilder.setMetadataSource(metadataSource);
 			}
+		}
+		
+		String metadataTermCode = context.getParameter(PARAM_TERM_CODE);
+		if (StringUtils.isNotBlank(metadataTermCode)) {
+			searchCriteriaBuilder.setMetadataTermCode(metadataTermCode);
 		}
 		
 		String referredObjectClassName = context.getParameter(PARAM_REFERENCE_CLASS);

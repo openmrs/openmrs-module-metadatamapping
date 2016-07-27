@@ -138,6 +138,10 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 			criteria.add(Restrictions.eq("metadataSource", searchCriteria.getMetadataSource()));
 		}
 		
+		if (searchCriteria.getMetadataTermCode() != null) {
+			criteria.add(Restrictions.eq("code", searchCriteria.getMetadataTermCode()));
+		}
+		
 		// Set ordering so as to ensure a consistent ordering of the results on consecutive invocations
 		criteria.addOrder(Order.asc("metadataSource"));
 		criteria.addOrder(Order.asc("metadataTermMappingId"));

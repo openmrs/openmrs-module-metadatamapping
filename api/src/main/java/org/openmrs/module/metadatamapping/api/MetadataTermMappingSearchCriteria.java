@@ -19,6 +19,8 @@ public class MetadataTermMappingSearchCriteria {
 	
 	private MetadataSource metadataSource;
 	
+	private String metadataTermCode;
+	
 	private OpenmrsMetadata referredObject;
 	
 	private MetadataReference referredObjectReference;
@@ -29,14 +31,16 @@ public class MetadataTermMappingSearchCriteria {
 	 * @param firstResult start from this result (numbered from <tt>0</tt>)
 	 * @param maxResults get a maximum of this many results
 	 * @param metadataSource only get term mappings from this source
+	 * @param metadataTermCode only get term mappings with this code
 	 * @param referredObject only get term mappings that refer to this metadata object
 	 */
 	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
-	    MetadataSource metadataSource, OpenmrsMetadata referredObject) {
+	    MetadataSource metadataSource, String metadataTermCode, OpenmrsMetadata referredObject) {
 		this.includeAll = includeAll;
 		this.firstResult = firstResult;
 		this.maxResults = maxResults;
 		this.metadataSource = metadataSource;
+		this.metadataTermCode = metadataTermCode;
 		this.referredObject = referredObject;
 	}
 	
@@ -46,14 +50,16 @@ public class MetadataTermMappingSearchCriteria {
 	 * @param firstResult start from this result (numbered from <tt>0</tt>)
 	 * @param maxResults get a maximum of this many results
 	 * @param metadataSource only get term mappings from this source
+	 * @param metadataTermCode only get term mappings with this code
 	 * @param referredObjectReference only get term mappings that refer to this metadata object
 	 */
 	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
-	    MetadataSource metadataSource, MetadataReference referredObjectReference) {
+	    MetadataSource metadataSource, String metadataTermCode, MetadataReference referredObjectReference) {
 		this.includeAll = includeAll;
 		this.firstResult = firstResult;
 		this.maxResults = maxResults;
 		this.metadataSource = metadataSource;
+		this.metadataTermCode = metadataTermCode;
 		this.referredObjectReference = referredObjectReference;
 	}
 	
@@ -83,6 +89,13 @@ public class MetadataTermMappingSearchCriteria {
 	 */
 	public MetadataSource getMetadataSource() {
 		return metadataSource;
+	}
+	
+	/**
+	 * @return only get term mappings with this code
+	 */
+	public String getMetadataTermCode() {
+		return metadataTermCode;
 	}
 	
 	/**
