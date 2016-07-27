@@ -136,7 +136,7 @@ public class MetadataSourceResourceOperationTest extends MainResourceControllerT
 	
 	@Override
 	public String getURI() {
-		return "/metadatamapping/metadatasource";
+		return "/metadatamapping/source";
 	}
 	
 	@Override
