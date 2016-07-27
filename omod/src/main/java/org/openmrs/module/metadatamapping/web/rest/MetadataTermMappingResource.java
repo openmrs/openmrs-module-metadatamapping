@@ -37,9 +37,7 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 	
 	public static final String PARAM_TERM_NAME = "name";
 	
-	public static final String PARAM_SOURCE_NAME = "sourceName";
-	
-	public static final String PARAM_SOURCE_UUID = "sourceUuid";
+	public static final String PARAM_SOURCE_NAME_OR_UUID = "source";
 	
 	public static final String PARAM_REFERENCE_CLASS = "refClass";
 	
@@ -169,14 +167,11 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 			searchCriteriaBuilder.setIncludeAll(true);
 		}
 		
-		String metadataSourceName = context.getParameter(PARAM_SOURCE_NAME);
-		String metadataSourceUuid = context.getParameter(PARAM_SOURCE_UUID);
-		if (StringUtils.isNotBlank(metadataSourceName) || StringUtils.isNotBlank(metadataSourceUuid)) {
-			MetadataSource metadataSource;
-			if (StringUtils.isNotBlank(metadataSourceName)) {
-				metadataSource = getService().getMetadataSourceByName(metadataSourceName);
-			} else {
-				metadataSource = getService().getMetadataSourceByUuid(metadataSourceUuid);
+		String metadataSourceNameOrUuid = context.getParameter(PARAM_SOURCE_NAME_OR_UUID);
+		if (StringUtils.isNotBlank(metadataSourceNameOrUuid)) {
+			MetadataSource metadataSource = getService().getMetadataSourceByUuid(metadataSourceNameOrUuid);
+			if (metadataSource == null) {
+				metadataSource = getService().getMetadataSourceByName(metadataSourceNameOrUuid);
 			}
 			
 			if (metadataSource == null) {

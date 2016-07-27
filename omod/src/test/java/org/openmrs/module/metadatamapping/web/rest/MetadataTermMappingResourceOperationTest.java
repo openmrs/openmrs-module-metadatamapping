@@ -106,7 +106,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// when
 		MockHttpServletRequest request = newGetRequest(getURI());
 		request.setParameter("code", "drug-tri");
-		request.setParameter("sourceUuid", "9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
+		request.setParameter("source", "9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
 		SimpleObject results = deserialize(handle(request));
 		
 		// then
@@ -137,7 +137,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// when
 		MockHttpServletRequest request = newGetRequest(getURI());
 		request.setParameter("code", "mdt-xan");
-		request.setParameter("sourceName", "Integration Test Metadata Source 2");
+		request.setParameter("source", "Integration Test Metadata Source 2");
 		SimpleObject results = deserialize(handle(request));
 		
 		// then
@@ -200,7 +200,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		assertEquals("mdt-nnl", PropertyUtils.getProperty(results.get(1), "code"));
 		
 		// given
-		request.setParameter("sourceName", "Integration Test Metadata Source 2");
+		request.setParameter("source", "Integration Test Metadata Source 2");
 		// when
 		results = deserialize(handle(request)).get("results");
 		// then
@@ -209,8 +209,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		assertEquals("mdt-nnl", PropertyUtils.getProperty(results.get(0), "code"));
 		
 		// given
-		request.removeParameter("sourceName");
-		request.setParameter("sourceUuid", "9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
+		request.setParameter("source", "9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
 		// when
 		results = deserialize(handle(request)).get("results");
 		// then
@@ -223,7 +222,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	public void search_shouldHandleUnknownSourceName() throws Exception {
 		// given
 		MockHttpServletRequest request = newGetRequest(getURI());
-		request.setParameter("sourceName", "Unknown Source Name");
+		request.setParameter("source", "Unknown Source Name");
 		
 		// when
 		List<SimpleObject> results = deserialize(handle(request)).get("results");
@@ -236,7 +235,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	public void search_shouldHandleUnknownSourceUuid() throws Exception {
 		// given
 		MockHttpServletRequest request = newGetRequest(getURI());
-		request.setParameter("sourceUuid", "1234-unknown-uuid");
+		request.setParameter("source", "1234-unknown-uuid");
 		
 		// when
 		List<SimpleObject> results = deserialize(handle(request)).get("results");
