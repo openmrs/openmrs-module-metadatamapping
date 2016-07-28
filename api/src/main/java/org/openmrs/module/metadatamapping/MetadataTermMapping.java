@@ -24,6 +24,43 @@ import org.openmrs.module.metadatamapping.util.ArgUtil;
  */
 public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	
+	/**
+	 * Reference to a metadata object, i.e. a tuple of a canonical class name and a uuid.
+	 * @since 1.2
+	 */
+	public static class MetadataReference {
+		
+		private String referenceCanonicalClassName;
+		
+		private String referenceUuid;
+		
+		/**
+		 * Construct a new reference.
+		 * @param referenceCanonicalClassName canonical class name of referred object
+		 * @param referenceUuid uuid of referred object
+		 */
+		public MetadataReference(String referenceCanonicalClassName, String referenceUuid) {
+			ArgUtil.notNull(referenceCanonicalClassName, "metadataClass");
+			ArgUtil.notNull(referenceUuid, "metadataUuid");
+			this.referenceCanonicalClassName = referenceCanonicalClassName;
+			this.referenceUuid = referenceUuid;
+		}
+		
+		/**
+		 * @return canonical class name of referred object
+		 */
+		public String getReferenceCanonicalClassName() {
+			return referenceCanonicalClassName;
+		}
+		
+		/**
+		 * @return uuid of referred object
+		 */
+		public String getReferenceUuid() {
+			return referenceUuid;
+		}
+	}
+	
 	private Integer metadataTermMappingId;
 	
 	private MetadataSource metadataSource;
@@ -35,9 +72,9 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	/**
-	 * Default constructor needed by Hibernate but is private as others should not use it.
+	 * Construct a new metadata term mapping. Make sure to specify {@link #setMetadataSource} and {@link #setCode}.
 	 */
-	private MetadataTermMapping() {
+	public MetadataTermMapping() {
 	}
 	
 	/**
@@ -155,6 +192,15 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 		ArgUtil.notNull(mappedObject.getUuid(), "mappedObject.uuid");
 		setMetadataClass(mappedObject.getClass().getCanonicalName());
 		setMetadataUuid(mappedObject.getUuid());
+	}
+	
+	/**
+	 * @param mappedObjectReference metadata object this term maps to, may not be null
+	 */
+	public void setMappedObject(MetadataReference mappedObjectReference) {
+		ArgUtil.notNull(mappedObjectReference, "mappedObject");
+		setMetadataClass(mappedObjectReference.getReferenceCanonicalClassName());
+		setMetadataUuid(mappedObjectReference.getReferenceUuid());
 	}
 	
 	/**

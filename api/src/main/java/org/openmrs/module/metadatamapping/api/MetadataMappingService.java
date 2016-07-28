@@ -237,9 +237,21 @@ public interface MetadataMappingService {
 	 * @return list of metadata source
 	 * @since 1.1
 	 * @should respect includeRetired flag
+	 * @deprecated use {@link #getMetadataSources(MetadataSourceSearchCriteria)} instead
 	 */
 	@Authorized()
+	@Deprecated
 	List<MetadataSource> getMetadataSources(boolean includeRetired);
+	
+	/**
+	 * Find all the metadata sources that match the given criteria.
+	 * @param searchCriteria find sources matching these criteria
+	 * @return list of sources
+	 * @since 1.2
+	 * @should return sources matching every criteria
+	 */
+	@Authorized()
+	List<MetadataSource> getMetadataSources(MetadataSourceSearchCriteria searchCriteria);
 	
 	/**
 	 * Get metadata source with the given id.
@@ -320,13 +332,25 @@ public interface MetadataMappingService {
 	MetadataTermMapping getMetadataTermMappingByUuid(String metadataTermMappingUuid);
 	
 	/**
+	 * Find all the metadata term mappings that match the given criteria.
+	 * @param searchCriteria find term mappings matching these criteria
+	 * @return list of metadata term mappings
+	 * @since 1.2
+	 * @should return term mappings matching every criteria
+	 */
+	@Authorized()
+	List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria);
+	
+	/**
 	 * Find all the unretired metadata term mappings that refer to the given metadata object.
 	 * @param referredObject find term mappings that refer to this object
 	 * @return list of matching metadata term mappings
 	 * @since 1.1
 	 * @should return unretired term mappings referring to object
+	 * @deprecated Use {@link #getMetadataTermMappings(MetadataTermMappingSearchCriteria)} instead
 	 */
 	@Authorized()
+	@Deprecated
 	List<MetadataTermMapping> getMetadataTermMappings(OpenmrsMetadata referredObject);
 	
 	/**
@@ -343,7 +367,7 @@ public interface MetadataMappingService {
 	/**
 	 * Get a specific metadata term mapping from a specific source. 
 	 * @param metadataSource source of the term
-	 * @param metadataTermCode code of the term   
+	 * @param metadataTermCode code of the term
 	 * @return object or null, if does not exist
 	 * @since 1.1
 	 * @should return a retired term mapping
@@ -357,8 +381,10 @@ public interface MetadataMappingService {
 	 * @return list of terms
 	 * @since 1.1
 	 * @should return only unretired term mappings
+	 * @deprecated Use {@link #getMetadataTermMappings(MetadataTermMappingSearchCriteria)} instead
 	 */
 	@Authorized()
+	@Deprecated
 	List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource);
 	
 	/**
