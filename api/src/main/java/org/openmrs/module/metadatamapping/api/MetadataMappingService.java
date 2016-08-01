@@ -399,7 +399,7 @@ public interface MetadataMappingService {
 	 * referred to by the metadata term mapping
 	 * @since 1.1
 	 * @should return unretired metadata item for unretired term
-	 * @should not return retired metadata item for unretired term
+	 * @should return retired metadata item for unretired term
 	 * @should not return unretired metadata item for retired term
 	 * @should fail on type mismatch
 	 * @should return null if term does not exist
@@ -414,7 +414,7 @@ public interface MetadataMappingService {
 	 * @param <T> type of the metadata item
 	 * @return list of matching metadata items
 	 * @since 1.1
-	 * @should return unretired metadata items of unretired terms matching type
+	 * @should return metadata items of terms matching type
 	 * @should return nothing if source does not exist
 	 */
 	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)

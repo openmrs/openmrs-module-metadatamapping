@@ -195,11 +195,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 				        + metadataTermMapping.getUuid() + " refers to type " + metadataTermMapping.getMetadataClass());
 			}
 			metadataItem = internalGetByUuid(type, metadataTermMapping.getMetadataUuid());
-			if (metadataItem != null && metadataItem.isRetired()) {
-				metadataItem = null;
-			}
 		}
-		
 		return metadataItem;
 	}
 	
@@ -210,7 +206,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		Criteria metadataTermCriteria = createSourceMetadataTermCriteria(metadataSourceName, type, null);
 		for (MetadataTermMapping metadataTermMapping : (List<MetadataTermMapping>) metadataTermCriteria.list()) {
 			T metadataItem = internalGetByUuid(type, metadataTermMapping.getMetadataUuid());
-			if (metadataItem != null && !metadataItem.isRetired()) {
+			if (metadataItem != null) {
 				metadataItems.add(metadataItem);
 			}
 		}
