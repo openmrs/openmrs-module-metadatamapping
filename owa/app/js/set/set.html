@@ -1,0 +1,24 @@
+<div align="center">
+        <div align="left">
+            <div>
+                <button ng-click="vm.cancel()">
+                    <i class="icon-remove"></i>
+                    {{"Concept.cancel" | translate}}
+                </button>
+                <button ng-if="vm.mapping.metadataUuid" ng-click="vm.unset()">
+                    <i class="icon-reply"></i>
+                    Unset
+                </button>
+            </div>
+            <openmrs-list
+                    on-update='vm.confirm(selectedItem)'
+                    resource="vm.resource"
+                    columns="vm.columns"
+                    limit="vm.limit"
+                    disable-links="vm.disableLinks"
+                    actions="vm.actions"
+                    enable-search="vm.enableSearch"
+                    minimum-query-length="0">
+            </openmrs-list>
+        </div>
+</div>

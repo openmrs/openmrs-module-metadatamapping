@@ -9,9 +9,9 @@ import org.openmrs.module.metadatamapping.MetadataSource;
  * @since 1.2
  */
 public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
-	
+
 	private Boolean mapped;
-	
+
 	private MetadataSource metadataSource;
 	
 	private String metadataTermCode;
