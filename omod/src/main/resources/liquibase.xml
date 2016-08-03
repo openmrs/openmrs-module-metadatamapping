@@ -312,22 +312,4 @@
 		</delete>
 	</changeSet>
 
-	<changeSet id="metadatamapping-2016-08-03-1044" author="adamgrzybkowski">
-		<preConditions onFail="MARK_RAN">
-			<columnExists tableName="metadatamapping_metadata_source"
-						  columnName="date_changed" />
-			<columnExists tableName="metadatamapping_metadata_term_mapping"
-						  columnName="date_changed" />
-		</preConditions>
-		<comment>
-			Make date_changed optional 
-		</comment>
-		<dropNotNullConstraint tableName="metadatamapping_metadata_term_mapping"
-							   columnName="date_changed"
-							   columnDataType="datetime"/>
-		<dropNotNullConstraint tableName="metadatamapping_metadata_source"
-							   columnName="date_changed"
-							   columnDataType="datetime"/>
-	</changeSet>
-
 </databaseChangeLog>
