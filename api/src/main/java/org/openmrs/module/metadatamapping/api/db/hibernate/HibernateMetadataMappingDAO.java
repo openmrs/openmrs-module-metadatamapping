@@ -161,6 +161,14 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 			criteria.add(Restrictions.eq("retired", false));
 		}
 		
+		if (searchCriteria.getMapped() != null) {
+			if (searchCriteria.getMapped()) {
+				criteria.add(Restrictions.isNotNull("metadataUuid"));
+			} else {
+				criteria.add(Restrictions.isNull("metadataUuid"));
+			}
+		}
+		
 		if (searchCriteria.getMetadataSource() != null) {
 			criteria.add(Restrictions.eq("metadataSource", searchCriteria.getMetadataSource()));
 		}
