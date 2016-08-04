@@ -14,6 +14,7 @@
 package org.openmrs.module.metadatamapping;
 
 import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
 
 /**
@@ -25,30 +26,29 @@ public class MetadataSetMember extends BaseOpenmrsMetadata {
 	
 	private MetadataSet metadataSet;
 	
-	private MetadataTermMapping metadataTermMapping;
+	private String metadataUuid;
+	
+	private String metadataClass;
 	
 	private Double sortWeight;
 	
-	/**
-	 * Construct a new metadata set member.
-	 * @see #MetadataSetMember(MetadataSet, MetadataTermMapping) 
-	 */
 	public MetadataSetMember() {
-		// Initialize name so that it needs not be set as it is of little use for a metadata set member.
-		setName("");
 	}
 	
-	/**
-	 * Construct a new metadata set member.
-	 * @param metadataSet set this member belongs to, may not be null
-	 * @param metadataTermMapping member metadata term mapping, may not be null
-	 */
-	public MetadataSetMember(MetadataSet metadataSet, MetadataTermMapping metadataTermMapping) {
-		this();
-		ArgUtil.notNull(metadataSet, "metadataSet");
-		ArgUtil.notNull(metadataTermMapping, "metadataTermMapping");
+	public MetadataSetMember(OpenmrsMetadata mappedObject) {
+		setMappedObject(mappedObject);
+	}
+	
+	public MetadataSetMember(OpenmrsMetadata mappedObject, MetadataSet metadataSet) {
+		setMappedObject(mappedObject);
 		this.metadataSet = metadataSet;
-		this.metadataTermMapping = metadataTermMapping;
+	}
+	
+	public void setMappedObject(OpenmrsMetadata mappedObject) {
+		ArgUtil.notNull(mappedObject, "mappedObject");
+		ArgUtil.notNull(mappedObject.getUuid(), "mappedObject.uuid");
+		setMetadataClass(mappedObject.getClass().getCanonicalName());
+		setMetadataUuid(mappedObject.getUuid());
 	}
 	
 	/**
@@ -99,21 +99,6 @@ public class MetadataSetMember extends BaseOpenmrsMetadata {
 	}
 	
 	/**
-	 * @return member metadata term mapping, is never null
-	 */
-	public MetadataTermMapping getMetadataTermMapping() {
-		return metadataTermMapping;
-	}
-	
-	/**
-	 * @param metadataTermMapping member metadata term mapping, may not be null
-	 */
-	public void setMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
-		ArgUtil.notNull(metadataTermMapping, "metadataTermMapping");
-		this.metadataTermMapping = metadataTermMapping;
-	}
-	
-	/**
 	 * @return sort weight used in sorting, may be null
 	 */
 	public Double getSortWeight() {
@@ -125,5 +110,21 @@ public class MetadataSetMember extends BaseOpenmrsMetadata {
 	 */
 	public void setSortWeight(Double sortWeight) {
 		this.sortWeight = sortWeight;
+	}
+	
+	public String getMetadataClass() {
+		return metadataClass;
+	}
+	
+	public void setMetadataClass(String metadataClass) {
+		this.metadataClass = metadataClass;
+	}
+	
+	public String getMetadataUuid() {
+		return metadataUuid;
+	}
+	
+	public void setMetadataUuid(String metadataUuid) {
+		this.metadataUuid = metadataUuid;
 	}
 }

@@ -16,7 +16,6 @@ package org.openmrs.module.metadatamapping;
 import org.openmrs.BaseOpenmrsMetadata;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
-import org.openmrs.module.metadatamapping.util.StateUtil;
 
 /**
  * Maps a "term" withing a specific namespace or "source" to a local metadata object. {@link #getCode()} is the public 
@@ -153,7 +152,6 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	 * @throws IllegalStateException when already set   
 	 */
 	public void setMetadataSource(MetadataSource metadataSource) {
-		StateUtil.mustNotChangeIfSet(this.metadataSource, metadataSource, "metadataSource may not be changed");
 		ArgUtil.notNull(metadataSource, "metadataSource");
 		this.metadataSource = metadataSource;
 	}

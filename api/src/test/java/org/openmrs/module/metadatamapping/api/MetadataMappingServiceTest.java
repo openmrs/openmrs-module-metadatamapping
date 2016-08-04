@@ -48,6 +48,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.ExpectedException;
 
+import static org.hamcrest.Matchers.is;
+
 public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
@@ -656,14 +658,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// when
 		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(6, termMappings.size());
+		Assert.assertEquals(8, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setIncludeAll(true);
 		// when
 		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(8, termMappings.size());
+		Assert.assertEquals(10, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setMaxResults(2);
@@ -681,7 +683,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertEquals(3, termMappings.size());
 		Assert.assertEquals("xyz", termMappings.get(0).getCode());
-		Assert.assertEquals("mdt-nnl", termMappings.get(2).getCode());
+		Assert.assertEquals("mdt-väi", termMappings.get(2).getCode());
 		
 		// given
 		Location neverNeverLand = locationService.getLocationByUuid("167ce20c-4785-4285-9119-d197268f7f4a");
@@ -898,8 +900,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	@Verifies(value = "save valid new object", method = "saveMetadataSet(MetadataSet)")
 	public void saveMetadataSet_shouldSaveValidNewObject() {
 		// given
-		MetadataSet metadataSet = new MetadataSet(service.getMetadataSource(1), "my-set");
-		metadataSet.setName("My Metadata Set");
+		MetadataSet metadataSet = new MetadataSet();
 		Assert.assertNull(metadataSet.getId());
 		
 		// when
@@ -921,16 +922,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	@Verifies(value = "return a retired set", method = "getMetadataSet(MetadataSource, String)")
 	public void getMetadataSet_shouldReturnARetiredSet() {
 		// given
-		// data in the test data set, and the following
-		MetadataSource metadataSource = service.getMetadataSource(1);
+		// data in the test data set
 		
 		// when
-		MetadataSet retiredMetadataSet = service.getMetadataSet(metadataSource, "qwe");
+		MetadataSet retiredMetadataSet = service.getMetadataSetByUuid("b3f4aa58-ab02-4379-ae61-ec2e15c29c1e");
 		
 		// then
 		Assert.assertNotNull(retiredMetadataSet);
 		Assert.assertTrue(retiredMetadataSet.isRetired());
-		Assert.assertEquals("qwe", retiredMetadataSet.getCode());
 	}
 	
 	@Test
@@ -944,7 +943,6 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// then
 		Assert.assertNotNull("getMetadataSetByUuid returned a set object", locationsSet);
-		Assert.assertEquals("set name is as expected", "Favourite Locations", locationsSet.getName());
 	}
 	
 	@Test
@@ -1001,15 +999,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "get members in desired order 2", method = "getMetadataSetMembers(String, String, int, int, "
-	        + "RetiredHandlingMode)")
+	@Verifies(value = "get members in desired order 2", method = "getMetadataSetMembers(String, int, int, RetiredHandlingMode)")
 	public void getMetadataSetMembers_shouldGetMembersInDesiredOrder2() {
 		new TestCase_getMetadataSetMembers() {
 			
 			@Override
 			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults) {
-				return service.getMetadataSetMembers(metadataSet.getMetadataSource().getName(), metadataSet.getCode(),
-				    firstResult, maxResults, RetiredHandlingMode.ONLY_ACTIVE);
+				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults,
+				    RetiredHandlingMode.ONLY_ACTIVE);
 			}
 		}.run();
 	}
@@ -1037,8 +1034,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 			@Override
 			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
 			        RetiredHandlingMode retiredHandlingMode) {
-				return service.getMetadataSetMembers(metadataSet.getMetadataSource().getName(), metadataSet.getCode(),
-				    firstResult, maxResults, retiredHandlingMode);
+				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults, retiredHandlingMode);
 			}
 		}.run();
 	}
@@ -1064,23 +1060,69 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 			@Override
 			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 			        int maxResults) {
-				return service.getMetadataSetItems(type, metadataSet.getMetadataSource().getName(), metadataSet.getCode(),
-				    firstResult, maxResults);
+				return service.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 			}
 		}.run();
 	}
 	
 	@Test
-	@Verifies(value = "return nothing if set does not exist", method = "getMetadataSetItems(Class, MetadataSet, int, int)")
-	public void getMetadataSetItems_shouldReturnNothingIfSetDoesNotExist() throws Exception {
+	@Verifies(value = "throw IllegalArgumentException if set does not exist", method = "getMetadataSetItems(Class, MetadataSet, int, int)")
+	@ExpectedException(IllegalArgumentException.class)
+	public void getMetadataSetItems_shouldThrowExceptionIfMetadataSetDoesNotExist() throws Exception {
 		// given
-		MetadataSource source = service.getMetadataSource(1);
 		
 		// when
-		List<Location> locations = service.getMetadataSetItems(Location.class, source.getName(), "qwe", 0, 1000);
+		List<Location> locations = service.getMetadataSetItems(Location.class, null, 0, 1000);
 		
 		// then
-		Assert.assertEquals(0, locations.size());
+		// expect exception thrown
+	}
+
+	@Test
+	@Verifies(value = "return unretired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnUnretiredMetadataItemForUnretiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(2);
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNotNull(metadataItem);
+	}
+
+	@Test
+	@Verifies(value = "not return retired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldNotReturnRetiredMetadataItemForUnretiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(4);
+		Assert.assertThat(member.isRetired(), is(false));
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNull(metadataItem);
+	}
+
+	@Test
+	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldNotReturnUnretiredMetadataItemForRetiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(5);
+		Assert.assertThat(member.isRetired(), is(true));
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNull(metadataItem);
+	}
+
+	@Test
+	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnNullForNonExistentSetMember() throws Exception {
+		// given
+		// test dataset
+
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, null);
+		// then
+		Assert.assertNull(metadataItem);
 	}
 	
 	@Test
@@ -1113,11 +1155,11 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 			Assert.assertEquals(5, members.size());
 			
 			Iterator<MetadataSetMember> memberIterator = members.iterator();
-			Assert.assertEquals("mdt-xan", memberIterator.next().getMetadataTermMapping().getCode());
-			Assert.assertEquals("mdt-nnl", memberIterator.next().getMetadataTermMapping().getCode());
-			Assert.assertEquals("abc", memberIterator.next().getMetadataTermMapping().getCode());
-			Assert.assertEquals("mdt-poh", memberIterator.next().getMetadataTermMapping().getCode());
-			Assert.assertEquals("mdt-väi", memberIterator.next().getMetadataTermMapping().getCode());
+			Assert.assertEquals("e1e2cc7d-dfb4-4e26-85b1-727666ff066d", memberIterator.next().getUuid());
+			Assert.assertEquals("0bc57eff-3088-460d-880b-56988d02851b", memberIterator.next().getUuid());
+			Assert.assertEquals("f75d45fb-f478-438a-970c-1a6b4f61f503", memberIterator.next().getUuid());
+			Assert.assertEquals("b0c99f16-14b8-49b2-8d14-1e7447ad6aa9", memberIterator.next().getUuid());
+			Assert.assertEquals("e9bed2b0-2828-44b3-a499-e3a307600197", memberIterator.next().getUuid());
 		}
 	}
 	
@@ -1138,12 +1180,12 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 			// then
 			Assert.assertEquals(2, membersWithRetired.size());
 			Iterator<MetadataSetMember> memberWithRetiredIterator = membersWithRetired.iterator();
-			Assert.assertEquals("mdt-xan", memberWithRetiredIterator.next().getMetadataTermMapping().getCode());
-			Assert.assertEquals("abc", memberWithRetiredIterator.next().getMetadataTermMapping().getCode());
+			Assert.assertEquals("r2d180c6-d5fb-4202-b1a6-80a06273c158", memberWithRetiredIterator.next().getMetadataUuid());
+			Assert.assertEquals("9356400c-a5a2-4532-8f2b-2361b3446eb8", memberWithRetiredIterator.next().getMetadataUuid());
 			
 			Assert.assertEquals(1, membersOnlyActive.size());
 			Iterator<MetadataSetMember> memberOnlyActiveIterator = membersOnlyActive.iterator();
-			Assert.assertEquals("abc", memberOnlyActiveIterator.next().getMetadataTermMapping().getCode());
+			Assert.assertEquals("r2d180c6-d5fb-4202-b1a6-80a06273c158", memberOnlyActiveIterator.next().getMetadataUuid());
 		}
 	}
 	

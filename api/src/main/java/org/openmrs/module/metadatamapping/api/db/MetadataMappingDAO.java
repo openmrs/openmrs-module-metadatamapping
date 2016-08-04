@@ -157,13 +157,6 @@ public interface MetadataMappingDAO {
 	MetadataSet getMetadataSetByUuid(String metadataSetUuid);
 	
 	/**
-	 * Get metadata set with the given name. 
-	 * @param metadataSource source of the set
-	 * @param metadataSetCode code of the set   
-	 */
-	MetadataSet getMetadataSet(MetadataSource metadataSource, String metadataSetCode);
-	
-	/**
 	 * Save a new metadata set member or update an existing one.
 	 * @param metadataSetMember object to save
 	 * @return saved object
@@ -195,25 +188,22 @@ public interface MetadataMappingDAO {
 	 * @param maxResults maximum number of results to get
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
-	 * @see #getMetadataSetMembers(String, String, int, int, RetiredHandlingMode)
 	 */
 	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
-	 * Get members of a metadata set. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered 
-	 * in ascending order according to said weight. Note that due to differences in database implementations, the order 
+	 * Get members of a metadata set with given uuid. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered
+	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
 	 * will be unpredictable, if there are null sort weights in the set.
-	 * @param metadataSourceName name of the source of the set
-	 * @param metadataSetCode code of the set
-	 * @param firstResult zero based index of first result to get 
+	 * @param metadataSetUuid metadata set uuid
+	 * @param firstResult zero based index of first result to get
 	 * @param maxResults maximum number of results to get
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
-	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
 	 */
-	List<MetadataSetMember> getMetadataSetMembers(String metadataSourceName, String metadataSetCode, int firstResult,
-	        int maxResults, RetiredHandlingMode retiredHandlingMode);
+	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
 	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will 
@@ -225,24 +215,7 @@ public interface MetadataMappingDAO {
 	 * @param maxResults maximum number of results to get
 	 * @param <T> type of the metadata items
 	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
-	 * @see #getMetadataSetItems(Class, String, String, int, int)
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
-	
-	/**
-	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will 
-	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations, 
-	 * the order  will be unpredictable, if there are null sort weights in the set.
-	 * @param type type of the metadata items
-	 * @param metadataSourceName name of the source of the set
-	 * @param metadataSetCode code of the set
-	 * @param firstResult zero based index of first result to get 
-	 * @param maxResults maximum number of results to get
-	 * @param <T> type of the metadata items
-	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
-	 * @see #getMetadataSetItems(Class, MetadataSet, int, int)
-	 */
-	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, String metadataSourceName,
-	        String metadataSetCode, int firstResult, int maxResults);
 }

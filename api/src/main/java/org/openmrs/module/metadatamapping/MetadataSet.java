@@ -24,31 +24,6 @@ public class MetadataSet extends BaseOpenmrsMetadata {
 	
 	private Integer metadataSetId;
 	
-	private MetadataSource metadataSource;
-	
-	private String code;
-	
-	/**
-	 * Construct a new metadata set.
-	 * @see #MetadataSet(MetadataSource, String)
-	 */
-	public MetadataSet() {
-	}
-	
-	/**
-	 * Construct a new metadata set.
-	 * @param metadataSource source of this set, may not be null
-	 * @param metadataSetCode code of this set, may not be null
-	 */
-	public MetadataSet(MetadataSource metadataSource, String metadataSetCode) {
-		ArgUtil.notNull(metadataSource, "metadataSource");
-		ArgUtil.notNull(metadataSetCode, "metadataSetCode");
-		setMetadataSource(metadataSource);
-		setCode(metadataSetCode);
-		this.metadataSource = metadataSource;
-		this.code = metadataSetCode;
-	}
-	
 	/**
 	 * Delegates to {@link #getMetadataSetId()}
 	 * @return locally unique identifier for the object
@@ -79,37 +54,5 @@ public class MetadataSet extends BaseOpenmrsMetadata {
 	 */
 	public void setMetadataSetId(Integer metadataSetId) {
 		this.metadataSetId = metadataSetId;
-	}
-	
-	/**
-	 * @return source of this set, is never null
-	 */
-	public MetadataSource getMetadataSource() {
-		return metadataSource;
-	}
-	
-	/**
-	 * @param metadataSource source of this set, may not be null
-	 * @throws IllegalStateException when already set   
-	 */
-	public void setMetadataSource(MetadataSource metadataSource) {
-		StateUtil.mustNotChangeIfSet(this.metadataSource, metadataSource, "metadataSource may not be changed");
-		ArgUtil.notNull(metadataSource, "metadataSource");
-		this.metadataSource = metadataSource;
-	}
-	
-	/**
-	 * @return code of this set within {@link #getMetadataSource()}, is never null
-	 */
-	public String getCode() {
-		return code;
-	}
-	
-	/**
-	 * @param code code of this set within {@link #getMetadataSource()}, may not be null
-	 */
-	public void setCode(String code) {
-		ArgUtil.notNull(code, "code");
-		this.code = code;
 	}
 }

@@ -24,14 +24,12 @@ Copyright (C) OpenMRS, LLC.  All Rights Reserved.
 		<many-to-one name="metadataSet" class="org.openmrs.module.metadatamapping.MetadataSet" not-null="true">
 			<column name="metadata_set_id" />
 		</many-to-one>
-		<many-to-one name="metadataTermMapping" class="org.openmrs.module.metadatamapping.MetadataTermMapping"
-					 not-null="true">
-			<column name="metadata_term_mapping_id" />
-		</many-to-one>
+		<property name="metadataClass" type="java.lang.String" column="metadata_class" length="1024" not-null="true" />
+		<property name="metadataUuid" type="java.lang.String" column="metadata_uuid" length="38" not-null="true" />
 		<property name="sortWeight" type="java.lang.Double" column="sort_weight" />
 		
 		<!-- BaseOpenmrsMetadata -->
-		<property name="name" type="java.lang.String" column="name" not-null="true" length="255" />
+		<property name="name" type="java.lang.String" column="name" length="255" />
 		<property name="description" type="java.lang.String" column="description" length="1024" />
 		<many-to-one name="creator" class="org.openmrs.User" not-null="true">
 			<column name="creator" />

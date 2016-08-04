@@ -102,65 +102,59 @@
 	<!-- ############################################################################################################## -->
 	<metadatamapping_metadata_set metadata_set_id="1"
 								  uuid="2fb06283-befc-4273-9448-2fcbbe4c99d5"
-								  name="Favourite Locations"
-								  metadata_source_id="1"
-								  code="loc-fav"
 								  creator="1"
 								  date_created="2015-11-14 22:02:00.0"
 								  retired="false" />
 	<!-- The MetadataTermMapping 5 is retired -->
 	<metadatamapping_metadata_set_member metadata_set_member_id="1"
 										 metadata_set_id="1"
-										 metadata_term_mapping_id="5"
 										 sort_weight="3.0"
 										 uuid="f75d45fb-f478-438a-970c-1a6b4f61f503"
-										 name=""
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
 										 creator="1"
 										 date_created="2015-11-14 22:02:00.0"
 										 retired="false" />
 	<metadatamapping_metadata_set_member metadata_set_member_id="2"
 										 metadata_set_id="1"
-										 metadata_term_mapping_id="1"
 										 sort_weight="1.0"
 										 uuid="e9bed2b0-2828-44b3-a499-e3a307600197"
-										 name=""
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="6a65bd39-a7be-43c0-b09f-d536026d6ff1"
 										 creator="1"
 										 date_created="2015-11-14 22:02:00.0"
 										 retired="false" />
 	<!-- The metadata item of MetadataTermMapping 2 is retired -->
 	<metadatamapping_metadata_set_member metadata_set_member_id="3"
 										 metadata_set_id="1"
-										 metadata_term_mapping_id="2"
 										 sort_weight="2.0"
 										 uuid="b0c99f16-14b8-49b2-8d14-1e7447ad6aa9"
-										 name=""
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="d3d180c6-d5fb-4202-b1a6-80a06273c158"
 										 creator="1"
 										 date_created="2015-11-14 22:02:00.0"
 										 retired="false" />
 	<metadatamapping_metadata_set_member metadata_set_member_id="6"
 										 metadata_set_id="1"
-										 metadata_term_mapping_id="9"
 										 sort_weight="9.0"
 										 uuid="e1e2cc7d-dfb4-4e26-85b1-727666ff066d"
-										 name=""
+										 metadata_class="org.openmrs.EncounterType"
+										 metadata_uuid="06087e80-d565-11e3-9c1a-0800200c9a66"
 										 creator="1"
 										 date_created="2015-11-22 22:02:00.0"
 										 retired="false" />
 	<metadatamapping_metadata_set_member metadata_set_member_id="7"
 										 metadata_set_id="1"
-										 metadata_term_mapping_id="10"
 										 sort_weight="7.0"
 										 uuid="0bc57eff-3088-460d-880b-56988d02851b"
-										 name=""
+										 metadata_class="org.openmrs.EncounterType"
+										 metadata_uuid="06087111-222-11e3-9c1a-0800200c9a66"
 										 creator="1"
 										 date_created="2015-11-22 22:02:00.0"
 										 retired="false" />
 	
 	<metadatamapping_metadata_set metadata_set_id="2"
 								  uuid="b3f4aa58-ab02-4379-ae61-ec2e15c29c1e"
-								  name="Favourite Locations"
-								  metadata_source_id="1"
-								  code="qwe"
 								  creator="1"
 								  date_created="2015-11-14 22:02:00.0"
 								  retired="true"
@@ -170,27 +164,24 @@
 	
 	<metadatamapping_metadata_set metadata_set_id="3"
 								  uuid="552b694b-c493-43ee-810a-16ab5542ee83"
-								  name="Favourite Locations 2"
-								  metadata_source_id="1"
-								  code="loc-fav-2"
 								  creator="1"
 								  date_created="2015-11-18 22:02:00.0"
 								  retired="false" />
 	<metadatamapping_metadata_set_member metadata_set_member_id="4"
 										 metadata_set_id="3"
-										 metadata_term_mapping_id="5"
 										 sort_weight="3.0"
 										 uuid="4c51deee-0c27-4991-92de-e09f8ae79c4d"
-										 name=""
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="r2d180c6-d5fb-4202-b1a6-80a06273c158"
 										 creator="1"
 										 date_created="2015-11-18 22:02:00.0"
 										 retired="false" />
 	<metadatamapping_metadata_set_member metadata_set_member_id="5"
 										 metadata_set_id="3"
-										 metadata_term_mapping_id="1"
 										 sort_weight="1.0"
 										 uuid="0f41f557-f360-4d20-bc51-b6a1c4b547ac"
-										 name=""
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
 										 creator="1"
 										 date_created="2015-11-18 22:02:00.0"
 										 retired="true"
@@ -276,5 +267,29 @@
 			  date_created="2015-11-22 13:48:50.0"
 			  retired="false"
 			  uuid="d3d180c6-d5fb-4202-b1a6-80a06273c158" />
-	
+
+	<location location_id="20"
+			  name="PPNT"
+			  description="Home"
+			  address1=""
+			  address2=""
+			  city_village="Unknown"
+			  state_province=""
+			  postal_code=""
+			  country="Bologna"
+			  latitude=""
+			  longitude=""
+			  creator="1"
+			  date_created="2015-11-22 13:48:50.0"
+			  retired="true"
+			  uuid="r2d180c6-d5fb-4202-b1a6-80a06273c158" />
+
+	<encounter_type encounter_type_id="1002" name="Discharge" description="Discharge from Inpatient (allows autoclosing visits)" creator="1"
+					date_created="2012-10-23 18:04:14" retired="0" uuid="3bbdc54a-b8eb-11e2-9426-3edb8e345d35"/>
+
+	<encounter_type encounter_type_id="1003" name="Visit Note" description="Consult With Physican" creator="1"
+					date_created="2012-10-23 18:04:14" retired="0" uuid="06087e80-d565-11e3-9c1a-0800200c9a66"/>
+
+	<encounter_type encounter_type_id="1004" name="Admission" description="Admit to Inpatient" creator="1"
+					date_created="2012-10-23 18:04:14" retired="0" uuid="06087111-222-11e3-9c1a-0800200c9a66"/>
 </dataset>

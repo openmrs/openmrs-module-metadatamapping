@@ -59,7 +59,6 @@
 		MetadataTerm.hbm.xml
 		MetadataSet.hbm.xml
 		MetadataSetMember.hbm.xml
->>>>>>> MAP-4: Add MetadataSet with service api
 	</mappingFiles>
 
 	<!-- Internationalization -->

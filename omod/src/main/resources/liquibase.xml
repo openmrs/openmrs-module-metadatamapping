@@ -195,159 +195,6 @@
 							 tableName="metadatamapping_metadata_source"
 							 columnNames="name" />
 	</changeSet>
-	
-	<changeSet id="metadatamapping-2015-11-22-1840" author="kosmik">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="metadatamapping_metadata_set" />
-			</not>
-		</preConditions>
-		<comment>Create metadata set table</comment>
-		<createTable tableName="metadatamapping_metadata_set">
-			<column name="metadata_set_id" autoIncrement="true" type="int">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="metadata_source_id" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="code" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			
-			<!-- columns for OpenMRSMetadata -->
-			<column name="name" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(1024)" />
-			<column name="creator" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="date_created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="changed_by" type="int" />
-			<column name="date_changed" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="retired" defaultValueBoolean="false" type="boolean">
-				<constraints nullable="false" />
-			</column>
-			<column name="date_retired" type="datetime" defaultValue="null" />
-			<column name="retired_by" type="int" defaultValue="null" />
-			<column name="retire_reason" type="varchar(255)" defaultValue="null" />
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" unique="true" />
-			</column>
-		</createTable>
-		
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_metadata_source_id"
-								 baseTableName="metadatamapping_metadata_set"
-								 baseColumnNames="metadata_source_id"
-								 referencedTableName="metadatamapping_metadata_source"
-								 referencedColumnNames="metadata_source_id" />
-		
-		<addUniqueConstraint constraintName="metadatamapping_metadata_set_code_unique_within_source"
-							 tableName="metadatamapping_metadata_set"
-							 columnNames="metadata_source_id, code" />
-		
-		<!-- constraints for OpenMRSMetadata -->
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_creator"
-								 baseTableName="metadatamapping_metadata_set"
-								 baseColumnNames="creator"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_changed_by"
-								 baseTableName="metadatamapping_metadata_set"
-								 baseColumnNames="changed_by"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_retired_by"
-								 baseTableName="metadatamapping_metadata_set"
-								 baseColumnNames="retired_by"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<!-- /constraints for OpenMRSMetadata -->
-	</changeSet>
-	
-	<changeSet id="metadatamapping-2015-11-22-1841" author="kosmik">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="metadatamapping_metadata_set_member" />
-			</not>
-		</preConditions>
-		<comment>Create metadata set member table</comment>
-		<createTable tableName="metadatamapping_metadata_set_member">
-			<column name="metadata_set_member_id" autoIncrement="true" type="int">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="metadata_set_id" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="metadata_term_mapping_id" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="sort_weight" type="double" />
-			
-			<!-- columns for OpenMRSMetadata -->
-			<column name="name" type="varchar(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(1024)" />
-			<column name="creator" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="date_created" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="changed_by" type="int" />
-			<column name="date_changed" type="datetime">
-				<constraints nullable="false" />
-			</column>
-			<column name="retired" defaultValueBoolean="false" type="boolean">
-				<constraints nullable="false" />
-			</column>
-			<column name="date_retired" type="datetime" defaultValue="null" />
-			<column name="retired_by" type="int" defaultValue="null" />
-			<column name="retire_reason" type="varchar(255)" defaultValue="null" />
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" unique="true" />
-			</column>
-			<!-- /columns for OpenMRSMetadata -->
-		</createTable>
-		
-		<addUniqueConstraint constraintName="metadatamapping_metadata_set_member_term_unique_within_set"
-							 tableName="metadatamapping_metadata_set_member"
-							 columnNames="metadata_set_id, metadata_term_mapping_id" />
-		
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_metadata_set_id"
-								 baseTableName="metadatamapping_metadata_set_member"
-								 baseColumnNames="metadata_set_id"
-								 referencedTableName="metadatamapping_metadata_set"
-								 referencedColumnNames="metadata_set_id" />
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_metadata_term_mapping_id"
-								 baseTableName="metadatamapping_metadata_set_member"
-								 baseColumnNames="metadata_term_mapping_id"
-								 referencedTableName="metadatamapping_metadata_term_mapping"
-								 referencedColumnNames="metadata_term_mapping_id" />
-		
-		<!-- constraints for OpenMRSMetadata -->
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_creator"
-								 baseTableName="metadatamapping_metadata_set_member"
-								 baseColumnNames="creator"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_changed_by"
-								 baseTableName="metadatamapping_metadata_set_member"
-								 baseColumnNames="changed_by"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_retired_by"
-								 baseTableName="metadatamapping_metadata_set_member"
-								 baseColumnNames="retired_by"
-								 referencedTableName="users"
-								 referencedColumnNames="user_id" />
-		<!-- /constraints for OpenMRSMetadata -->
-	</changeSet>
 
 	<changeSet id="metadatamapping-2016-01-06-0800" author="jasonvena">
 		<preConditions onFail="MARK_RAN">
@@ -481,6 +328,136 @@
 		<dropNotNullConstraint tableName="metadatamapping_metadata_source"
 							   columnName="date_changed"
 							   columnDataType="datetime"/>
+	</changeSet>
+
+	<changeSet id="metadatamapping-2016-08-04-1511" author="pgutkowski">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="metadatamapping_metadata_set" />
+			</not>
+		</preConditions>
+		<comment>Create metadata set table</comment>
+		<createTable tableName="metadatamapping_metadata_set">
+			<column name="metadata_set_id" autoIncrement="true" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<!-- columns for OpenMRSMetadata -->
+			<column name="name" type="varchar(255)"/>
+			<column name="description" type="varchar(1024)" />
+			<column name="creator" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="changed_by" type="int" />
+			<column name="date_changed" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="retired" defaultValueBoolean="false" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_retired" type="datetime" defaultValue="null" />
+			<column name="retired_by" type="int" defaultValue="null" />
+			<column name="retire_reason" type="varchar(255)" defaultValue="null" />
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+		</createTable>
+
+		<!-- constraints for OpenMRSMetadata -->
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_creator"
+								 baseTableName="metadatamapping_metadata_set"
+								 baseColumnNames="creator"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_changed_by"
+								 baseTableName="metadatamapping_metadata_set"
+								 baseColumnNames="changed_by"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_retired_by"
+								 baseTableName="metadatamapping_metadata_set"
+								 baseColumnNames="retired_by"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<!-- /constraints for OpenMRSMetadata -->
+	</changeSet>
+
+	<changeSet id="metadatamapping-2016-08-04-1513" author="pgutkowski">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="metadatamapping_metadata_set_member" />
+			</not>
+		</preConditions>
+		<comment>Create metadata set member table</comment>
+		<createTable tableName="metadatamapping_metadata_set_member">
+			<column name="metadata_set_member_id" autoIncrement="true" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="metadata_set_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="metadata_class" type="varchar(1024)">
+				<constraints nullable="false" />
+			</column>
+			<column name="metadata_uuid" type="varchar(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="sort_weight" type="double" />
+			<!-- columns for OpenMRSMetadata -->
+			<column name="name" type="varchar(255)"/>
+			<column name="description" type="varchar(1024)" />
+			<column name="creator" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_created" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="changed_by" type="int" />
+			<column name="date_changed" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="retired" defaultValueBoolean="false" type="boolean">
+				<constraints nullable="false" />
+			</column>
+			<column name="date_retired" type="datetime" defaultValue="null" />
+			<column name="retired_by" type="int" defaultValue="null" />
+			<column name="retire_reason" type="varchar(255)" defaultValue="null" />
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" unique="true" />
+			</column>
+			<!-- /columns for OpenMRSMetadata -->
+		</createTable>
+
+		<addUniqueConstraint constraintName="metadatamapping_metadata_set_member_term_unique_within_set"
+							 tableName="metadatamapping_metadata_set_member"
+							 columnNames="metadata_set_id, metadata_uuid" />
+
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_metadata_set_id"
+								 baseTableName="metadatamapping_metadata_set_member"
+								 baseColumnNames="metadata_set_id"
+								 referencedTableName="metadatamapping_metadata_set"
+								 referencedColumnNames="metadata_set_id" />
+
+		<!-- constraints for OpenMRSMetadata -->
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_creator"
+								 baseTableName="metadatamapping_metadata_set_member"
+								 baseColumnNames="creator"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_changed_by"
+								 baseTableName="metadatamapping_metadata_set_member"
+								 baseColumnNames="changed_by"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<addForeignKeyConstraint constraintName="metadatamapping_metadata_set_member_retired_by"
+								 baseTableName="metadatamapping_metadata_set_member"
+								 baseColumnNames="retired_by"
+								 referencedTableName="users"
+								 referencedColumnNames="user_id" />
+		<!-- /constraints for OpenMRSMetadata -->
 	</changeSet>
 
 </databaseChangeLog>

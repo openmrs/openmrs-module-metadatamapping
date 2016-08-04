@@ -472,12 +472,6 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	@Override
-	@Transactional(readOnly = true)
-	public MetadataSet getMetadataSet(MetadataSource metadataSource, String metadataSetCode) {
-		return dao.getMetadataSet(metadataSource, metadataSetCode);
-	}
-	
-	@Override
 	@Transactional
 	public MetadataSet retireMetadataSet(MetadataSet metadataSet, String reason) {
 		// Required values on metadata set have already been set by the injected BaseRetireHandler.
@@ -514,6 +508,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	@Override
+	public MetadataSetMember saveMetadataSetMember(MetadataSet metadataSet, OpenmrsMetadata metadata) {
+		MetadataSetMember setMember = new MetadataSetMember(metadata, metadataSet);
+		return saveMetadataSetMember(setMember);
+	}
+	
+	@Override
 	@Transactional
 	public Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers) {
 		return dao.saveMetadataSetMembers(metadataSetMembers);
@@ -533,16 +533,16 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
-		return dao.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
+		return dao.getMetadataSetMembers(metadataSetUuid, firstResult, maxResults, retiredHandlingMode);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<MetadataSetMember> getMetadataSetMembers(String metadataSourceName, String metadataSetCode, int firstResult,
-	        int maxResults, RetiredHandlingMode retiredHandlingMode) {
-		return dao.getMetadataSetMembers(metadataSourceName, metadataSetCode, firstResult, maxResults, retiredHandlingMode);
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode) {
+		return dao.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
 	}
 	
 	@Override
@@ -551,14 +551,21 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	        int maxResults) {
 		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
-	
+
 	@Override
-	@Transactional(readOnly = true)
-	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, String metadataSourceName,
-	        String metadataSetCode, int firstResult, int maxResults) {
-		return dao.getMetadataSetItems(type, metadataSourceName, metadataSetCode, firstResult, maxResults);
+	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember) {
+		if(setMember == null || setMember.isRetired()){
+			return null;
+		} else {
+			T item = dao.getByUuid(type, setMember.getMetadataUuid());
+			if(item != null && !item.isRetired()){
+				return item;
+			} else {
+				return null;
+			}
+		}
 	}
-	
+
 	@Override
 	@Transactional
 	public MetadataSetMember retireMetadataSetMember(MetadataSetMember metadataSetMember, String reason) {

@@ -156,14 +156,14 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// when
 		List<SimpleObject> results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("default parameters", 6, results.size());
+		assertEquals("default parameters", 8, results.size());
 		
 		// given
 		request.setParameter(RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, String.valueOf(true));
 		// when
 		results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("include all", 8, results.size());
+		assertEquals("include all", 10, results.size());
 		
 		// given
 		request.setParameter("limit", "2");
@@ -181,7 +181,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// then
 		assertEquals(3, results.size());
 		assertEquals("xyz", PropertyUtils.getProperty(results.get(0), "code"));
-		assertEquals("mdt-nnl", PropertyUtils.getProperty(results.get(2), "code"));
+		assertEquals("61774ac8-ac82-4fd9-b496-fd2016a016f7", PropertyUtils.getProperty(results.get(2), "uuid"));
 		
 		// given
 		Location neverNeverLand = locationService.getLocationByUuid("167ce20c-4785-4285-9119-d197268f7f4a");
@@ -256,7 +256,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	
 	@Override
 	public long getAllCount() {
-		return 6;
+		return 8;
 	}
 	
 	private String getMetadataSourceNameProperty(Object metadataTermResult) throws Exception {
