@@ -2,7 +2,6 @@ package org.openmrs.module.metadatamapping.api;
 
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.MetadataSource;
-import org.openmrs.module.metadatamapping.MetadataTermMapping.MetadataReference;
 
 /**
  * Convenience builder for {@link MetadataTermMappingSearchCriteria}.
@@ -21,9 +20,11 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	
 	private String metadataTermName;
 	
-	private OpenmrsMetadata referredObject;
+	private String metadataUuid;
 	
-	private MetadataReference referredObjectReference;
+	private String metadataClass;
+	
+	private OpenmrsMetadata referredObject;
 	
 	/**
 	 * @param includeAll include retired term mappings
@@ -84,22 +85,27 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	 * @return this builder
 	 */
 	public MetadataTermMappingSearchCriteriaBuilder setReferredObject(OpenmrsMetadata referredObject) {
-		if (referredObjectReference != null) {
-			throw new IllegalStateException("referredObject can not be set if referredObjectReference has been set");
-		}
 		this.referredObject = referredObject;
 		return this;
 	}
 	
 	/**
-	 * @param referredObjectReference only get term mappings that refer to this metadata object
+	 *
+	 * @param metadataUuid only get term mappings with this metadataUuid
 	 * @return this builder
 	 */
-	public MetadataTermMappingSearchCriteriaBuilder setReferredObjectReference(MetadataReference referredObjectReference) {
-		if (referredObject != null) {
-			throw new IllegalStateException("referredObjectReference can not be set if referredObject has been set");
-		}
-		this.referredObjectReference = referredObjectReference;
+	public MetadataTermMappingSearchCriteriaBuilder setMetadataUuid(String metadataUuid) {
+		this.metadataUuid = metadataUuid;
+		return this;
+	}
+	
+	/**
+	 *
+	 * @param metadataClass only get term mappings with this metadataClass
+	 * @return this builder
+	 */
+	public MetadataTermMappingSearchCriteriaBuilder setMetadataClass(String metadataClass) {
+		this.metadataClass = metadataClass;
 		return this;
 	}
 	
@@ -112,7 +118,7 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 			        metadataTermCode, metadataTermName, referredObject);
 		} else {
 			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource,
-			        metadataTermCode, metadataTermName, referredObjectReference);
+			        metadataTermCode, metadataTermName, metadataClass, metadataUuid);
 		}
 	}
 }

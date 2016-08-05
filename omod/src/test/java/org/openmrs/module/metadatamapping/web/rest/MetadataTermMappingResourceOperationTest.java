@@ -36,9 +36,8 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	public void create_shouldPersist() throws Exception {
 		// given
 		SimpleObject postData = new SimpleObject().add("code", "term-123").add("name", "Test Term Mapping 123").add(
-		    "metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8");
-		postData.add("mappedObject", new SimpleObject().add("className", "org.openmrs.Drug").add("uuid",
-		    "3cfcf118-931c-46f7-8ff6-7b876f0d4202"));
+		    "metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8").add("metadataClass", "org.openmrs.Drug").add(
+		    "metadataUuid", "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
 		
 		// when
 		SimpleObject postResponseData = deserialize(handle(newPostRequest(getURI(), postData)));
@@ -52,20 +51,18 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		assertNotNull(getResponseData);
 		assertEquals("term-123", PropertyUtils.getProperty(getResponseData, "code"));
 		assertEquals("Test Term Mapping 123", PropertyUtils.getProperty(getResponseData, "name"));
+		assertEquals("org.openmrs.Drug", PropertyUtils.getProperty(getResponseData, "metadataClass"));
+		assertEquals("3cfcf118-931c-46f7-8ff6-7b876f0d4202", PropertyUtils.getProperty(getResponseData, "metadataUuid"));
 		Object metadataSource = getResponseData.get("metadataSource");
 		assertEquals("df29a160-0add-4598-8ac2-b11a9eb3cdb8", PropertyUtils.getProperty(metadataSource, "uuid"));
 		
-		Object mappedObject = getResponseData.get("mappedObject");
-		assertEquals("org.openmrs.Drug", PropertyUtils.getProperty(mappedObject, "className"));
-		assertEquals("3cfcf118-931c-46f7-8ff6-7b876f0d4202", PropertyUtils.getProperty(mappedObject, "uuid"));
 	}
 	
 	@Test
 	public void update_shouldPersist() throws Exception {
 		// given
 		SimpleObject postData = new SimpleObject().add("description", "This is the new term mapping description").add(
-		    "mappedObject",
-		    new SimpleObject().add("className", "org.openmrs.Drug").add("uuid", "3cfcf118-931c-46f7-8ff6-7b876f0d4202"));
+		    "metadataClass", "org.openmrs.Drug").add("metadataUuid", "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
 		
 		// when
 		MockHttpServletResponse postResponse = handle(newPostRequest(getURI() + "/" + getUuid(), postData));
@@ -76,10 +73,8 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		SimpleObject getResponseData = deserialize(handle(newGetRequest(getURI() + "/" + getUuid())));
 		assertNotNull(getResponseData);
 		assertEquals("This is the new term mapping description", PropertyUtils.getProperty(getResponseData, "description"));
-		
-		Object mappedObject = getResponseData.get("mappedObject");
-		assertEquals("org.openmrs.Drug", PropertyUtils.getProperty(mappedObject, "className"));
-		assertEquals("3cfcf118-931c-46f7-8ff6-7b876f0d4202", PropertyUtils.getProperty(mappedObject, "uuid"));
+		assertEquals("org.openmrs.Drug", PropertyUtils.getProperty(getResponseData, "metadataClass"));
+		assertEquals("3cfcf118-931c-46f7-8ff6-7b876f0d4202", PropertyUtils.getProperty(getResponseData, "metadataUuid"));
 	}
 	
 	@Test
@@ -185,8 +180,8 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		
 		// given
 		Location neverNeverLand = locationService.getLocationByUuid("167ce20c-4785-4285-9119-d197268f7f4a");
-		request.setParameter("refUuid", neverNeverLand.getUuid());
-		request.setParameter("refClass", neverNeverLand.getClass().getCanonicalName());
+		request.setParameter("metadataUuid", neverNeverLand.getUuid());
+		request.setParameter("metadataClass", neverNeverLand.getClass().getCanonicalName());
 		request.setParameter(RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, String.valueOf(false));
 		request.setParameter("startIndex", "0");
 		request.removeParameter("limit");

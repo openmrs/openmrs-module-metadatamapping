@@ -574,10 +574,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		MetadataSource metadataSource = new MetadataSource();
 		metadataSource.setName("my-source");
 		
-		Location location = new Location();
-		location.setUuid("some-uuid");
-		
-		MetadataTermMapping metadataTermMapping = new MetadataTermMapping(metadataSource, "my code", location);
+		MetadataTermMapping metadataTermMapping = new MetadataTermMapping(metadataSource, "my code", "org.openmrs.Drug");
 		metadataTermMapping.setName("some term");
 		
 		Assert.assertNull(metadataTermMapping.getId());
@@ -591,15 +588,15 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "save mapping without a referred object", method = "saveMetadataTermMapping(MetadataTermMapping)")
+	@Verifies(value = "save mapping without metadataUuid", method = "saveMetadataTermMapping(MetadataTermMapping)")
 	public void saveMetadataTermMapping_shouldSaveMappingWithoutReferredObject() {
 		// given
 		MetadataSource metadataSource = new MetadataSource();
 		metadataSource.setName("my-source");
 		
-		MetadataTermMapping metadataTermMapping = new MetadataTermMapping(metadataSource,
-		        "my code without a referred object");
-		metadataTermMapping.setName("some term without a referred object");
+		MetadataTermMapping metadataTermMapping = new MetadataTermMapping(metadataSource, "my code without metadataUuid",
+		        "org.openmrs.Drug");
+		metadataTermMapping.setName("some term without metadataUuid");
 		
 		Assert.assertNull(metadataTermMapping.getId());
 		
@@ -608,7 +605,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// then
 		Assert.assertNotNull(metadataTermMapping.getId());
-		Assert.assertNull(metadataTermMapping.getMetadataClass());
+		Assert.assertNotNull(metadataTermMapping.getMetadataClass());
 		Assert.assertNull(metadataTermMapping.getMetadataUuid());
 	}
 	

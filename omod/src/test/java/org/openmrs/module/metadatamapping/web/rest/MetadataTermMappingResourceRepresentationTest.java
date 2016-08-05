@@ -63,10 +63,6 @@ public class MetadataTermMappingResourceRepresentationTest extends BaseDelegatin
 		assertEquals(getObject().getMetadataSource().getUuid(), metadataSource.get("uuid"));
 		assertEquals(getObject().getMetadataSource().getName(), metadataSource.get("display"));
 		
-		SimpleObject mappedObject = getRepresentation().get("mappedObject");
-		assertEquals(getObject().getMetadataClass(), mappedObject.get("className"));
-		assertEquals(getObject().getMetadataUuid(), mappedObject.get("uuid"));
-		
 		assertPropEquals("code", getObject().getCode());
 		assertPropEquals("metadataClass", getObject().getMetadataClass());
 		assertPropEquals("metadataUuid", getObject().getMetadataUuid());
