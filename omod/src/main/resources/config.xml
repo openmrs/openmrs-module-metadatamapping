@@ -56,6 +56,8 @@
 	<mappingFiles>
 		MetadataSource.hbm.xml
 		MetadataTermMapping.hbm.xml
+		MetadataSet.hbm.xml
+		MetadataSetMember.hbm.xml
 	</mappingFiles>
 
 	<!-- Internationalization -->

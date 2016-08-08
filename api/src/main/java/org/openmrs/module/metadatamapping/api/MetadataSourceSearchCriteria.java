@@ -5,13 +5,7 @@ package org.openmrs.module.metadatamapping.api;
  * convenience builder {@link MetadataSourceSearchCriteriaBuilder}.
  * @since 1.2
  */
-public class MetadataSourceSearchCriteria {
-	
-	private boolean includeAll;
-	
-	private Integer firstResult;
-	
-	private Integer maxResults;
+public class MetadataSourceSearchCriteria extends MetadataSearchCriteria {
 	
 	private String sourceName;
 	
@@ -23,31 +17,8 @@ public class MetadataSourceSearchCriteria {
 	 * @param sourceName only get a term mapping with this name (note that names are unique)
 	 */
 	public MetadataSourceSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults, String sourceName) {
-		this.includeAll = includeAll;
-		this.firstResult = firstResult;
-		this.maxResults = maxResults;
+		super(includeAll, firstResult, maxResults);
 		this.sourceName = sourceName;
-	}
-	
-	/**
-	 * @return include retired term mappings
-	 */
-	public boolean isIncludeAll() {
-		return includeAll;
-	}
-	
-	/**
-	 * @return start from this result (numbered from <tt>0</tt>)
-	 */
-	public Integer getFirstResult() {
-		return firstResult;
-	}
-	
-	/**
-	 * @return get a maximum of this many results
-	 */
-	public Integer getMaxResults() {
-		return maxResults;
 	}
 	
 	/**

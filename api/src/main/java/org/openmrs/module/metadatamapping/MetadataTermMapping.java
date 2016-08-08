@@ -72,7 +72,8 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	/**
-	 * Construct a new metadata term mapping. Make sure to specify {@link #setMetadataSource} and {@link #setCode}.
+	 * Construct a new metadata term mapping.
+	 * @see #MetadataTermMapping(MetadataSource, String, OpenmrsMetadata)
 	 */
 	public MetadataTermMapping() {
 	}
@@ -148,6 +149,7 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	
 	/**
 	 * @param metadataSource source of this term, may not be null
+	 * @throws IllegalStateException when already set   
 	 */
 	public void setMetadataSource(MetadataSource metadataSource) {
 		ArgUtil.notNull(metadataSource, "metadataSource");

@@ -20,15 +20,23 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.openmrs.Concept;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.module.metadatamapping.MetadataSet;
+import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
+
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,9 +225,96 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		return metadataItems;
 	}
 	
+	@Override
+	public MetadataSet saveMetadataSet(MetadataSet metadataSet) {
+		sessionFactory.getCurrentSession().saveOrUpdate(metadataSet);
+		return metadataSet;
+	}
+	
+	@Override
+	public MetadataSet getMetadataSet(Integer metadataSetId) {
+		return (MetadataSet) sessionFactory.getCurrentSession().get(MetadataSet.class, metadataSetId);
+	}
+	
+	@Override
+	public List<MetadataSet> getMetadataSet(MetadataSetSearchCriteria searchCriteria) {
+		Criteria criteria = getCurrentSession().createCriteria(MetadataSet.class);
+		
+		if (!searchCriteria.isIncludeAll()) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		
+		if (searchCriteria.getFirstResult() != null) {
+			criteria.setFirstResult(searchCriteria.getFirstResult());
+		}
+		if (searchCriteria.getMaxResults() != null) {
+			criteria.setMaxResults(searchCriteria.getMaxResults());
+		}
+		return criteria.list();
+	}
+	
+	@Override
+	public MetadataSet getMetadataSetByUuid(String metadataSetUuid) {
+		return internalGetByUuid(MetadataSet.class, metadataSetUuid);
+	}
+	
+	@Override
+	public MetadataSetMember saveMetadataSetMember(MetadataSetMember metadataSetMember) {
+		return internalSaveMetadataSetMember(metadataSetMember);
+	}
+	
+	@Override
+	public Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers) {
+		for (MetadataSetMember metadataSetMember : metadataSetMembers) {
+			internalSaveMetadataSetMember(metadataSetMember);
+		}
+		return metadataSetMembers;
+	}
+	
+	@Override
+	public MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId) {
+		return (MetadataSetMember) sessionFactory.getCurrentSession().get(MetadataSetMember.class, metadataSetMemberId);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSetMember.class);
+		criteria.addOrder(Order.desc("sortWeight"));
+		
+		if (RetiredHandlingMode.ONLY_ACTIVE.equals(retiredHandlingMode)) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		criteria.add(Restrictions.eq("metadataSet", metadataSet));
+		
+		criteria.setFirstResult(firstResult);
+		criteria.setMaxResults(maxResults);
+		return criteria.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode) {
+		MetadataSet metadataSet = getMetadataSetByUuid(metadataSetUuid);
+		return getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
+	}
+	
+	@Override
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+	        int maxResults) {
+		return internalGetMetadataSetItems(type, metadataSet, firstResult, maxResults);
+	}
+	
 	private MetadataTermMapping internalSaveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
 		getCurrentSession().saveOrUpdate(metadataTermMapping);
 		return metadataTermMapping;
+	}
+	
+	private MetadataSetMember internalSaveMetadataSetMember(MetadataSetMember metadataSetMember) {
+		sessionFactory.getCurrentSession().saveOrUpdate(metadataSetMember);
+		return metadataSetMember;
 	}
 	
 	@SuppressWarnings(value = "unchecked")
@@ -263,5 +358,39 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 				throw new RuntimeException("Failed to get the current hibernate session", e);
 			}
 		}
+	}
+	
+	private <T extends OpenmrsMetadata> List<T> internalGetMetadataSetItems(Class<T> type, MetadataSet metadataSet,
+	        int firstResult, int maxResults) {
+		if (metadataSet == null) {
+			throw new IllegalArgumentException("To obtain MetadataSet items, reference to MetadataSet must be given");
+		}
+		
+		Criteria memberCriteria = sessionFactory.getCurrentSession().createCriteria(MetadataSetMember.class, "member");
+		memberCriteria.add(Restrictions.eq("member.retired", false));
+		memberCriteria.add(Restrictions.eq("member.metadataSet", metadataSet));
+		
+		DetachedCriteria metadataItemSubQuery = DetachedCriteria.forClass(type, "item");
+		metadataItemSubQuery.add(Restrictions.eqProperty("item.uuid", "member.metadataUuid"));
+		metadataItemSubQuery.add(Restrictions.eq("item.retired", false));
+		metadataItemSubQuery.setProjection(Projections.property("item.uuid"));
+		
+		memberCriteria.add(Subqueries.propertyIn("member.metadataUuid", metadataItemSubQuery));
+		
+		memberCriteria.setProjection(Projections.property("member.metadataUuid"));
+		memberCriteria.setFirstResult(firstResult);
+		memberCriteria.setMaxResults(maxResults);
+		memberCriteria.addOrder(Order.desc("member.sortWeight"));
+		
+		List<String> itemUuids = memberCriteria.list();
+		
+		List<T> items = new LinkedList<T>();
+		for (String itemUuid : itemUuids) {
+			T item = getByUuid(type, itemUuid);
+			if (item != null) {
+				items.add(item);
+			}
+		}
+		return items;
 	}
 }

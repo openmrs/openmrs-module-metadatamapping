@@ -34,9 +34,13 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
+import org.openmrs.module.metadatamapping.MetadataSet;
+import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
@@ -448,5 +452,131 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Transactional(readOnly = true)
 	public <T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName) {
 		return dao.getMetadataItems(type, metadataSourceName);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataSet saveMetadataSet(MetadataSet metadataSet) {
+		return dao.saveMetadataSet(metadataSet);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSet getMetadataSet(Integer metadataSetId) {
+		return dao.getMetadataSet(metadataSetId);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataSet> getMetadataSets(MetadataSetSearchCriteria criteria) {
+		return dao.getMetadataSet(criteria);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSet getMetadataSetByUuid(String metadataSetUuid) {
+		return dao.getMetadataSetByUuid(metadataSetUuid);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataSet retireMetadataSet(MetadataSet metadataSet, String reason) {
+		// Required values on metadata set have already been set by the injected BaseRetireHandler.
+		
+		int firstResult = 0;
+		final int CHUNK_SIZE = 100;
+		while (true) {
+			List<MetadataSetMember> metadataSetMembers = dao.getMetadataSetMembers(metadataSet, firstResult, CHUNK_SIZE,
+			    RetiredHandlingMode.ONLY_ACTIVE);
+			
+			for (MetadataSetMember metadataSetMember : metadataSetMembers) {
+				metadataSetMember.setRetired(true);
+				metadataSetMember.setRetiredBy(metadataSet.getRetiredBy());
+				metadataSetMember.setRetireReason(reason);
+				metadataSetMember.setDateRetired(metadataSet.getDateRetired());
+				
+				dao.saveMetadataSetMember(metadataSetMember);
+			}
+			
+			if (metadataSetMembers.size() < CHUNK_SIZE) {
+				break;
+			} else {
+				firstResult = firstResult + CHUNK_SIZE;
+			}
+		}
+		
+		return dao.saveMetadataSet(metadataSet);
+	}
+	
+	@Override
+	@Transactional
+	public MetadataSetMember saveMetadataSetMember(MetadataSetMember metadataSetMember) {
+		return dao.saveMetadataSetMember(metadataSetMember);
+	}
+	
+	@Override
+	public MetadataSetMember saveMetadataSetMember(MetadataSet metadataSet, OpenmrsMetadata metadata) {
+		MetadataSetMember setMember = new MetadataSetMember(metadata, metadataSet);
+		return saveMetadataSetMember(setMember);
+	}
+	
+	@Override
+	@Transactional
+	public Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers) {
+		return dao.saveMetadataSetMembers(metadataSetMembers);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId) {
+		return dao.getMetadataSetMember(metadataSetMemberId);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MetadataSetMember getMetadataSetMemberByUuid(String metadataSetMemberUuid) {
+		return dao.getByUuid(MetadataSetMember.class, metadataSetMemberUuid);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode) {
+		return dao.getMetadataSetMembers(metadataSetUuid, firstResult, maxResults, retiredHandlingMode);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	        RetiredHandlingMode retiredHandlingMode) {
+		return dao.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+	        int maxResults) {
+		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
+	}
+	
+	@Override
+	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember) {
+		if (setMember == null || setMember.isRetired()) {
+			return null;
+		} else {
+			T item = dao.getByUuid(type, setMember.getMetadataUuid());
+			if (item != null && !item.isRetired()) {
+				return item;
+			} else {
+				return null;
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public MetadataSetMember retireMetadataSetMember(MetadataSetMember metadataSetMember, String reason) {
+		// Required values have already been set by the injected BaseRetireHandler.
+		return dao.saveMetadataSetMember(metadataSetMember);
 	}
 }

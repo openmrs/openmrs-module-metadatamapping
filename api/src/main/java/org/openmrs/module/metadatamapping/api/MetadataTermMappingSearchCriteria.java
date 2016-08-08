@@ -9,13 +9,7 @@ import org.openmrs.module.metadatamapping.MetadataTermMapping.MetadataReference;
  * convenience builder {@link MetadataTermMappingSearchCriteriaBuilder}.
  * @since 1.2
  */
-public class MetadataTermMappingSearchCriteria {
-	
-	private boolean includeAll;
-	
-	private Integer firstResult;
-	
-	private Integer maxResults;
+public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	
 	private MetadataSource metadataSource;
 	
@@ -39,9 +33,7 @@ public class MetadataTermMappingSearchCriteria {
 	 */
 	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
 	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName, OpenmrsMetadata referredObject) {
-		this.includeAll = includeAll;
-		this.firstResult = firstResult;
-		this.maxResults = maxResults;
+		super(includeAll, firstResult, maxResults);
 		this.metadataSource = metadataSource;
 		this.metadataTermCode = metadataTermCode;
 		this.metadataTermName = metadataTermName;
@@ -61,34 +53,11 @@ public class MetadataTermMappingSearchCriteria {
 	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
 	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName,
 	    MetadataReference referredObjectReference) {
-		this.includeAll = includeAll;
-		this.firstResult = firstResult;
-		this.maxResults = maxResults;
+		super(includeAll, firstResult, maxResults);
 		this.metadataSource = metadataSource;
 		this.metadataTermCode = metadataTermCode;
 		this.metadataTermName = metadataTermName;
 		this.referredObjectReference = referredObjectReference;
-	}
-	
-	/**
-	 * @return include retired term mappings
-	 */
-	public boolean isIncludeAll() {
-		return includeAll;
-	}
-	
-	/**
-	 * @return start from this result (numbered from <tt>0</tt>)
-	 */
-	public Integer getFirstResult() {
-		return firstResult;
-	}
-	
-	/**
-	 * @return get a maximum of this many results
-	 */
-	public Integer getMaxResults() {
-		return maxResults;
 	}
 	
 	/**

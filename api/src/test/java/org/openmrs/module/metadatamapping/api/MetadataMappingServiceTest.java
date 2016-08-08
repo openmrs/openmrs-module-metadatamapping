@@ -15,6 +15,7 @@ package org.openmrs.module.metadatamapping.api;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,14 +27,18 @@ import org.openmrs.ConceptSource;
 import org.openmrs.Drug;
 import org.openmrs.GlobalProperty;
 import org.openmrs.Location;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataMapping;
+import org.openmrs.module.metadatamapping.MetadataSet;
+import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 import org.openmrs.module.metadatamapping.api.impl.MetadataMappingServiceImpl;
 import org.openmrs.module.metadatamapping.api.wrapper.ConceptAdapter;
@@ -42,6 +47,8 @@ import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.ExpectedException;
+
+import static org.hamcrest.Matchers.is;
 
 public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
@@ -651,14 +658,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// when
 		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(6, termMappings.size());
+		Assert.assertEquals(8, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setIncludeAll(true);
 		// when
 		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(8, termMappings.size());
+		Assert.assertEquals(10, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setMaxResults(2);
@@ -676,7 +683,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertEquals(3, termMappings.size());
 		Assert.assertEquals("xyz", termMappings.get(0).getCode());
-		Assert.assertEquals("mdt-nnl", termMappings.get(2).getCode());
+		Assert.assertEquals("mdt-väi", termMappings.get(2).getCode());
 		
 		// given
 		Location neverNeverLand = locationService.getLocationByUuid("167ce20c-4785-4285-9119-d197268f7f4a");
@@ -704,9 +711,9 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@SuppressWarnings("deprecation")
 	@Verifies(value = "return unretired term mappings referring to object", method = "getMetadataTermMappings"
 	        + "(OpenmrsMetadata)")
-	@SuppressWarnings("deprecation")
 	public void getMetadataTermMappings_shouldReturnUnretiredTermMappingsReferringToObject() {
 		// given
 		// data in the test data set, and the following
@@ -758,7 +765,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// then
 		Assert.assertNotNull(metadataTermMappings);
-		Assert.assertEquals(2, metadataTermMappings.size());
+		Assert.assertEquals(4, metadataTermMappings.size());
 		
 		for (MetadataTermMapping metadataTermMapping : metadataTermMappings) {
 			Assert.assertFalse("MetadataTermMapping " + metadataTermMapping.getId() + " is not retired", metadataTermMapping
@@ -887,5 +894,319 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// then
 		Assert.assertEquals(0, locations.size());
+	}
+	
+	@Test
+	@Verifies(value = "save valid new object", method = "saveMetadataSet(MetadataSet)")
+	public void saveMetadataSet_shouldSaveValidNewObject() {
+		// given
+		MetadataSet metadataSet = new MetadataSet();
+		Assert.assertNull(metadataSet.getId());
+		
+		// when
+		metadataSet = service.saveMetadataSet(metadataSet);
+		
+		// then
+		Assert.assertNotNull(metadataSet.getId());
+		Assert.assertNotNull(metadataSet.getUuid());
+	}
+	
+	@Test
+	@Verifies(value = "fail if code is not unique within source", method = "saveMetadataSet(MetadataSet)")
+	public void saveMetadataSet_shouldFailIfCodeIsNotUniqueWithinSource() {
+		// This case only serves a documentation purpose: the constraint is enforced in the database schema
+		// and can not be verified by this integration test.
+	}
+	
+	@Test
+	@Verifies(value = "return a retired set", method = "getMetadataSet(MetadataSource, String)")
+	public void getMetadataSet_shouldReturnARetiredSet() {
+		// given
+		// data in the test data set
+		
+		// when
+		MetadataSet retiredMetadataSet = service.getMetadataSetByUuid("b3f4aa58-ab02-4379-ae61-ec2e15c29c1e");
+		
+		// then
+		Assert.assertNotNull(retiredMetadataSet);
+		Assert.assertTrue(retiredMetadataSet.isRetired());
+	}
+	
+	@Test
+	@Verifies(value = "return matching metadata set", method = "getMetadataSetByUuid(String)")
+	public void getMetadataSetByUuid_shouldReturnMatchingMetadataSet() {
+		// given
+		// data in the test data set
+		
+		// when
+		MetadataSet locationsSet = service.getMetadataSetByUuid("2fb06283-befc-4273-9448-2fcbbe4c99d5");
+		
+		// then
+		Assert.assertNotNull("getMetadataSetByUuid returned a set object", locationsSet);
+	}
+	
+	@Test
+	@Verifies(value = "retire and set info", method = "retireMetadataSet(MetadataSet, String)")
+	public void retireMetadataSet_shouldRetireAndSetInfo() {
+		// given
+		MetadataSet metadataSet = service.getMetadataSet(1);
+		
+		// when
+		metadataSet = service.retireMetadataSet(metadataSet, "testing the retire method");
+		
+		// then
+		Assert.assertTrue(metadataSet.isRetired());
+		Assert.assertNotNull(metadataSet.getRetiredBy());
+		Assert.assertEquals("testing the retire method", metadataSet.getRetireReason());
+	}
+	
+	@Test
+	@Verifies(value = "retire members", method = "retireMetadataSet(MetadataSet, String)")
+	public void retireMetadataSet_shouldRetireMembers() {
+		// given
+		MetadataSet metadataSet = service.getMetadataSet(1);
+		Assert.assertFalse(metadataSet.isRetired());
+		for (MetadataSetMember metadataSetMember : service.getMetadataSetMembers(metadataSet, 0, 1000,
+		    RetiredHandlingMode.INCLUDE_RETIRED)) {
+			Assert.assertFalse(metadataSetMember.isRetired());
+		}
+		
+		// when
+		metadataSet = service.retireMetadataSet(metadataSet, "testing the retire method");
+		clearHibernateCache();
+		
+		// then
+		Assert.assertTrue(metadataSet.isRetired());
+		for (MetadataSetMember metadataSetMember : service.getMetadataSetMembers(metadataSet, 0, 1000,
+		    RetiredHandlingMode.INCLUDE_RETIRED)) {
+			Assert.assertTrue(metadataSetMember.isRetired());
+			Assert.assertNotNull(metadataSetMember.getRetiredBy());
+			Assert.assertEquals("testing the retire method", metadataSetMember.getRetireReason());
+		}
+	}
+	
+	@Test
+	@Verifies(value = "get members in desired order 1", method = "getMetadataSetMembers(MetadataSet, int, int, "
+	        + "RetiredHandlingMode)")
+	public void getMetadataSetMembers_shouldGetMembersInDesiredOrder1() {
+		new TestCase_getMetadataSetMembers() {
+			
+			@Override
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults) {
+				return service.getMetadataSetMembers(metadataSet, firstResult, maxResults, RetiredHandlingMode.ONLY_ACTIVE);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "get members in desired order 2", method = "getMetadataSetMembers(String, int, int, RetiredHandlingMode)")
+	public void getMetadataSetMembers_shouldGetMembersInDesiredOrder2() {
+		new TestCase_getMetadataSetMembers() {
+			
+			@Override
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults) {
+				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults,
+				    RetiredHandlingMode.ONLY_ACTIVE);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "respect retire fetch mode 1", method = "getMetadataSetMembers(MetadataSet, int, int, "
+	        + "RetiredHandlingMode)")
+	public void getMetadataSetMembers_shouldRespectRetireFetchMode1() throws Exception {
+		new TestCase_getMetadataSetMembersInRetireModes() {
+			
+			@Override
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+			        RetiredHandlingMode retiredHandlingMode) {
+				return service.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "respect retire fetch mode2", method = "getMetadataSetMembers(String, String, int, int, "
+	        + "RetiredHandlingMode)")
+	public void getMetadataSetMembers_shouldRespectRetireFetchMode2() throws Exception {
+		new TestCase_getMetadataSetMembersInRetireModes() {
+			
+			@Override
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+			        RetiredHandlingMode retiredHandlingMode) {
+				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults, retiredHandlingMode);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "get unretired metadata items of unretired terms matching type in sort weight order 1", method = "getMetadataSetItems(Class, MetadataSet, int, int)")
+	public void getMetadataSetItems_shouldGetUnretiredMetadataItemsOfUnretiredTermsMatchingTypeInSortWeightOrder1() {
+		new TestCase_getMetadataSetItems() {
+			
+			@Override
+			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+			        int maxResults) {
+				return service.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "get unretired metadata items of unretired terms matching type in sort weight order 2", method = "getMetadataSetItems(Class, String, String, int, int)")
+	public void getMetadataSetItems_shouldGetUnretiredMetadataItemsOfUnretiredTermsMatchingTypeInSortWeightOrder2() {
+		new TestCase_getMetadataSetItems() {
+			
+			@Override
+			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+			        int maxResults) {
+				return service.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
+			}
+		}.run();
+	}
+	
+	@Test
+	@Verifies(value = "throw IllegalArgumentException if set does not exist", method = "getMetadataSetItems(Class, MetadataSet, int, int)")
+	@ExpectedException(IllegalArgumentException.class)
+	public void getMetadataSetItems_shouldThrowExceptionIfMetadataSetDoesNotExist() throws Exception {
+		// given
+		
+		// when
+		List<Location> locations = service.getMetadataSetItems(Location.class, null, 0, 1000);
+		
+		// then
+		// expect exception thrown
+	}
+	
+	@Test
+	@Verifies(value = "return unretired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnUnretiredMetadataItemForUnretiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(2);
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNotNull(metadataItem);
+	}
+	
+	@Test
+	@Verifies(value = "not return retired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldNotReturnRetiredMetadataItemForUnretiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(4);
+		Assert.assertThat(member.isRetired(), is(false));
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNull(metadataItem);
+	}
+	
+	@Test
+	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldNotReturnUnretiredMetadataItemForRetiredSetMember() throws Exception {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(5);
+		Assert.assertThat(member.isRetired(), is(true));
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, member);
+		// then
+		Assert.assertNull(metadataItem);
+	}
+	
+	@Test
+	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnNullForNonExistentSetMember() throws Exception {
+		// given
+		// test dataset
+		
+		// when
+		Location metadataItem = service.getMetadataItem(Location.class, null);
+		// then
+		Assert.assertNull(metadataItem);
+	}
+	
+	@Test
+	@Verifies(value = "retire and set info", method = "retireMetadataSetMember(MetadataSetMember, String)")
+	public void retireMetadataSetMember_shouldRetireAndSetInfo() {
+		// given
+		MetadataSetMember member = service.getMetadataSetMember(1);
+		
+		// when
+		member = service.retireMetadataSetMember(member, "testing the retire method");
+		
+		// then
+		Assert.assertTrue(member.isRetired());
+		Assert.assertNotNull(member.getRetiredBy());
+		Assert.assertEquals("testing the retire method", member.getRetireReason());
+	}
+	
+	private abstract class TestCase_getMetadataSetMembers {
+		
+		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults);
+		
+		void run() {
+			// given
+			MetadataSet metadataSet = service.getMetadataSet(1);
+			
+			// when
+			List<MetadataSetMember> members = getMembers(metadataSet, 0, 1000);
+			
+			// then
+			Assert.assertEquals(5, members.size());
+			
+			Iterator<MetadataSetMember> memberIterator = members.iterator();
+			Assert.assertEquals("e1e2cc7d-dfb4-4e26-85b1-727666ff066d", memberIterator.next().getUuid());
+			Assert.assertEquals("0bc57eff-3088-460d-880b-56988d02851b", memberIterator.next().getUuid());
+			Assert.assertEquals("f75d45fb-f478-438a-970c-1a6b4f61f503", memberIterator.next().getUuid());
+			Assert.assertEquals("b0c99f16-14b8-49b2-8d14-1e7447ad6aa9", memberIterator.next().getUuid());
+			Assert.assertEquals("e9bed2b0-2828-44b3-a499-e3a307600197", memberIterator.next().getUuid());
+		}
+	}
+	
+	private abstract class TestCase_getMetadataSetMembersInRetireModes {
+		
+		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+		        RetiredHandlingMode retiredHandlingMode);
+		
+		void run() {
+			// given
+			MetadataSet metadataSet = service.getMetadataSet(3);
+			
+			// when
+			List<MetadataSetMember> membersWithRetired = getMembers(metadataSet, 0, 1000,
+			    RetiredHandlingMode.INCLUDE_RETIRED);
+			List<MetadataSetMember> membersOnlyActive = getMembers(metadataSet, 0, 1000, RetiredHandlingMode.ONLY_ACTIVE);
+			
+			// then
+			Assert.assertEquals(2, membersWithRetired.size());
+			Iterator<MetadataSetMember> memberWithRetiredIterator = membersWithRetired.iterator();
+			Assert.assertEquals("r2d180c6-d5fb-4202-b1a6-80a06273c158", memberWithRetiredIterator.next().getMetadataUuid());
+			Assert.assertEquals("9356400c-a5a2-4532-8f2b-2361b3446eb8", memberWithRetiredIterator.next().getMetadataUuid());
+			
+			Assert.assertEquals(1, membersOnlyActive.size());
+			Iterator<MetadataSetMember> memberOnlyActiveIterator = membersOnlyActive.iterator();
+			Assert.assertEquals("r2d180c6-d5fb-4202-b1a6-80a06273c158", memberOnlyActiveIterator.next().getMetadataUuid());
+		}
+	}
+	
+	private abstract class TestCase_getMetadataSetItems {
+		
+		abstract <T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
+		        int maxResults);
+		
+		void run() {
+			// given
+			MetadataSet metadataSet = service.getMetadataSet(1);
+			
+			// when
+			List<Location> locations = getItems(Location.class, metadataSet, 0, 1000);
+			
+			// then
+			Assert.assertEquals(3, locations.size());
+			Iterator<Location> locationIterator = locations.iterator();
+			Assert.assertEquals("Xanadu", locationIterator.next().getName());
+			Assert.assertEquals("Pohjola", locationIterator.next().getName());
+			Assert.assertEquals("Väinölä", locationIterator.next().getName());
+		}
 	}
 }
