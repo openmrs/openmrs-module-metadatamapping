@@ -567,11 +567,10 @@ public interface MetadataMappingService {
 	 * @param type type of the metadata item
 	 * @param setMember metadata set member referring to object
 	 * @param <T> type of the metadata item
-	 * @return metadata item or null, if not found or if either the set member or the metadata item itself are
-	 * retired
+	 * @return metadata item or null, if not found or if set member itself is null
 	 * @should return unretired metadata item for unretired set member
-	 * @should not return retired metadata item for unretired set member
-	 * @should not return unretired metadata item for retired set member
+	 * @should return retired metadata item for unretired set member
+	 * @should return unretired metadata item for retired set member
 	 * @should return null for non existent set member
 	 * @since 1.2
 	 */
