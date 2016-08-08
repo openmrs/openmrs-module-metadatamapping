@@ -205,7 +205,7 @@ public interface MetadataMappingDAO {
 	 */
 	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
-
+	
 	/**
 	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will
 	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
@@ -219,18 +219,18 @@ public interface MetadataMappingDAO {
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
-
-    /**
-     * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will
-     * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
-     * the order  will be unpredictable, if there are null sort weights in the set.
-     * @param type type of the metadata items
-     * @param metadataSet metadata set
-     * @param <T> type of the metadata items
-     * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
-     */
-    <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet);
-
+	
+	/**
+	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will
+	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
+	 * the order  will be unpredictable, if there are null sort weights in the set.
+	 * @param type type of the metadata items
+	 * @param metadataSet metadata set
+	 * @param <T> type of the metadata items
+	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 */
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet);
+	
 	/**
 	 * Get metadata sets.
 	 * @param searchCriteria find metadata sets matching these criteria

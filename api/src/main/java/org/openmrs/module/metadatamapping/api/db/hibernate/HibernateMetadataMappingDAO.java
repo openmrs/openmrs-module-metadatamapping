@@ -310,13 +310,13 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	        int maxResults) {
 		return internalGetMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
-
-    @Override
-    public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet) {
-        return internalGetMetadataSetItems(type, metadataSet, null, null);
-    }
-
-    private MetadataTermMapping internalSaveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
+	
+	@Override
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet) {
+		return internalGetMetadataSetItems(type, metadataSet, null, null);
+	}
+	
+	private MetadataTermMapping internalSaveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
 		getCurrentSession().saveOrUpdate(metadataTermMapping);
 		return metadataTermMapping;
 	}
@@ -387,12 +387,12 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		memberCriteria.add(Subqueries.propertyIn("member.metadataUuid", metadataItemSubQuery));
 		
 		memberCriteria.setProjection(Projections.property("member.metadataUuid"));
-        if(firstResult != null){
-            memberCriteria.setFirstResult(firstResult);
-        }
-        if(maxResults != null){
-            memberCriteria.setMaxResults(maxResults);
-        }
+		if (firstResult != null) {
+			memberCriteria.setFirstResult(firstResult);
+		}
+		if (maxResults != null) {
+			memberCriteria.setMaxResults(maxResults);
+		}
 		memberCriteria.addOrder(Order.desc("member.sortWeight"));
 		
 		List<String> itemUuids = memberCriteria.list();
