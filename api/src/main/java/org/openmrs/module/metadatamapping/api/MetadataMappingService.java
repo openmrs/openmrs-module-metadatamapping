@@ -561,6 +561,20 @@ public interface MetadataMappingService {
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
+
+	/**
+	 * Get unretired metadata items in the set of specified type. If set members have {@link MetadataSetMember#getSortWeight()} set they will
+	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
+	 * the order  will be unpredictable, if there are null sort weights in the set.
+	 * @param type type of the metadata items
+	 * @param metadataSet metadata set
+	 * @param <T> type of the metadata items
+	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.2
+	 * @should get unretired metadata items of unretired terms matching type in sort weight order 1
+	 * @should throw IllegalArgumentException if set does not exist
+	 */
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet);
 	
 	/**
 	 * Get metadata item referred to by the given metadata term mapping

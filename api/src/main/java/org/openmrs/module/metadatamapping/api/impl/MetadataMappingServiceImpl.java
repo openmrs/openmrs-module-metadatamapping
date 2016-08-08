@@ -558,6 +558,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	        int maxResults) {
 		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet) {
+        return dao.getMetadataSetItems(type, metadataSet);
+    }
 	
 	@Override
 	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember) {
