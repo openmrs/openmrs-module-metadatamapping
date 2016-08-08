@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.ExpectedException;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
@@ -1087,34 +1088,37 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Location metadataItem = service.getMetadataItem(Location.class, member);
 		// then
 		Assert.assertNotNull(metadataItem);
+		assertThat(member.getMetadataUuid(), is(metadataItem.getUuid()));
 	}
 	
 	@Test
-	@Verifies(value = "not return retired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
-	public void getMetadataSetItem_shouldNotReturnRetiredMetadataItemForUnretiredSetMember() throws Exception {
+	@Verifies(value = "return retired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnRetiredMetadataItemForUnretiredSetMember() throws Exception {
 		// given
 		MetadataSetMember member = service.getMetadataSetMember(4);
 		Assert.assertThat(member.isRetired(), is(false));
 		// when
 		Location metadataItem = service.getMetadataItem(Location.class, member);
 		// then
-		Assert.assertNull(metadataItem);
+		Assert.assertNotNull(metadataItem);
+		assertThat(member.getMetadataUuid(), is(metadataItem.getUuid()));
 	}
 	
 	@Test
-	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
-	public void getMetadataSetItem_shouldNotReturnUnretiredMetadataItemForRetiredSetMember() throws Exception {
+	@Verifies(value = "return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	public void getMetadataSetItem_shouldReturnUnretiredMetadataItemForRetiredSetMember() throws Exception {
 		// given
 		MetadataSetMember member = service.getMetadataSetMember(5);
 		Assert.assertThat(member.isRetired(), is(true));
 		// when
 		Location metadataItem = service.getMetadataItem(Location.class, member);
 		// then
-		Assert.assertNull(metadataItem);
+		Assert.assertNotNull(metadataItem);
+		assertThat(member.getMetadataUuid(), is(metadataItem.getUuid()));
 	}
 	
 	@Test
-	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
+	@Verifies(value = "return null for non existent set member", method = "getMetadataItem(Class, MetadataSetMember)")
 	public void getMetadataSetItem_shouldReturnNullForNonExistentSetMember() throws Exception {
 		// given
 		// test dataset

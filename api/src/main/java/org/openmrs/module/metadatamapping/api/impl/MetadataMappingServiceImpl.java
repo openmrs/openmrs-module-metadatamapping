@@ -561,15 +561,10 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember) {
-		if (setMember == null || setMember.isRetired()) {
+		if (setMember == null) {
 			return null;
 		} else {
-			T item = dao.getByUuid(type, setMember.getMetadataUuid());
-			if (item != null && !item.isRetired()) {
-				return item;
-			} else {
-				return null;
-			}
+			return dao.getByUuid(type, setMember.getMetadataUuid());
 		}
 	}
 	

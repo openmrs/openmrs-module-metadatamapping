@@ -29,7 +29,7 @@ public class MetadataSetMember extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	private String metadataClass;
-
+	
 	private Double sortWeight;
 	
 	public MetadataSetMember() {
