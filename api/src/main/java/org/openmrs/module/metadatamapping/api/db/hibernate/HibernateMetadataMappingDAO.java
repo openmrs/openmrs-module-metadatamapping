@@ -32,6 +32,7 @@ import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.RetiredHandlingMode;
@@ -233,6 +234,23 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	@Override
 	public MetadataSet getMetadataSet(Integer metadataSetId) {
 		return (MetadataSet) sessionFactory.getCurrentSession().get(MetadataSet.class, metadataSetId);
+	}
+	
+	@Override
+	public List<MetadataSet> getMetadataSet(MetadataSetSearchCriteria searchCriteria) {
+		Criteria criteria = getCurrentSession().createCriteria(MetadataSet.class);
+		
+		if (!searchCriteria.isIncludeAll()) {
+			criteria.add(Restrictions.eq("retired", false));
+		}
+		
+		if (searchCriteria.getFirstResult() != null) {
+			criteria.setFirstResult(searchCriteria.getFirstResult());
+		}
+		if (searchCriteria.getMaxResults() != null) {
+			criteria.setMaxResults(searchCriteria.getMaxResults());
+		}
+		return criteria.list();
 	}
 	
 	@Override

@@ -1077,7 +1077,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		// expect exception thrown
 	}
-
+	
 	@Test
 	@Verifies(value = "return unretired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
 	public void getMetadataSetItem_shouldReturnUnretiredMetadataItemForUnretiredSetMember() throws Exception {
@@ -1088,7 +1088,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertNotNull(metadataItem);
 	}
-
+	
 	@Test
 	@Verifies(value = "not return retired metadata item for unretired set member", method = "getMetadataItem(Class, MetadataSetMember)")
 	public void getMetadataSetItem_shouldNotReturnRetiredMetadataItemForUnretiredSetMember() throws Exception {
@@ -1100,7 +1100,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertNull(metadataItem);
 	}
-
+	
 	@Test
 	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
 	public void getMetadataSetItem_shouldNotReturnUnretiredMetadataItemForRetiredSetMember() throws Exception {
@@ -1112,13 +1112,13 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// then
 		Assert.assertNull(metadataItem);
 	}
-
+	
 	@Test
 	@Verifies(value = "not return unretired metadata item for retired set member", method = "getMetadataItem(Class, MetadataSetMember)")
 	public void getMetadataSetItem_shouldReturnNullForNonExistentSetMember() throws Exception {
 		// given
 		// test dataset
-
+		
 		// when
 		Location metadataItem = service.getMetadataItem(Location.class, null);
 		// then

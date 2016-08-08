@@ -23,6 +23,7 @@ import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.RetiredHandlingMode;
@@ -218,4 +219,11 @@ public interface MetadataMappingDAO {
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
+	
+	/**
+	 * Get metadata sets.
+	 * @param searchCriteria find metadata sets matching these criteria
+	 * @return list of metadata sets
+	 */
+	List<MetadataSet> getMetadataSet(MetadataSetSearchCriteria searchCriteria);
 }

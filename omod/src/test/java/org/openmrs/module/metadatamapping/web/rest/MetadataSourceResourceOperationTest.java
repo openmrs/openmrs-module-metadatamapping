@@ -156,7 +156,7 @@ public class MetadataSourceResourceOperationTest extends MainResourceControllerT
 	 * @param property name of property
 	 * @return true if the property value equals to true
 	 */
-	private Matcher<Object> propertyValueEqualsTrue(final String property) {
+	static Matcher<Object> propertyValueEqualsTrue(final String property) {
 		return new BaseMatcher<Object>() {
 			
 			@Override

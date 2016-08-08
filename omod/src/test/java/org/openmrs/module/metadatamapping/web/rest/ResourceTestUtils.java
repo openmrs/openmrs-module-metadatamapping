@@ -1,11 +1,11 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.openmrs.module.webservices.rest.SimpleObject;
 
 import java.util.List;
 
-import org.openmrs.module.webservices.rest.SimpleObject;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 class ResourceTestUtils {
 	

@@ -410,7 +410,7 @@ public interface MetadataMappingService {
 	 */
 	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, String metadataSourceName, String metadataTermCode);
-
+	
 	/**
 	 * Get metadata items of the given type that are referred to by any metadata term mappings in the given metadata source
 	 * @param type type of the metadata item
@@ -423,7 +423,7 @@ public interface MetadataMappingService {
 	 */
 	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName);
-
+	
 	/**
 	 * Save a new metadata set or update an existing one.
 	 * @param metadataSet object to save
@@ -432,7 +432,7 @@ public interface MetadataMappingService {
 	 * @should save valid new object
 	 */
 	MetadataSet saveMetadataSet(MetadataSet metadataSet);
-
+	
 	/**
 	 * Get metadata set with the given id.
 	 * @param metadataSetId database id of the object
@@ -441,7 +441,14 @@ public interface MetadataMappingService {
 	 * @should return a retired set
 	 */
 	MetadataSet getMetadataSet(Integer metadataSetId);
-
+	
+	/**
+	 * get metadata sets matching passed search criteria
+	 * @param criteria
+	 * @return
+	 */
+	List<MetadataSet> getMetadataSets(MetadataSetSearchCriteria criteria);
+	
 	/**
 	 * Get metadata set with the given uuid.
 	 * @param metadataSetUuid uuid of the object
@@ -450,7 +457,7 @@ public interface MetadataMappingService {
 	 * @should return matching metadata set
 	 */
 	MetadataSet getMetadataSetByUuid(String metadataSetUuid);
-
+	
 	/**
 	 * Retire the metadata set and its members and set required info via an AOP injected method.
 	 * @param metadataSet object to retire
@@ -461,7 +468,7 @@ public interface MetadataMappingService {
 	 * @should retire members
 	 */
 	MetadataSet retireMetadataSet(MetadataSet metadataSet, String reason);
-
+	
 	/**
 	 * Save a new metadata set member or update an existing one.
 	 * @param metadataSetMember object to save
@@ -470,7 +477,7 @@ public interface MetadataMappingService {
 	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
 	 */
 	MetadataSetMember saveMetadataSetMember(MetadataSetMember metadataSetMember);
-
+	
 	/**
 	 * Save a new metadata set member or update an existing one.
 	 * @param metadataSet set to update with entry
@@ -480,7 +487,7 @@ public interface MetadataMappingService {
 	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
 	 */
 	MetadataSetMember saveMetadataSetMember(MetadataSet metadataSet, OpenmrsMetadata metadata);
-
+	
 	/**
 	 * Save a collection of new metadata set members or update an existing ones.
 	 * @param metadataSetMembers collection of objects to save
@@ -489,7 +496,7 @@ public interface MetadataMappingService {
 	 * @see #saveMetadataSetMember(MetadataSetMember)
 	 */
 	Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers);
-
+	
 	/**
 	 * Get metadata set member with the given id.
 	 * @param metadataSetMemberId database id of the object
@@ -497,7 +504,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 */
 	MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId);
-
+	
 	/**
 	 * Get metadata set member with the given uuid.
 	 * @param metadataSetMemberUuid uuid of the object
@@ -505,7 +512,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 */
 	MetadataSetMember getMetadataSetMemberByUuid(String metadataSetMemberUuid);
-
+	
 	/**
 	 * Get members of a metadata set. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
@@ -521,7 +528,7 @@ public interface MetadataMappingService {
 	 */
 	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
-
+	
 	/**
 	 * Get members of a metadata set with given uuid. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
@@ -537,7 +544,7 @@ public interface MetadataMappingService {
 	 */
 	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
-
+	
 	/**
 	 * Get unretired metadata items in the set of specified type. If set members have {@link MetadataSetMember#getSortWeight()} set they will
 	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
@@ -554,7 +561,7 @@ public interface MetadataMappingService {
 	 */
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
-
+	
 	/**
 	 * Get metadata item referred to by the given metadata term mapping
 	 * @param type type of the metadata item
@@ -569,7 +576,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 */
 	<T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember);
-
+	
 	/**
 	 * Retire the metadata set member and set required info via an AOP injected method.
 	 * @param metadataSetMember object to retire

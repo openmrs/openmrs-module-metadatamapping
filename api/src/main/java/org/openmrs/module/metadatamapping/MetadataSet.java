@@ -14,11 +14,10 @@
 package org.openmrs.module.metadatamapping;
 
 import org.openmrs.BaseOpenmrsMetadata;
-import org.openmrs.module.metadatamapping.util.ArgUtil;
-import org.openmrs.module.metadatamapping.util.StateUtil;
 
 /**
- * A group or set of metadata terms mappings that relate to each other.
+ * A group or set of metadata terms mappings that relate to each other. MetadataSet doesn't directly contain members, but its members refer to it.
+ * To obtain {@link MetadataSetMember}'s use {@link org.openmrs.module.metadatamapping.api.MetadataMappingService#getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)}
  */
 public class MetadataSet extends BaseOpenmrsMetadata {
 	
@@ -55,4 +54,5 @@ public class MetadataSet extends BaseOpenmrsMetadata {
 	public void setMetadataSetId(Integer metadataSetId) {
 		this.metadataSetId = metadataSetId;
 	}
+	
 }

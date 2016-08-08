@@ -40,6 +40,7 @@ import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
@@ -467,6 +468,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional(readOnly = true)
+	public List<MetadataSet> getMetadataSets(MetadataSetSearchCriteria criteria) {
+		return dao.getMetadataSet(criteria);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public MetadataSet getMetadataSetByUuid(String metadataSetUuid) {
 		return dao.getMetadataSetByUuid(metadataSetUuid);
 	}
@@ -551,21 +558,21 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	        int maxResults) {
 		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
-
+	
 	@Override
 	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember) {
-		if(setMember == null || setMember.isRetired()){
+		if (setMember == null || setMember.isRetired()) {
 			return null;
 		} else {
 			T item = dao.getByUuid(type, setMember.getMetadataUuid());
-			if(item != null && !item.isRetired()){
+			if (item != null && !item.isRetired()) {
 				return item;
 			} else {
 				return null;
 			}
 		}
 	}
-
+	
 	@Override
 	@Transactional
 	public MetadataSetMember retireMetadataSetMember(MetadataSetMember metadataSetMember, String reason) {

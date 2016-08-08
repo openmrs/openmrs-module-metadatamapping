@@ -18,7 +18,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
 
 /**
- * A member in a {@link MetadataSet}.
+ * A member in a {@link MetadataSet}. Similar to {@link MetadataTermMapping} it keeps reference to single metadata item
  */
 public class MetadataSetMember extends BaseOpenmrsMetadata {
 	
@@ -29,7 +29,7 @@ public class MetadataSetMember extends BaseOpenmrsMetadata {
 	private String metadataUuid;
 	
 	private String metadataClass;
-	
+
 	private Double sortWeight;
 	
 	public MetadataSetMember() {
