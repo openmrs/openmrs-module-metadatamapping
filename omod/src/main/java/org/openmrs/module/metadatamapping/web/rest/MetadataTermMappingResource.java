@@ -1,23 +1,18 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
-import org.openmrs.module.metadatamapping.MetadataTermMapping.MetadataReference;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.web.controller.MetadataMappingRestController;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
-import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
@@ -39,9 +34,9 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 	
 	public static final String PARAM_SOURCE_NAME_OR_UUID = "source";
 	
-	public static final String PARAM_REFERENCE_CLASS = "refClass";
+	public static final String PARAM_METADATA_CLASS = "metadataClass";
 	
-	public static final String PARAM_REFERENCE_UUID = "refUuid";
+	public static final String PARAM_METADATA_UUID = "metadataUuid";
 	
 	@Override
 	public MetadataTermMapping getByUniqueId(String uniqueId) {
@@ -87,8 +82,6 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 			description.addProperty("metadataClass");
 			description.addProperty("metadataUuid");
 			
-			description.addProperty("mappedObject");
-			
 			// links
 			description.addSelfLink();
 			if (rep instanceof DefaultRepresentation) {
@@ -102,38 +95,17 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		return description;
 	}
 	
-	@PropertyGetter("mappedObject")
-	public SimpleObject getMappedObject(MetadataTermMapping delegate) {
-		SimpleObject simpleObject = null;
-		if (delegate.getMetadataClass() != null && delegate.getMetadataUuid() != null) {
-			simpleObject = new SimpleObject();
-			simpleObject.put("className", delegate.getMetadataClass());
-			simpleObject.put("uuid", delegate.getMetadataUuid());
-		}
-		
-		return simpleObject;
-	}
-	
-	@PropertySetter("mappedObject")
-	public void setMappedObject(MetadataTermMapping delegate, Object value) throws IllegalAccessException,
-	        NoSuchMethodException, InvocationTargetException {
-		String metadataClass = (String) PropertyUtils.getProperty(value, "className");
-		String metadataUuid = (String) PropertyUtils.getProperty(value, "uuid");
-		MetadataTermMapping.MetadataReference mappedObjectReference = new MetadataTermMapping.MetadataReference(
-		        metadataClass, metadataUuid);
-		delegate.setMappedObject(mappedObjectReference);
-	}
-	
 	@Override
 	public DelegatingResourceDescription getCreatableProperties() {
 		DelegatingResourceDescription description = new DelegatingResourceDescription();
 		
 		description.addRequiredProperty("code");
 		description.addRequiredProperty("metadataSource");
-		description.addRequiredProperty("name");
+		description.addRequiredProperty("metadataClass");
 		
+		description.addProperty("name");
 		description.addProperty("description");
-		description.addProperty("mappedObject");
+		description.addProperty("metadataUuid");
 		
 		return description;
 	}
@@ -144,8 +116,9 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		
 		description.addProperty("code");
 		description.addProperty("description");
-		description.addProperty("mappedObject");
 		description.addProperty("name");
+		description.addProperty("metadataUuid");
+		description.addProperty("metadataClass");
 		
 		return description;
 	}
@@ -192,11 +165,14 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 			searchCriteriaBuilder.setMetadataTermName(metadataTermName);
 		}
 		
-		String referredObjectClassName = context.getParameter(PARAM_REFERENCE_CLASS);
-		String referredObjectUuid = context.getParameter(PARAM_REFERENCE_UUID);
-		if (StringUtils.isNotBlank(referredObjectClassName) && StringUtils.isNotBlank(referredObjectUuid)) {
-			searchCriteriaBuilder.setReferredObjectReference(new MetadataReference(referredObjectClassName.trim(),
-			        referredObjectUuid.trim()));
+		String metadataClassName = context.getParameter(PARAM_METADATA_CLASS);
+		if (StringUtils.isNotBlank(metadataClassName)) {
+			searchCriteriaBuilder.setMetadataClass(metadataClassName);
+		}
+		
+		String metadataUuid = context.getParameter(PARAM_METADATA_UUID);
+		if (StringUtils.isNotBlank(metadataUuid)) {
+			searchCriteriaBuilder.setMetadataUuid(metadataUuid);
 		}
 		
 		Integer firstResult = context.getStartIndex();

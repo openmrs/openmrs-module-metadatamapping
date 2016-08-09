@@ -2,7 +2,6 @@ package org.openmrs.module.metadatamapping.api;
 
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.MetadataSource;
-import org.openmrs.module.metadatamapping.MetadataTermMapping.MetadataReference;
 
 /**
  * Search criteria for {@link MetadataMappingService#getMetadataTermMappings(MetadataTermMappingSearchCriteria)}. Use the
@@ -17,9 +16,11 @@ public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	
 	private String metadataTermName;
 	
-	private OpenmrsMetadata referredObject;
+	private String metadataUuid;
 	
-	private MetadataReference referredObjectReference;
+	private String metadataClass;
+	
+	private OpenmrsMetadata referredObject;
 	
 	/**
 	 * Prefer using {@link MetadataTermMappingSearchCriteriaBuilder} instead. Every parameter is optional.
@@ -48,16 +49,18 @@ public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	 * @param metadataSource only get term mappings from this source
 	 * @param metadataTermCode only get term mappings with this code
 	 * @param metadataTermName only get a term mapping with this name (note that names are unique)
-	 * @param referredObjectReference only get term mappings that refer to this metadata object
+	 * @param metadataClass only get term mapping with this metadataClass
+	 * @param metadataUuid only get term mapping with this metadatauuid
 	 */
 	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
-	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName,
-	    MetadataReference referredObjectReference) {
+	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName, String metadataClass,
+	    String metadataUuid) {
 		super(includeAll, firstResult, maxResults);
 		this.metadataSource = metadataSource;
 		this.metadataTermCode = metadataTermCode;
 		this.metadataTermName = metadataTermName;
-		this.referredObjectReference = referredObjectReference;
+		this.metadataClass = metadataClass;
+		this.metadataUuid = metadataUuid;
 	}
 	
 	/**
@@ -89,9 +92,18 @@ public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	}
 	
 	/**
-	 * @return only get term mappings that refer to this metadata object
+	 *
+	 * @return only get term mappings with this metadataUuid
 	 */
-	public MetadataReference getReferredObjectReference() {
-		return referredObjectReference;
+	public String getMetadataUuid() {
+		return metadataUuid;
+	}
+	
+	/**
+	 *
+	 * @return only get term mappings with this metadataClass
+	 */
+	public String getMetadataClass() {
+		return metadataClass;
 	}
 }

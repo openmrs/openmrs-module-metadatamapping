@@ -147,10 +147,14 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		if (searchCriteria.getReferredObject() != null) {
 			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getReferredObject().getUuid()));
 			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getReferredObject().getClass().getCanonicalName()));
-		} else if (searchCriteria.getReferredObjectReference() != null) {
-			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getReferredObjectReference().getReferenceUuid()));
-			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getReferredObjectReference()
-			        .getReferenceCanonicalClassName()));
+		}
+		
+		if (searchCriteria.getMetadataUuid() != null) {
+			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getMetadataUuid()));
+		}
+		
+		if (searchCriteria.getMetadataClass() != null) {
+			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getMetadataClass()));
 		}
 		
 		if (!searchCriteria.isIncludeAll()) {

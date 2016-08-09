@@ -14,7 +14,6 @@
 package org.openmrs.module.metadatamapping;
 
 import org.openmrs.BaseOpenmrsMetadata;
-import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
 
 /**
@@ -23,43 +22,6 @@ import org.openmrs.module.metadatamapping.util.ArgUtil;
  * @since 1.1
  */
 public class MetadataTermMapping extends BaseOpenmrsMetadata {
-	
-	/**
-	 * Reference to a metadata object, i.e. a tuple of a canonical class name and a uuid.
-	 * @since 1.2
-	 */
-	public static class MetadataReference {
-		
-		private String referenceCanonicalClassName;
-		
-		private String referenceUuid;
-		
-		/**
-		 * Construct a new reference.
-		 * @param referenceCanonicalClassName canonical class name of referred object
-		 * @param referenceUuid uuid of referred object
-		 */
-		public MetadataReference(String referenceCanonicalClassName, String referenceUuid) {
-			ArgUtil.notNull(referenceCanonicalClassName, "metadataClass");
-			ArgUtil.notNull(referenceUuid, "metadataUuid");
-			this.referenceCanonicalClassName = referenceCanonicalClassName;
-			this.referenceUuid = referenceUuid;
-		}
-		
-		/**
-		 * @return canonical class name of referred object
-		 */
-		public String getReferenceCanonicalClassName() {
-			return referenceCanonicalClassName;
-		}
-		
-		/**
-		 * @return uuid of referred object
-		 */
-		public String getReferenceUuid() {
-			return referenceUuid;
-		}
-	}
 	
 	private Integer metadataTermMappingId;
 	
@@ -82,30 +44,38 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	 * Construct a new metadata term mapping.
 	 * @param metadataSource defines the namespace of this term, may not be null
 	 * @param metadataTermCode code of this term within metadataSource, may not be null
-	 * @param referredObject object this term maps to, may not be null, must have {@link OpenmrsMetadata#getUuid()}
+	 * @param metadataClass class of mapped object
+	 * @param metadataUuid uuid of mapped object
 	 * @since 1.1
 	 */
-	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode, OpenmrsMetadata referredObject) {
+	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode, String metadataClass,
+	    String metadataUuid) {
 		this();
 		ArgUtil.notNull(metadataSource, "metadataSource");
 		ArgUtil.notNull(metadataTermCode, "metadataTermCode");
+		ArgUtil.notNull(metadataClass, "metadataClass");
+		ArgUtil.notNull(metadataUuid, "metadataUuid");
 		setMetadataSource(metadataSource);
 		setCode(metadataTermCode);
-		setMappedObject(referredObject);
+		setMetadataClass(metadataClass);
+		setMetadataUuid(metadataUuid);
 	}
 	
 	/**
 	 * Construct a new metadata term mapping without reference to an OpenmrsMetadata object.
 	 * @param metadataSource defines the namespace of this term, may not be null
 	 * @param metadataTermCode code of this term within metadataSource, may not be null
+	 * @param metadataClass class of mapped object
 	 * @since 1.1
 	 */
-	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
+	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode, String metadataClass) {
 		this();
 		ArgUtil.notNull(metadataSource, "metadataSource");
 		ArgUtil.notNull(metadataTermCode, "metadataTermCode");
+		ArgUtil.notNull(metadataClass, "metadataClass");
 		setMetadataSource(metadataSource);
 		setCode(metadataTermCode);
+		setMetadataClass(metadataClass);
 	}
 	
 	/**
@@ -172,52 +142,32 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	}
 	
 	/**
-	 * @return canonical class name of the mapped object
+	 * @return metadataClass of mapped object, is never null
 	 */
 	public String getMetadataClass() {
 		return metadataClass;
 	}
 	
 	/**
-	 * @return universally unique id of the mapped object
+	 * @return metadataUuid of mapped object
 	 */
 	public String getMetadataUuid() {
 		return metadataUuid;
 	}
 	
 	/**
-	 * @param mappedObject metadata object this term maps to, may not be null, must have {@link 
-	 * OpenmrsMetadata#getUuid()}
+	 *
+	 * @param metadataClass, reference class of mapped object, may not be null
 	 */
-	public void setMappedObject(OpenmrsMetadata mappedObject) {
-		ArgUtil.notNull(mappedObject, "mappedObject");
-		ArgUtil.notNull(mappedObject.getUuid(), "mappedObject.uuid");
-		setMetadataClass(mappedObject.getClass().getCanonicalName());
-		setMetadataUuid(mappedObject.getUuid());
-	}
-	
-	/**
-	 * @param mappedObjectReference metadata object this term maps to, may not be null
-	 */
-	public void setMappedObject(MetadataReference mappedObjectReference) {
-		ArgUtil.notNull(mappedObjectReference, "mappedObject");
-		setMetadataClass(mappedObjectReference.getReferenceCanonicalClassName());
-		setMetadataUuid(mappedObjectReference.getReferenceUuid());
-	}
-	
-	/**
-	 * Private as we prefer the convenience method {@link #setMappedObject(OpenmrsMetadata)}
-	 * @param metadataClass canonical class name of the mapped object
-	 */
-	private void setMetadataClass(String metadataClass) {
+	public void setMetadataClass(String metadataClass) {
 		this.metadataClass = metadataClass;
 	}
 	
 	/**
-	 * Private as we prefer the convenience method {@link #setMappedObject(OpenmrsMetadata)}
-	 * @param metadataUuid uuid of the mapped object
+	 *
+	 * @param metadataUuid, reference uuid of mapped object
 	 */
-	private void setMetadataUuid(String metadataUuid) {
+	public void setMetadataUuid(String metadataUuid) {
 		this.metadataUuid = metadataUuid;
 	}
 }

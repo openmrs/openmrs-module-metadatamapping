@@ -456,4 +456,17 @@
 		<!-- /constraints for OpenMRSMetadata -->
 	</changeSet>
 
+	<changeSet id="metadatamapping-2016-08-05-8000" author="adamgrzybkowski">
+	<preConditions onFail="MARK_RAN">
+		<columnExists tableName="metadatamapping_metadata_term_mapping"
+					  columnName="name" />
+	</preConditions>
+	<comment>
+		Make name optional
+	</comment>
+	<dropNotNullConstraint tableName="metadatamapping_metadata_term_mapping"
+						   columnName="name"
+						   columnDataType="varchar(255)"/>
+	</changeSet>
+
 </databaseChangeLog>
