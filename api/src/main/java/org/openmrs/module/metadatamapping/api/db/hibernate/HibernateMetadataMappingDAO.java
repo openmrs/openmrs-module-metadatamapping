@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.classic.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -28,6 +29,9 @@ import org.hibernate.criterion.Subqueries;
 import org.openmrs.Concept;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
+import org.openmrs.api.db.hibernate.DbSession;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
+import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -51,8 +55,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Autowired
-	@Qualifier("sessionFactory")
-	private SessionFactory sessionFactory;
+	private DbSessionFactory sessionFactory;
+	
+	public DbSession getCurrentSession() {
+		return sessionFactory.getCurrentSession();
+	}
 	
 	/**
 	 * @see MetadataMappingDAO#getConcepts(int, int)
@@ -347,26 +354,6 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		criteria = criteria.createCriteria("metadataSource").add(Restrictions.eq("name", metadataSourceName));
 		
 		return criteria;
-	}
-	
-	/**
-	 * Gets the current hibernate session while taking care of the hibernate 3 and 4 differences.
-	 *
-	 * @return the current hibernate session.
-	 */
-	private org.hibernate.Session getCurrentSession() {
-		try {
-			return sessionFactory.getCurrentSession();
-		}
-		catch (NoSuchMethodError ex) {
-			try {
-				Method method = sessionFactory.getClass().getMethod("getCurrentSession", null);
-				return (org.hibernate.Session) method.invoke(sessionFactory, null);
-			}
-			catch (Exception e) {
-				throw new RuntimeException("Failed to get the current hibernate session", e);
-			}
-		}
 	}
 	
 	private <T extends OpenmrsMetadata> List<T> internalGetMetadataSetItems(Class<T> type, MetadataSet metadataSet,
