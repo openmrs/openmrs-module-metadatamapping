@@ -378,6 +378,17 @@ public interface MetadataMappingService {
 	 */
 	@Authorized()
 	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
+
+	/**
+	 * Get a specific metadata term mapping from a specific source.
+	 * @param metadataSourceName name of source of the term
+	 * @param metadataTermCode code of the term
+	 * @return object or null, if does not exist
+	 * @since 1.2
+	 * @should return a retired term mapping
+	 */
+	@Authorized()
+	MetadataTermMapping getMetadataTermMapping(String metadataSourceName, String metadataTermCode);
 	
 	/**
 	 * Get all unretired metadata term mappings in the source.

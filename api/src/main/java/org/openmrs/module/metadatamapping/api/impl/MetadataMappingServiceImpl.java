@@ -433,7 +433,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	public MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
 		return dao.getMetadataTermMapping(metadataSource, metadataTermCode);
 	}
-	
+
+	@Override
+	public MetadataTermMapping getMetadataTermMapping(String metadataSourceName, String metadataTermCode) {
+		return dao.getMetadataTermMapping(dao.getMetadataSourceByName(metadataSourceName), metadataTermCode);
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
