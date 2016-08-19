@@ -378,7 +378,7 @@ public interface MetadataMappingService {
 	 */
 	@Authorized()
 	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
-
+	
 	/**
 	 * Get a specific metadata term mapping from a specific source.
 	 * @param metadataSourceName name of source of the term
