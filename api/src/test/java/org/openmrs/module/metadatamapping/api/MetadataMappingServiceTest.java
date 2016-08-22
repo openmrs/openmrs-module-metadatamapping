@@ -791,9 +791,9 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "not return retired metadata item for unretired term", method = "getMetadataItem(Class, String, "
+	@Verifies(value = "return retired metadata item for unretired term", method = "getMetadataItem(Class, String, "
 	        + "String)")
-	public void getMetadataItem_shouldNotReturnRetiredMetadataItemForUnretiredTerm() {
+	public void getMetadataItem_shouldReturnRetiredMetadataItemForUnretiredTerm() {
 		// given
 		// data in the test data set, and the following
 		MetadataSource metadataSource = service.getMetadataSource(1);
@@ -805,7 +805,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		    neverNeverLandTermMapping.getCode());
 		
 		// then
-		Assert.assertNull("requesting a retired metadata item returns null", neverNeverLand);
+		Assert.assertNotNull("requesting a retired metadata item returns not null", neverNeverLand);
 	}
 	
 	@Test
@@ -859,9 +859,9 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "return unretired metadata items of unretired terms matching type", method = "getMetadataItems(Class,"
+	@Verifies(value = "return metadata items of terms matching type", method = "getMetadataItems(Class,"
 	        + " String)")
-	public void getMetadataItems_shouldReturnUnretiredMetadataItemsOfUnretiredTermsMatchingType() {
+	public void getMetadataItems_shouldReturnMetadataItemsOfTermsMatchingType() {
 		// given
 		// data in the test data set, and the following
 		MetadataSource metadataSource = service.getMetadataSourceByUuid("9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
@@ -871,14 +871,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		List<Drug> drugs = service.getMetadataItems(Drug.class, metadataSource.getName());
 		
 		// then
-		Assert.assertEquals(1, locations.size());
-		for (Location location : locations) {
-			Assert.assertFalse(location.isRetired());
-		}
+		Assert.assertEquals(2, locations.size());
 		Assert.assertEquals(2, drugs.size());
-		for (Drug drug : drugs) {
-			Assert.assertFalse(drug.isRetired());
-		}
 	}
 	
 	@Test
