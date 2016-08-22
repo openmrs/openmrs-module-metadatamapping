@@ -69,7 +69,7 @@
 	</modules>
 
 	<properties>
-		<openMRSVersion>1.9.8</openMRSVersion>
+		<openMRSVersion>1.9.9</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javaComplianceVersion>1.6</javaComplianceVersion>
 		<MODULE_ID>${project.parent.artifactId}</MODULE_ID>

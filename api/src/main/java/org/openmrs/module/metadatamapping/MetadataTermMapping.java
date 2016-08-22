@@ -14,6 +14,7 @@
 package org.openmrs.module.metadatamapping;
 
 import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.util.ArgUtil;
 
 /**
@@ -38,6 +39,22 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	 * @see #MetadataTermMapping(MetadataSource, String, OpenmrsMetadata)
 	 */
 	public MetadataTermMapping() {
+	}
+	
+	/**
+	 * Construct a new metadata term mapping.
+	 * @param metadataSource defines the namespace of this term, may not be null
+	 * @param metadataTermCode code of this term within metadataSource, may not be null
+	 * @param mappedObject object to map
+	 * @since 1.1
+	 */
+	public MetadataTermMapping(MetadataSource metadataSource, String metadataTermCode, OpenmrsMetadata mappedObject) {
+		this();
+		ArgUtil.notNull(metadataSource, "metadataSource");
+		ArgUtil.notNull(metadataTermCode, "metadataTermCode");
+		setMetadataSource(metadataSource);
+		setCode(metadataTermCode);
+		setMappedObject(mappedObject);
 	}
 	
 	/**
@@ -169,5 +186,12 @@ public class MetadataTermMapping extends BaseOpenmrsMetadata {
 	 */
 	public void setMetadataUuid(String metadataUuid) {
 		this.metadataUuid = metadataUuid;
+	}
+	
+	public void setMappedObject(OpenmrsMetadata mappedObject) {
+		ArgUtil.notNull(mappedObject, "metadataObject");
+		ArgUtil.notNull(mappedObject.getUuid(), "mappedObject.uuid");
+		setMetadataClass(mappedObject.getClass().getCanonicalName());
+		setMetadataUuid(mappedObject.getUuid());
 	}
 }

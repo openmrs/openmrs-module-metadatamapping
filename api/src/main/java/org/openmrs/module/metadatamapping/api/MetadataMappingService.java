@@ -380,6 +380,17 @@ public interface MetadataMappingService {
 	MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode);
 	
 	/**
+	 * Get a specific metadata term mapping from a specific source.
+	 * @param metadataSourceName name of source of the term
+	 * @param metadataTermCode code of the term
+	 * @return object or null, if does not exist
+	 * @since 1.2
+	 * @should return a retired term mapping
+	 */
+	@Authorized()
+	MetadataTermMapping getMetadataTermMapping(String metadataSourceName, String metadataTermCode);
+	
+	/**
 	 * Get all unretired metadata term mappings in the source.
 	 * @param metadataSource source of the terms
 	 * @return list of terms
@@ -431,6 +442,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @should save valid new object
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSet saveMetadataSet(MetadataSet metadataSet);
 	
 	/**
@@ -440,6 +452,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 * @should return a retired set
 	 */
+	@Authorized()
 	MetadataSet getMetadataSet(Integer metadataSetId);
 	
 	/**
@@ -447,6 +460,7 @@ public interface MetadataMappingService {
 	 * @param criteria
 	 * @return
 	 */
+	@Authorized()
 	List<MetadataSet> getMetadataSets(MetadataSetSearchCriteria criteria);
 	
 	/**
@@ -456,6 +470,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 * @should return matching metadata set
 	 */
+	@Authorized()
 	MetadataSet getMetadataSetByUuid(String metadataSetUuid);
 	
 	/**
@@ -467,6 +482,7 @@ public interface MetadataMappingService {
 	 * @should retire and set info
 	 * @should retire members
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSet retireMetadataSet(MetadataSet metadataSet, String reason);
 	
 	/**
@@ -476,6 +492,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSetMember saveMetadataSetMember(MetadataSetMember metadataSetMember);
 	
 	/**
@@ -486,6 +503,7 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 * @see #getMetadataSetMembers(MetadataSet, int, int, RetiredHandlingMode)
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSetMember saveMetadataSetMember(MetadataSet metadataSet, OpenmrsMetadata metadata);
 	
 	/**
@@ -495,6 +513,7 @@ public interface MetadataMappingService {
 	 * @since 1.1
 	 * @see #saveMetadataSetMember(MetadataSetMember)
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers);
 	
 	/**
@@ -503,6 +522,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.2
 	 */
+	@Authorized()
 	MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId);
 	
 	/**
@@ -511,6 +531,7 @@ public interface MetadataMappingService {
 	 * @return object or null, if does not exist
 	 * @since 1.2
 	 */
+	@Authorized()
 	MetadataSetMember getMetadataSetMemberByUuid(String metadataSetMemberUuid);
 	
 	/**
@@ -526,6 +547,7 @@ public interface MetadataMappingService {
 	 * @should get members in desired order 1
 	 * @should respect retire fetch mode 1
 	 */
+	@Authorized()
 	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
@@ -542,6 +564,7 @@ public interface MetadataMappingService {
 	 * @should get members in desired order 1
 	 * @should respect retire fetch mode 1
 	 */
+	@Authorized()
 	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
@@ -559,8 +582,24 @@ public interface MetadataMappingService {
 	 * @should get unretired metadata items of unretired terms matching type in sort weight order 1
 	 * @should throw IllegalArgumentException if set does not exist
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults);
+	
+	/**
+	 * Get unretired metadata items in the set of specified type. If set members have {@link MetadataSetMember#getSortWeight()} set they will
+	 * be ordered in ascending order according to said weight. Note that due to differences in database implementations,
+	 * the order  will be unpredictable, if there are null sort weights in the set.
+	 * @param type type of the metadata items
+	 * @param metadataSet metadata set
+	 * @param <T> type of the metadata items
+	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.2
+	 * @should get unretired metadata items of unretired terms matching type in sort weight order 1
+	 * @should throw IllegalArgumentException if set does not exist
+	 */
+	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet);
 	
 	/**
 	 * Get metadata item referred to by the given metadata term mapping
@@ -574,6 +613,7 @@ public interface MetadataMappingService {
 	 * @should return null for non existent set member
 	 * @since 1.2
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
 	<T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, MetadataSetMember setMember);
 	
 	/**
@@ -584,5 +624,6 @@ public interface MetadataMappingService {
 	 * @since 1.2
 	 * @should retire and set info
 	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
 	MetadataSetMember retireMetadataSetMember(MetadataSetMember metadataSetMember, String reason);
 }

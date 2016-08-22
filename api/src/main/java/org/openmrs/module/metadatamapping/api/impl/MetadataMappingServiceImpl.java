@@ -435,6 +435,11 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	@Override
+	public MetadataTermMapping getMetadataTermMapping(String metadataSourceName, String metadataTermCode) {
+		return dao.getMetadataTermMapping(dao.getMetadataSourceByName(metadataSourceName), metadataTermCode);
+	}
+	
+	@Override
 	@Transactional(readOnly = true)
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataSource metadataSource) {
 		MetadataTermMappingSearchCriteria searchCriteria = new MetadataTermMappingSearchCriteriaBuilder().setIncludeAll(
@@ -557,6 +562,12 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
 	        int maxResults) {
 		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet) {
+		return dao.getMetadataSetItems(type, metadataSet);
 	}
 	
 	@Override
