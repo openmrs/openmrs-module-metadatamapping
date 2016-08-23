@@ -14,7 +14,7 @@ class HomeController {
     vm.limitDefined = 10; //Default value
     vm.customParamsDefined = [
       {
-        "property": "def",
+        "property": "mapped",
         "value": "true"
       }
     ];
@@ -68,7 +68,7 @@ class HomeController {
 
     vm.customParamsUndefined = [
       {
-        "property": "def",
+        "property": "mapped",
         "value": "false"
       }
     ];

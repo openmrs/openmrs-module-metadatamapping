@@ -14,7 +14,7 @@ class SetController {
     vm.limit = 10; //Default value
     vm.customParams = [
       {
-        "property": "def",
+        "property": "mapped",
         "value": "true"
       }
     ];
