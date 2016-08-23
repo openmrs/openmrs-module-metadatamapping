@@ -10,6 +10,8 @@ import org.openmrs.module.metadatamapping.MetadataSource;
  */
 public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	
+	private Boolean mapped;
+	
 	private MetadataSource metadataSource;
 	
 	private String metadataTermCode;
@@ -32,9 +34,10 @@ public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	 * @param metadataTermName only get a term mapping with this name (note that names are unique)
 	 * @param referredObject only get term mappings that refer to this metadata object
 	 */
-	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
+	public MetadataTermMappingSearchCriteria(boolean includeAll, Boolean mapped, Integer firstResult, Integer maxResults,
 	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName, OpenmrsMetadata referredObject) {
 		super(includeAll, firstResult, maxResults);
+		this.mapped = mapped;
 		this.metadataSource = metadataSource;
 		this.metadataTermCode = metadataTermCode;
 		this.metadataTermName = metadataTermName;
@@ -52,15 +55,23 @@ public class MetadataTermMappingSearchCriteria extends MetadataSearchCriteria {
 	 * @param metadataClass only get term mapping with this metadataClass
 	 * @param metadataUuid only get term mapping with this metadatauuid
 	 */
-	public MetadataTermMappingSearchCriteria(boolean includeAll, Integer firstResult, Integer maxResults,
+	public MetadataTermMappingSearchCriteria(boolean includeAll, Boolean mapped, Integer firstResult, Integer maxResults,
 	    MetadataSource metadataSource, String metadataTermCode, String metadataTermName, String metadataClass,
 	    String metadataUuid) {
 		super(includeAll, firstResult, maxResults);
+		this.mapped = mapped;
 		this.metadataSource = metadataSource;
 		this.metadataTermCode = metadataTermCode;
 		this.metadataTermName = metadataTermName;
 		this.metadataClass = metadataClass;
 		this.metadataUuid = metadataUuid;
+	}
+	
+	/**
+	 * @return defined or undefined mappings
+	 */
+	public Boolean getMapped() {
+		return mapped;
 	}
 	
 	/**
