@@ -1,1 +1,31 @@
-{{vm.hello}}
+<div style="padding: 20px">
+    <h2>&#160;Undefined mappings</h2>
+    <div id="content" class="container">
+        <openmrs-list
+                resource="vm.resourceUndefined"
+                custom-params="vm.customParamsUndefined"
+                columns="vm.columnsUndefined"
+                actions="vm.actionsUndefined"
+                list-all="true"
+                limit="vm.limitUndefined"
+                disable-links="vm.disableLinksUndefined">
+        </openmrs-list>
+    </div>
+</div>
+
+<div style="padding: 20px">
+    <h2>&#160;Defined mappings</h2>
+    <div>
+        <openmrs-list
+                resource="vm.resourceDefined"
+                custom-params="vm.customParamsDefined"
+                columns="vm.columnsDefined"
+                actions="vm.actionsDefined"
+                list-all="true"
+                limit="vm.limitDefined"
+                disable-links="vm.disableLinksDefined"
+                enable-search="vm.enableSearchDefined"
+                minimum-query-length="0">
+        </openmrs-list>
+    </div>
+</div>

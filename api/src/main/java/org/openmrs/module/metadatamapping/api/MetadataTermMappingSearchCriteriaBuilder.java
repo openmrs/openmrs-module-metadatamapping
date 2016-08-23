@@ -1,5 +1,6 @@
 package org.openmrs.module.metadatamapping.api;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.MetadataSource;
 
@@ -9,6 +10,8 @@ import org.openmrs.module.metadatamapping.MetadataSource;
 public class MetadataTermMappingSearchCriteriaBuilder {
 	
 	private boolean includeAll = false;
+
+	private Boolean mapped;
 	
 	private Integer firstResult = 0;
 	
@@ -32,6 +35,15 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	 */
 	public MetadataTermMappingSearchCriteriaBuilder setIncludeAll(boolean includeAll) {
 		this.includeAll = includeAll;
+		return this;
+	}
+	
+	/**
+	 * @param mapped return defined or undefined mappings (null by default (returns both defined and undefined), possible: true, false, null)
+	 * @return this builder
+	 */
+	public MetadataTermMappingSearchCriteriaBuilder setMapped(Boolean mapped) {
+		this.mapped = mapped;
 		return this;
 	}
 	
@@ -114,10 +126,10 @@ public class MetadataTermMappingSearchCriteriaBuilder {
 	 */
 	public MetadataTermMappingSearchCriteria build() {
 		if (referredObject != null) {
-			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource,
+			return new MetadataTermMappingSearchCriteria(includeAll, mapped, firstResult, maxResults, metadataSource,
 			        metadataTermCode, metadataTermName, referredObject);
 		} else {
-			return new MetadataTermMappingSearchCriteria(includeAll, firstResult, maxResults, metadataSource,
+			return new MetadataTermMappingSearchCriteria(includeAll, mapped, firstResult, maxResults, metadataSource,
 			        metadataTermCode, metadataTermName, metadataClass, metadataUuid);
 		}
 	}

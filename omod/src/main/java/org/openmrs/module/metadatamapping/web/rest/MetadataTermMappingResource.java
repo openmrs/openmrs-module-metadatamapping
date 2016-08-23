@@ -8,6 +8,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
+import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteriaBuilder;
 import org.openmrs.module.metadatamapping.web.controller.MetadataMappingRestController;
 import org.openmrs.module.webservices.rest.SimpleObject;
@@ -37,6 +38,8 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 	public static final String PARAM_METADATA_CLASS = "metadataClass";
 	
 	public static final String PARAM_METADATA_UUID = "metadataUuid";
+	
+	public static final String PARAM_DEFINED = "mapped";
 	
 	@Override
 	public MetadataTermMapping getByUniqueId(String uniqueId) {
@@ -175,6 +178,15 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 			searchCriteriaBuilder.setMetadataUuid(metadataUuid);
 		}
 		
+		String isReturnOnlyDefined = context.getParameter(PARAM_DEFINED);
+		if (StringUtils.isNotBlank(isReturnOnlyDefined)) {
+			if (isReturnOnlyDefined.toLowerCase().equals("true")) {
+				searchCriteriaBuilder.setMapped(Boolean.TRUE);
+			} else if (isReturnOnlyDefined.toLowerCase().equals("false")) {
+				searchCriteriaBuilder.setMapped(Boolean.FALSE);
+			}
+		}
+		
 		Integer firstResult = context.getStartIndex();
 		if (firstResult == null) {
 			firstResult = 0;
@@ -185,7 +197,7 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		}
 		
 		boolean hasMore = false;
-		searchCriteriaBuilder.setFirstResult(firstResult).setMaxResults(maxResults + 1).build();
+		searchCriteriaBuilder.setFirstResult(firstResult).setMaxResults(maxResults + 1);
 		
 		List<MetadataTermMapping> metadataTermMappings = getService().getMetadataTermMappings(searchCriteriaBuilder.build());
 		if (metadataTermMappings.size() > maxResults) {

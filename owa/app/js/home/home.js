@@ -9,7 +9,7 @@ let homeModule = angular.module('home', [ uiRouter, 'openmrs-contrib-uicommons']
         $urlRouterProvider.otherwise('/');
 
         $stateProvider.state('home', {
-            url: '/',
+            url: '/?infoToast&errorToast&successToast&warningToast',
             template: "<home></home>"
         })
     })
