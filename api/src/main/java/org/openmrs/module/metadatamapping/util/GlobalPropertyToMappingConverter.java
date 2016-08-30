@@ -1,6 +1,7 @@
 package org.openmrs.module.metadatamapping.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.GlobalProperty;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -16,7 +17,9 @@ import java.lang.reflect.Type;
  * @param <T> Class of mapped metadata object
  */
 public abstract class GlobalPropertyToMappingConverter<T extends OpenmrsMetadata> {
-	
+
+	protected static final String MIGRATION_INFO_TMPL = "This global property had been migrated to metadata mapping in source '%s' with code '&s'";
+
 	private MetadataSource source;
 	
 	public GlobalPropertyToMappingConverter(MetadataSource source) {
@@ -31,23 +34,26 @@ public abstract class GlobalPropertyToMappingConverter<T extends OpenmrsMetadata
 	 * @should do nothing, if mapping is not missing
 	 * @should create new mapping without mapped object, if mapping is missing and there is no global property or it has value not matching any OpenmrsMetadata uuid
 	 * @should create new mapping with mapped object, if mapping is missing and there is global property with uuid matching existing OpenmrsMetadata
-	 * @param globalProperty - global property to convert to metadata mapping
+	 * @Should replace global property value with migration info if migrated
+	 * @param globalPropertyKey - global property to convert to metadata mapping
 	 */
-	public void convert(String globalProperty) {
+	public void convert(String globalPropertyKey) {
 		MetadataMappingService metadataMappingService = Context.getService(MetadataMappingService.class);
-		MetadataTermMapping metadataTermMapping = metadataMappingService.getMetadataTermMapping(source, globalProperty);
+		MetadataTermMapping metadataTermMapping = metadataMappingService.getMetadataTermMapping(source, globalPropertyKey);
 		if (metadataTermMapping == null) {
 			T instance = null;
 			
-			String globalPropertyValue = Context.getAdministrationService().getGlobalProperty(globalProperty);
-			if (StringUtils.isNotBlank(globalPropertyValue)) {
-				instance = getMetadataByUuid(globalPropertyValue);
+			GlobalProperty globalProperty = Context.getAdministrationService().getGlobalPropertyObject(globalPropertyKey);
+			if (globalProperty != null && StringUtils.isNotBlank(globalProperty.getPropertyValue())) {
+				instance = getMetadataByUuid(globalProperty.getPropertyValue());
+				globalProperty.setPropertyValue(String.format(MIGRATION_INFO_TMPL, source.getName(), globalPropertyKey));
+				Context.getAdministrationService().saveGlobalProperty(globalProperty);
 			}
 			
 			if (instance == null) {
-				metadataTermMapping = new MetadataTermMapping(source, globalProperty, getMetadataClass());
+				metadataTermMapping = new MetadataTermMapping(source, globalPropertyKey, getMetadataClass());
 			} else {
-				metadataTermMapping = new MetadataTermMapping(source, globalProperty, instance);
+				metadataTermMapping = new MetadataTermMapping(source, globalPropertyKey, instance);
 			}
 			metadataMappingService.saveMetadataTermMapping(metadataTermMapping);
 		}

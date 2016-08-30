@@ -36,15 +36,14 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 	public void convert_shouldDoNothingIfMappingAlreadyExists() {
 		//given
 		//test dataset
-		assertThat(metadataMappingService.getMetadataTermMapping(source, "emr.exitFromInpatientEncounterType"),
-		    is(notNullValue()));
+		String globalPropertyKey = "emr.exitFromInpatientEncounterType";
+		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(notNullValue()));
 		
 		//when
-		getEncounterTypeConverter().convert("emr.exitFromInpatientEncounterType");
+		getEncounterTypeConverter().convert(globalPropertyKey);
 		
 		//then
-		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source,
-		    "emr.exitFromInpatientEncounterType");
+		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, globalPropertyKey);
 		assertThat(termMapping, hasMappedUuid(null));
 		assertThat(termMapping, hasMappedClass("org.openmrs.EncounterType"));
 	}
@@ -54,13 +53,14 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 	public void convert_shouldCreateEmptyMappingIfThereIsNoGlobalProperty() {
 		//given
 		//test dataset
-		assertThat(metadataMappingService.getMetadataTermMapping(source, "provider.exitTest"), is(nullValue()));
+		String globalPropertyKey = "emr.exitTest";
+		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(nullValue()));
 		
 		//when
-		getEncounterTypeConverter().convert("emr.exitTest");
+		getEncounterTypeConverter().convert(globalPropertyKey);
 		
 		//then
-		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, "emr.exitTest");
+		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, globalPropertyKey);
 		assertThat(termMapping, hasMappedUuid(null));
 		assertThat(termMapping, hasMappedClass("org.openmrs.EncounterType"));
 	}
@@ -70,14 +70,14 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 	public void convert_shouldCreateEmptyMappingIfThereIsEmptyGlobalProperty() {
 		//given
 		//test dataset
-		assertThat(metadataMappingService.getMetadataTermMapping(source, "provider.unknownProviderUuid"), is(nullValue()));
+		String globalPropertyKey = "provider.unknownProviderUuid";
+		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(nullValue()));
 		
 		//when
-		getEncounterTypeConverter().convert("provider.unknownProviderUuid");
+		getEncounterTypeConverter().convert(globalPropertyKey);
 		
 		//then
-		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source,
-		    "provider.unknownProviderUuid");
+		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, globalPropertyKey);
 		assertThat(termMapping, hasMappedUuid(null));
 		assertThat(termMapping, hasMappedClass("org.openmrs.EncounterType"));
 	}
@@ -87,20 +87,37 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 	public void convert_shouldMapObjectFromGlobalProperty() {
 		//given
 		//test dataset
-		assertThat(metadataMappingService.getMetadataTermMapping(source, "emr.checkInEncounterType"), is(nullValue()));
+		String globalPropertyKey = "emr.checkInEncounterType";
+		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(nullValue()));
 		
 		//when
-		getEncounterTypeConverter().convert("emr.checkInEncounterType");
+		getEncounterTypeConverter().convert(globalPropertyKey);
 		
 		//then
-		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, "emr.checkInEncounterType");
+		MetadataTermMapping termMapping = metadataMappingService.getMetadataTermMapping(source, globalPropertyKey);
 		assertThat(termMapping, hasMappedUuid("55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b"));
 		assertThat(termMapping, hasMappedClass("org.openmrs.EncounterType"));
 	}
+
+
+	@Test
+	@Verifies(value = "replace global property value with migration info if migrated", method = "convert(String)")
+	public void convert_shouldReplaceGlobalPropertyValueWithMigrationInfo() {
+		//given
+		//test dataset
+		String globalPropertyKey = "emr.checkInEncounterType";
+		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(nullValue()));
+
+		//when
+		getEncounterTypeConverter().convert(globalPropertyKey);
+
+		//then
+		String globalProperty = Context.getAdministrationService().getGlobalProperty(globalPropertyKey);
+		assertThat(globalProperty, is(String.format(GlobalPropertyToMappingConverter.MIGRATION_INFO_TMPL, source.getName(), globalPropertyKey)));
+	}
 	
 	public GlobalPropertyToMappingConverter<EncounterType> getEncounterTypeConverter() {
-		return new GlobalPropertyToMappingConverter<EncounterType>(
-		                                                           source) {
+		return new GlobalPropertyToMappingConverter<EncounterType>(source) {
 			
 			@Override
 			public EncounterType getMetadataByUuid(String uuid) {
