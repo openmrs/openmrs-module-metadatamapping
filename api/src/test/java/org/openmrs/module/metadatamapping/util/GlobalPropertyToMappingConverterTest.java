@@ -98,8 +98,7 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 		assertThat(termMapping, hasMappedUuid("55a0d3ea-a4d7-4e88-8f01-5aceb2d3c61b"));
 		assertThat(termMapping, hasMappedClass("org.openmrs.EncounterType"));
 	}
-
-
+	
 	@Test
 	@Verifies(value = "replace global property value with migration info if migrated", method = "convert(String)")
 	public void convert_shouldReplaceGlobalPropertyValueWithMigrationInfo() {
@@ -107,17 +106,19 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 		//test dataset
 		String globalPropertyKey = "emr.checkInEncounterType";
 		assertThat(metadataMappingService.getMetadataTermMapping(source, globalPropertyKey), is(nullValue()));
-
+		
 		//when
 		getEncounterTypeConverter().convert(globalPropertyKey);
-
+		
 		//then
 		String globalProperty = Context.getAdministrationService().getGlobalProperty(globalPropertyKey);
-		assertThat(globalProperty, is(String.format(GlobalPropertyToMappingConverter.MIGRATION_INFO_TMPL, source.getName(), globalPropertyKey)));
+		assertThat(globalProperty, is(String.format(GlobalPropertyToMappingConverter.MIGRATION_INFO_TMPL, source.getName(),
+		    globalPropertyKey)));
 	}
 	
 	public GlobalPropertyToMappingConverter<EncounterType> getEncounterTypeConverter() {
-		return new GlobalPropertyToMappingConverter<EncounterType>(source) {
+		return new GlobalPropertyToMappingConverter<EncounterType>(
+		                                                           source) {
 			
 			@Override
 			public EncounterType getMetadataByUuid(String uuid) {

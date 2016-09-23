@@ -23,13 +23,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>${project.parent.artifactId}-owa</artifactId>
-			<version>${project.parent.version}</version>
-			<type>zip</type>
-		</dependency>
-
-		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 		</dependency>
@@ -96,6 +89,7 @@
 				<groupId>org.openmrs.maven.plugins</groupId>
 				<artifactId>maven-openmrs-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -112,6 +106,26 @@
 							<excludeTransitive>true</excludeTransitive>
 							<includes>**/*</includes>
 							<outputDirectory>${project.build.directory}/classes</outputDirectory>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>include-owa</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.parent.groupId}</groupId>
+									<artifactId>${project.parent.artifactId}-owa</artifactId>
+									<version>${project.parent.version}</version>
+									<type>zip</type>
+									<destFileName>metadatamapping.owa</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/classes/web/module/owas</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

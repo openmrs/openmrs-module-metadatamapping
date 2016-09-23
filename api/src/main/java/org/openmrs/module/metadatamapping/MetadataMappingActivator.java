@@ -18,10 +18,4 @@ import org.openmrs.module.BaseModuleActivator;
 /**
  * Performs startup and shutdown operations.
  */
-public class MetadataMappingActivator extends BaseModuleActivator {
-	
-	@Override
-	public void willRefreshContext() {
-		new OwaDeployer().deployOwa();
-	}
-}
+public class MetadataMappingActivator extends BaseModuleActivator {}

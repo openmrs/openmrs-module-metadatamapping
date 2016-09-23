@@ -10,7 +10,7 @@ import org.openmrs.module.metadatamapping.MetadataSource;
 public class MetadataTermMappingSearchCriteriaBuilder {
 	
 	private boolean includeAll = false;
-
+	
 	private Boolean mapped;
 	
 	private Integer firstResult = 0;

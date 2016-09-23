@@ -859,8 +859,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "return metadata items of terms matching type", method = "getMetadataItems(Class,"
-	        + " String)")
+	@Verifies(value = "return metadata items of terms matching type", method = "getMetadataItems(Class," + " String)")
 	public void getMetadataItems_shouldReturnMetadataItemsOfTermsMatchingType() {
 		// given
 		// data in the test data set, and the following
