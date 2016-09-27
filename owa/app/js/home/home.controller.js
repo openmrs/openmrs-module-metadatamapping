@@ -46,7 +46,7 @@ class HomeController {
         "action":"view",
         "label":"Set",
         "link":"#/set/",
-        "icon":"edit-action",
+        "icon":"icon-reply edit-action",
         "showLabel": "true"
       },
       {
@@ -65,6 +65,7 @@ class HomeController {
     vm.resourceUndefined = "metadatamapping/termmapping";
     vm.disableLinksUndefined = true;
     vm.limitUndefined = 10; //Default value
+    vm.noDataNotification = 'There are no undefined mappings';
 
     vm.customParamsUndefined = [
       {
@@ -95,7 +96,7 @@ class HomeController {
         "action":"view",
         "label":"Set",
         "link":"#/set/",
-        "icon":"edit-action",
+        "icon":"icon-pencil edit-action",
         "showLabel": "true"
       },
       {

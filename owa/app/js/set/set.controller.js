@@ -35,10 +35,10 @@ class SetController {
 
     vm.actions = [
       {
-        "action":"confirm",
+        "action":"custom",
         "label":"Select",
         "message":"Would you like to map {name} as " + vm.mapping.metadataSource.display + ":" + vm.mapping.code + "?",
-        "icon":"edit-action",
+        "icon":"icon-ok edit-action",
         "showLabel": "true"
       }
     ];
