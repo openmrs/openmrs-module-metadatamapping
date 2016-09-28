@@ -149,6 +149,9 @@ var webpackConfig = {
 	}, {
 	    test: /\.(png|jpg|jpeg|gif|svg)$/,
 	    loader: 'url'
+	},{
+		test: /\.json$/,
+		loader: 'json'
 	}, {
 	    test: /\.html$/,
 	    loader: 'html'
