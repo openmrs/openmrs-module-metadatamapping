@@ -1,4 +1,8 @@
 {
   "createsource.title":"Create Metadata Source",
-  "createsource.button":"Add new metadata source"
+  "createsource.button":"Add new metadata source",
+  "createtermamapping.button":"Create Mapping",
+  "createtermamapping.title":"Create Metadata Term Mapping",
+  "metadataclassname.error":"Metadata Class cannot be empty",
+  "metadataautocomplite.noresults":"No Results Found"
 }
