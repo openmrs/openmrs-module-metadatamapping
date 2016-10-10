@@ -13,10 +13,38 @@
  */
 package org.openmrs.module.metadatamapping;
 
+import org.openmrs.Privilege;
+import org.openmrs.Role;
+import org.openmrs.api.UserService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+
+import java.util.List;
 
 /**
  * Performs startup and shutdown operations.
  */
 public class MetadataMappingActivator extends BaseModuleActivator {
+
+	@Override
+	public void started() {
+		removeDeprecatedMetadataMappingPrivilege();
+	}
+
+	/**
+	 * @deprecated since 1.2.0
+	 */
+	private void removeDeprecatedMetadataMappingPrivilege() {
+		UserService userService = Context.getUserService();
+
+		Privilege privilege = userService.getPrivilege("Metadata Mapping");
+		if (privilege != null) {
+			List<Role> roles = userService.getAllRoles();
+			for (Role role : roles) {
+				role.removePrivilege(privilege);
+			}
+
+			userService.purgePrivilege(privilege);
+		}
+	}
 }
