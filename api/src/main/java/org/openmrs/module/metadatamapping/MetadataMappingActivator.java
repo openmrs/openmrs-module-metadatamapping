@@ -18,4 +18,5 @@ import org.openmrs.module.BaseModuleActivator;
 /**
  * Performs startup and shutdown operations.
  */
-public class MetadataMappingActivator extends BaseModuleActivator {}
+public class MetadataMappingActivator extends BaseModuleActivator {
+}
