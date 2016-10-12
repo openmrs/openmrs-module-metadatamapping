@@ -1,0 +1,20 @@
+<h1><i class="icon-pencil"></i>&#160;{{"createsource.title" | translate}}</h1>
+<form name="createSource">
+    <div align="center">
+        <fieldset style="width: 90%">
+            <p class="input-position-class">
+                <label name="input-name">{{"Name" | translate}}<span class="required">*</span></label>
+                <input name='name' id="input-name" ng-model='vm.source.name' required/>
+            </p>
+
+            <p class="input-position-class">
+                <label name="input-description">{{"Description" | translate}}</label>
+                <input name='name' id="input-description" ng-model='vm.source.description' length="100"/>
+            </p>
+        </fieldset>
+    </div>
+</form>
+<div style="padding-top: 13px">
+    <button ng-click='vm.saveSource()' ng-disabled="!vm.isCorrect()"><i class="icon-ok"></i><strong>{{"Save" | translate}}</strong></button>
+    <a class="button" href="#/"><i class="icon-remove"></i><strong>{{"Concept.cancel" | translate}}</strong></a>
+</div>
