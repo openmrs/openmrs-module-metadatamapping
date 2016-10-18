@@ -2,7 +2,7 @@
   "Name": "Nombre",
   "Description":"Descripción",
   "Save": "Salvar",
-  "Concept.cancel":"Cancelar",
+  "Cancel":"Cancelar",
   "createsource.title":"Crear origen de metadatos",
   "createsource.button":"Añadir un nuevo origen de metadatos"
 }

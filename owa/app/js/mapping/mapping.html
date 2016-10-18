@@ -1,0 +1,55 @@
+<h1><i class="icon-pencil"></i>&#160;{{"createtermamapping.title" | translate }} </h1>
+<form name="classEdit">
+    <div class="info-body" align="center">
+        <fieldset style="width: 90%;">
+            <div align="left">
+
+                <div>{{"Metadata Class" | translate}}
+                    <span class="required">*</span>
+                    <input name="description"  ng-model="vm.mapping.metadataClass" ng-required="true" ng-change="vm.checkIfEmpty()">
+                    <div ng-show="vm.metadataClassEmpty" style="color:red">{{"metadataclassname.error"|translate}}</div>
+                </div>
+
+                <div>{{"Metadata Source" | translate}}
+                    <span class="required">*</span>
+                    <select name="metadataSource"  ng-model="vm.mapping.metadataSource" ng-required="true">
+                        <option ng-repeat="source in vm.metadataSources" value="{{source.uuid}}">{{source.name}}</option>
+                    </select>
+                </div>
+
+                <div>{{"Code" | translate}}
+                    <span class="required">*</span>
+                    <input name="description"ng-model="vm.mapping.code" ng-required="true">
+                </div>
+
+                <div>{{"Metadata" | translate}}
+                    <input class="form-control" type="text" ng-model="vm.metadataName" typeahead-no-results="noResults" ng-change="vm.getMetadata()"
+                           uib-typeahead="metadata as metadata.display for metadata in vm.suggestions" typeahead-wait-ms="250"
+                           typeahead-select-on-exact="true" typeahead-on-select="vm.onSelect($item, $model, $label)">
+                    <div ng-show="noResults"> {{"metadataautocomplite.noresults"|translate}}</div>
+                </div>
+
+                <div>{{"Name" | translate}}
+                    <input type="text" name="name" ng-model="vm.mapping.name">
+                </div>
+
+                <div>{{"Description" | translate}}
+                    <textarea name="description" rows="3" cols="40" ng-model="vm.mapping.description"></textarea>
+                </div>
+
+            </div>
+        </fieldset>
+    </div>
+    <div style="padding-top: 13px">
+
+        <button ng-disabled="classEdit.$invalid" ng-click="vm.saveMapping()">
+            <i class="icon-ok"></i>
+            {{"Save" | translate}}
+        </button>
+        <button ng-click="vm.cancel()">
+            <i class="icon-remove"></i>
+            {{"Cancel" | translate}}
+        </button>
+    </div>
+
+</form>
