@@ -32,7 +32,6 @@ public class MetadataTermMappingValidator implements Validator {
                     errors.rejectValue("metadataClass", ERROR_INFO);
                 }
             } catch (ClassNotFoundException e) {
-                errors.rejectValue("metadataClass", e.getMessage());
                 log.error(e.getMessage(), e);
             }
         }
