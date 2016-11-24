@@ -1,10 +1,10 @@
 package org.openmrs.module.metadatamapping;
 
 
-import org.openmrs.Concept;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.annotation.Handler;
-import org.openmrs.notification.Alert;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -13,6 +13,8 @@ public class MetadataTermMappingValidator implements Validator {
 
     public static final String ERROR_INFO = "metadata class must be loaded class implementing OpenmrsMetadata";
 
+    protected final Log log = LogFactory.getLog(getClass());
+    
     @Override
     public boolean supports(Class<?> aClass) {
         return MetadataTermMapping.class.isAssignableFrom(aClass);
@@ -30,7 +32,8 @@ public class MetadataTermMappingValidator implements Validator {
                     errors.rejectValue("metadataClass", ERROR_INFO);
                 }
             } catch (ClassNotFoundException e) {
-                errors.rejectValue("metadataClass", ERROR_INFO);
+                errors.rejectValue("metadataClass", e.getMessage());
+                log.error(e.getMessage(), e);
             }
         }
     }
