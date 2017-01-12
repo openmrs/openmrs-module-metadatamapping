@@ -15,7 +15,7 @@
 
 	<dependencies>
 
-		<!-- moduel is "aware-of" metadata deploy -->
+		<!-- module is "aware-of" metadata deploy -->
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>metadatadeploy-api</artifactId>
