@@ -27,6 +27,22 @@ public class MetadataMappingConstructors {
 		obj.setUuid(uuid);
 		return obj;
 	}
-
+	
+	public static MetadataSet metadataSet(String uuid) {
+		MetadataSet obj = new MetadataSet();
+		obj.setUuid(uuid);
+		return obj;
+	}
+	
+	public static MetadataSetMember metadataSetMember(MetadataSet set, String metadataClass, String metadataUuid,
+	        Double sortWeight, String uuid) {
+		MetadataSetMember obj = new MetadataSetMember();
+		obj.setMetadataSet(set);
+		obj.setMetadataClass(metadataClass);
+		obj.setMetadataUuid(metadataUuid);
+		obj.setSortWeight(sortWeight);
+		obj.setUuid(uuid);
+		return obj;
+	}
+	
 }
-

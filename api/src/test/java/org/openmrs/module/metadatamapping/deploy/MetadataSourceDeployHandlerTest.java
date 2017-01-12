@@ -40,7 +40,7 @@ public class MetadataSourceDeployHandlerTest extends BaseModuleContextSensitiveT
 		Assert.assertThat(updated.getDescription(), Matchers.is("Updated desc"));
 		
 		// Check uninstall retires
-		deployService.uninstallObject(deployService.fetchObject(MetadataSource.class, "obj-uuid"), "Testing");
+		deployService.uninstallObject(metadataMappingService.getMetadataSourceByUuid("obj-uuid"), "Testing");
 		
 		Assert.assertThat(metadataMappingService.getMetadataSourceByUuid("obj-uuid").isRetired(), Matchers.is(true));
 		
