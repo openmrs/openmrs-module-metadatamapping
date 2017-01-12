@@ -77,6 +77,9 @@
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
 		<webservices.rest-omod.version>2.13</webservices.rest-omod.version>
+		<metadatadeployVersion>1.7</metadatadeployVersion>
+		<metadatasharingVersion>1.1.8</metadatasharingVersion>
+		<serializationxstreamVersion>0.2.7</serializationxstreamVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -137,6 +140,30 @@
 				<type>pom</type>
 				<scope>test</scope>
 			</dependency>
+
+			<!-- module is "aware-of" metadata deploy -->
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatadeploy-api</artifactId>
+				<scope>provided</scope>
+				<version>${metadatadeployVersion}</version>
+			</dependency>
+
+			<!-- modules only required to fire up application context during testing -->
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatasharing-api</artifactId>
+				<scope>test</scope>
+				<version>${metadatasharingVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>serialization.xstream-api</artifactId>
+				<scope>test</scope>
+				<version>${serializationxstreamVersion}</version>
+			</dependency>
+			<!-- end modules only required to fire up application context during testing -->
 
 			<dependency>
 				<groupId>org.mockito</groupId>
