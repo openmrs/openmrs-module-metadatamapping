@@ -32,13 +32,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- module is "aware-of" metadata deploy -->
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>metadatadeploy-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
 		<dependency>
 			<!-- Need to depend on test resources so that we don't need to duplicate context configuration for tests. -->
 			<groupId>${project.parent.groupId}</groupId>
@@ -61,20 +54,6 @@
 			<artifactId>openmrs-web</artifactId>
 			<classifier>tests</classifier>
 		</dependency>
-
-		<!-- modules only required to fire up application context during testing -->
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>metadatasharing-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>serialization.xstream-api</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 	
 	<build>
