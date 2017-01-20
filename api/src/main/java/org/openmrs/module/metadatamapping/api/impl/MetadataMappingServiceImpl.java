@@ -13,12 +13,6 @@
  */
 package org.openmrs.module.metadatamapping.api.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +22,7 @@ import org.openmrs.ConceptSource;
 import org.openmrs.GlobalProperty;
 import org.openmrs.ImplementationId;
 import org.openmrs.OpenmrsMetadata;
+import org.openmrs.OpenmrsObject;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
@@ -48,6 +43,13 @@ import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteriaB
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.wrapper.ConceptAdapter;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The service implementation.
@@ -385,6 +387,124 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional
+	public MetadataTermMapping mapMetadataItem(OpenmrsMetadata referredObject, String sourceName, String mappingCode) {
+		
+		MetadataSource source = Context.getService(MetadataMappingService.class).getMetadataSourceByName(sourceName);
+		if (source == null) {
+			throw new IllegalArgumentException("No source with name " + sourceName);
+		}
+		
+		// create mapping if necessary
+		MetadataTermMapping mapping = Context.getService(MetadataMappingService.class).getMetadataTermMapping(source,
+		    mappingCode);
+		if (mapping == null) {
+			mapping = new MetadataTermMapping();
+			mapping.setMetadataSource(source);
+			mapping.setCode(mappingCode);
+		}
+		
+		// update & save
+		mapping.setMappedObject(referredObject);
+		Context.getService(MetadataMappingService.class).saveMetadataTermMapping(mapping);
+		return mapping;
+	}
+	
+	@Override
+	@Transactional
+	public <T extends OpenmrsMetadata> MetadataTermMapping mapMetadataItems(List<T> referredObjects, String sourceName,
+	        String mappingCode) {
+		
+		if (referredObjects == null || referredObjects.size() == 0) {
+			throw new IllegalArgumentException("List of objects to map null or empty");
+		}
+		
+		MetadataSource source = Context.getService(MetadataMappingService.class).getMetadataSourceByName(sourceName);
+		if (source == null) {
+			throw new IllegalArgumentException("No source with name " + sourceName);
+		}
+		
+		MetadataTermMapping mapping = Context.getService(MetadataMappingService.class).getMetadataTermMapping(source,
+		    mappingCode);
+		
+		// create new set
+		if (mapping == null) {
+			
+			MetadataSet set = new MetadataSet();
+			Context.getService(MetadataMappingService.class).saveMetadataSet(set);
+			
+			for (OpenmrsMetadata obj : referredObjects) {
+				Context.getService(MetadataMappingService.class).saveMetadataSetMember(new MetadataSetMember(obj, set));
+			}
+			
+			mapping = new MetadataTermMapping();
+			mapping.setMetadataSource(source);
+			mapping.setCode(mappingCode);
+			mapping.setMappedObject(set);
+			Context.getService(MetadataMappingService.class).saveMetadataTermMapping(mapping);
+			return mapping;
+		}
+		// find and modify existing set
+		else {
+			MetadataSet existingSet = Context.getService(MetadataMappingService.class).getMetadataItem(MetadataSet.class,
+			    sourceName, mappingCode);
+			List<MetadataSetMember> existingSetMembers = Context.getService(MetadataMappingService.class)
+			        .getMetadataSetMembers(existingSet, RetiredHandlingMode.ONLY_ACTIVE);
+			
+			List<String> existingSetMemberUuids = mapToMemberUuids(existingSetMembers);
+			List<String> newSetMemberUuids = mapToUuids(referredObjects);
+			
+			// remove any items that are no longer there
+			for (MetadataSetMember member : existingSetMembers) {
+				if (!newSetMemberUuids.contains(member.getMetadataUuid())) {
+					Context.getService(MetadataMappingService.class).retireMetadataSetMember(member, "removed from set");
+				}
+			}
+			
+			// add any missing items
+			for (OpenmrsMetadata obj : referredObjects) {
+				if (!existingSetMemberUuids.contains(obj.getUuid())) {
+					Context.getService(MetadataMappingService.class).saveMetadataSetMember(
+					    new MetadataSetMember(obj, existingSet));
+				}
+			}
+			
+		}
+		
+		return mapping;
+	}
+	
+	private List<String> mapToMemberUuids(List<MetadataSetMember> members) {
+		
+		List<String> memberUuids = new ArrayList<String>();
+		
+		if (members == null) {
+			return memberUuids;
+		} else {
+			for (MetadataSetMember member : members) {
+				memberUuids.add(member.getMetadataUuid());
+			}
+		}
+		
+		return memberUuids;
+	}
+	
+	private <T extends OpenmrsMetadata> List<String> mapToUuids(List<T> metadata) {
+		
+		List<String> uuids = new ArrayList<String>();
+		
+		if (metadata == null) {
+			return uuids;
+		} else {
+			for (OpenmrsObject member : metadata) {
+				uuids.add(member.getUuid());
+			}
+		}
+		
+		return uuids;
+	}
+	
+	@Override
+	@Transactional
 	public MetadataTermMapping saveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
 		return dao.saveMetadataTermMapping(metadataTermMapping);
 	}
@@ -544,23 +664,33 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	@Override
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, RetiredHandlingMode retiredHandlingMode) {
+		return this.getMetadataSetMembers(metadataSet, null, null, retiredHandlingMode);
+	}
+	
+	@Override
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, RetiredHandlingMode retiredHandlingMode) {
+		return this.getMetadataSetMembers(metadataSetUuid, null, null, retiredHandlingMode);
+	}
+	
+	@Override
 	@Transactional(readOnly = true)
-	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
 		return dao.getMetadataSetMembers(metadataSetUuid, firstResult, maxResults, retiredHandlingMode);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
 		return dao.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
 	}
 	
 	@Override
 	@Transactional(readOnly = true)
-	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-	        int maxResults) {
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet,
+	        Integer firstResult, Integer maxResults) {
 		return dao.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
 	

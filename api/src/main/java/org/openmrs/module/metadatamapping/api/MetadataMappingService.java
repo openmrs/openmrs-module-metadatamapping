@@ -13,10 +13,6 @@
  */
 package org.openmrs.module.metadatamapping.api;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.openmrs.Concept;
 import org.openmrs.ConceptSource;
 import org.openmrs.OpenmrsMetadata;
@@ -31,7 +27,10 @@ import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 import org.openmrs.module.metadatamapping.api.wrapper.ConceptAdapter;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The service.
@@ -296,6 +295,36 @@ public interface MetadataMappingService {
 	MetadataSource retireMetadataSource(MetadataSource metadataSource, String reason);
 	
 	/**
+	 * Creates or updates a metadata mapping for an object
+	 *
+	 * @param referredObject object to map
+	 * @param sourceName name of source
+	 * @param mappingCode name of mapping
+	 * @return created or updated MetadataTermMapping
+	 * @should create new MetadataTermMapping if none exists within the existing source with the given mappingName
+	 * @should update existing MetadataTermMapping if a mapping with that name already exists within the given source
+	 * @should fail if no source with the give sourceName
+	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
+	MetadataTermMapping mapMetadataItem(OpenmrsMetadata referredObject, String sourceName, String mappingCode);
+	
+	/**
+	 * Creates or updates a metadata mapping for a set of objects
+	 * @param referredObjects objects to map
+	 * @param sourceName name of source
+	 * @param mappingCode name of mapping
+	 * @return created up updated MetadataTermMapping
+	 * @should create new MetadataSet, MetadataSetMembers, and MetadataTermMapping if none exists within the existing source with the given mapping name
+	 * @should if existing MetadataTermMapping, should add any objects in referredObjects that aren't currently items in MetadataSet
+	 * @should if existing MetadateTermMapping, should remove any objects in referredObjects that aren't currently items in MetadataSet
+	 * @should fail if no source with given sourceName
+	 * @should fail if existing MetadataTermMapping and that mapping does not point to a MetadataSet
+	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
+	<T extends OpenmrsMetadata> MetadataTermMapping mapMetadataItems(List<T> referredObjects, String sourceName,
+	        String mappingCode);
+	
+	/**
 	 * Save a new metadata term mapping or update an existing one.
 	 * @param metadataTermMapping object to save
 	 * @return saved object
@@ -539,8 +568,6 @@ public interface MetadataMappingService {
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
 	 * will be unpredictable, if there are null sort weights in the set.
 	 * @param metadataSet metadata set
-	 * @param firstResult zero based index of first result to get
-	 * @param maxResults maximum number of results to get
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
 	 * @since 1.2
@@ -548,7 +575,23 @@ public interface MetadataMappingService {
 	 * @should respect retire fetch mode 1
 	 */
 	@Authorized()
-	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, RetiredHandlingMode retiredHandlingMode);
+	
+	/**
+	 * Get members of a metadata set. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered
+	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
+	 * will be unpredictable, if there are null sort weights in the set.
+	 * @param metadataSet metadata set
+	 * @param firstResult zero based index of first result to get (null = 0)
+	 * @param maxResults maximum number of results to get (null = get all)
+	 * @param retiredHandlingMode handle retired objects using this mode
+	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.2
+	 * @should get members in desired order 1
+	 * @should respect retire fetch mode 1
+	 */
+	@Authorized()
+	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
@@ -556,8 +599,6 @@ public interface MetadataMappingService {
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
 	 * will be unpredictable, if there are null sort weights in the set.
 	 * @param metadataSetUuid metadata set uuid
-	 * @param firstResult zero based index of first result to get
-	 * @param maxResults maximum number of results to get
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
 	 * @since 1.2
@@ -565,7 +606,23 @@ public interface MetadataMappingService {
 	 * @should respect retire fetch mode 1
 	 */
 	@Authorized()
-	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, RetiredHandlingMode retiredHandlingMode);
+	
+	/**
+	 * Get members of a metadata set with given uuid. If members have {@link MetadataSetMember#getSortWeight()} set they will be ordered
+	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
+	 * will be unpredictable, if there are null sort weights in the set.
+	 * @param metadataSetUuid metadata set uuid
+	 * @param firstResult zero based index of first result to get (null = 0)
+	 * @param maxResults maximum number of results to get (null = get all)
+	 * @param retiredHandlingMode handle retired objects using this mode
+	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
+	 * @since 1.2
+	 * @should get members in desired order 1
+	 * @should respect retire fetch mode 1
+	 */
+	@Authorized()
+	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
@@ -583,8 +640,8 @@ public interface MetadataMappingService {
 	 * @should throw IllegalArgumentException if set does not exist
 	 */
 	@Authorized(MetadataMapping.PRIVILEGE_VIEW_METADATA)
-	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-	        int maxResults);
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, Integer firstResult,
+	        Integer maxResults);
 	
 	/**
 	 * Get unretired metadata items in the set of specified type. If set members have {@link MetadataSetMember#getSortWeight()} set they will

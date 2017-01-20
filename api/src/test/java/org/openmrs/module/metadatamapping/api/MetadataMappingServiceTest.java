@@ -13,12 +13,6 @@
  */
 package org.openmrs.module.metadatamapping.api;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +41,13 @@ import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.ExpectedException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -568,6 +569,179 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@Verifies(value = "throw exception if no matching source", method = "mapMetadataItem")
+	@ExpectedException(IllegalArgumentException.class)
+	public void mapMetadataItem_shouldThrowExceptionIfNoMatchingSource() {
+		service.mapMetadataItem(locationService.getLocation(1), "non-existing-source", "some-mapping");
+	}
+	
+	@Test
+	@Verifies(value = "throw exception if referredObject is null", method = "mapMetadataItem")
+	@ExpectedException(IllegalArgumentException.class)
+	public void mapMetadataItem_shouldThrowExceptionIfReferredObjectIsNull() {
+		service.mapMetadataItem(null, "Integration Test Metadata Source 1", "some-mapping");
+	}
+	
+	@Test
+	@Verifies(value = "create new metadata term mapping", method = "mapMetadataItem")
+	public void mapMetadataItem_shouldCreateNewMetadataTermMapping() {
+		
+		Location xanadu = locationService.getLocation(1);
+		MetadataTermMapping newMapping = service.mapMetadataItem(xanadu, "Integration Test Metadata Source 1",
+		    "some-mapping");
+		
+		Assert.assertNotNull(newMapping.getUuid());
+		Assert.assertThat(newMapping.getMetadataSource().getName(), is("Integration Test Metadata Source 1"));
+		Assert.assertThat(newMapping.getCode(), is("some-mapping"));
+		Assert.assertThat(newMapping.getMetadataClass(), is(Location.class.getName()));
+		Assert.assertThat(newMapping.getMetadataUuid(), is(xanadu.getUuid()));
+	}
+	
+	@Test
+	@Verifies(value = "update existing metadata term mapping", method = "mapMetadataItem")
+	public void mapMetadataItem_shouldUpdateExistingMetadataTermMapping() {
+		
+		Location xanadu = locationService.getLocation(1);
+		MetadataTermMapping updatedMapping = service
+		        .mapMetadataItem(xanadu, "Integration Test Metadata Source 1", "mdt-nnl"); // update the existing "neverland" mappiung to point to "xanadu"
+		
+		Assert.assertThat(updatedMapping.getUuid(), is("2d93cda0-1316-4ed1-82ff-47f78068efaa"));
+		Assert.assertThat(updatedMapping.getMetadataSource().getName(), is("Integration Test Metadata Source 1"));
+		Assert.assertThat(updatedMapping.getCode(), is("mdt-nnl"));
+		Assert.assertThat(updatedMapping.getMetadataClass(), is(Location.class.getName()));
+		Assert.assertThat(updatedMapping.getMetadataUuid(), is(xanadu.getUuid()));
+	}
+	
+	@Test
+	@Verifies(value = "throw exception if no matching source", method = "mapMetadataItems")
+	@ExpectedException(IllegalArgumentException.class)
+	public void mapMetadataItems_shouldThrowExceptionIfNoMatchingSource() {
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		metadataList.add(locationService.getLocation(1));
+		service.mapMetadataItems(metadataList, "non-existing-source", "some-mapping");
+	}
+	
+	@Test
+	@Verifies(value = "throw exception if referredObjects is null", method = "mapMetadataItems")
+	@ExpectedException(IllegalArgumentException.class)
+	public void mapMetadataItems_shouldThrowExceptionIfReferredObjectsIsNull() {
+		service.mapMetadataItems(null, "Integration Test Metadata Source 1", "some-mapping");
+	}
+	
+	@Test
+	@Verifies(value = "throw exception if referredObjects is empty list", method = "mapMetadataItems")
+	@ExpectedException(IllegalArgumentException.class)
+	public void mapMetadataItems_shouldThrowExceptionIfReferredObjectsIsEmptyList() {
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1", "some-mapping");
+	}
+	
+	@Test
+	@Verifies(value = "should create new metadata mapping to metadata set ", method = "mapMetadataItem")
+	public void mapMetadataItems_shouldCreateNewMetadataMappingToMetadataSet() {
+		
+		Location location1 = locationService.getLocation(1);
+		Location location2 = locationService.getLocation(2);
+		
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		metadataList.add(location1);
+		metadataList.add(location2);
+		MetadataTermMapping newMapping = service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1",
+		    "some-mapping");
+		
+		Assert.assertNotNull(newMapping.getUuid());
+		Assert.assertThat(newMapping.getMetadataSource().getName(), is("Integration Test Metadata Source 1"));
+		Assert.assertThat(newMapping.getCode(), is("some-mapping"));
+		Assert.assertThat(newMapping.getMetadataClass(), is(MetadataSet.class.getName()));
+		
+		MetadataSet metadataSet = service.getMetadataItem(MetadataSet.class, "Integration Test Metadata Source 1",
+		    "some-mapping");
+		Assert.assertNotNull(metadataSet);
+		
+		List<Location> locations = service.getMetadataSetItems(Location.class, metadataSet);
+		Assert.assertNotNull(locations);
+		Assert.assertThat(locations.size(), is(2));
+		Assert.assertTrue(locations.contains(location1));
+		Assert.assertTrue(locations.contains(location2));
+	}
+	
+	@Test
+	@Verifies(value = "should throw exception if existing metadata mapping is not set", method = "mapMetadataItem")
+	@ExpectedException(InvalidMetadataTypeException.class)
+	public void mapMetadataItems_shouldThrowExceptionIfExistingMetadataMappingIsNotSet() {
+		
+		Location xanadu = locationService.getLocation(1);
+		Location neverland = locationService.getLocation(2);
+		
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		metadataList.add(xanadu);
+		metadataList.add(neverland);
+		service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1", "mdt-xan");
+	}
+	
+	@Test
+	@Verifies(value = "should add new items to metadata set", method = "mapMetadataItem")
+	public void mapMetadataItems_shouldAddNewItemsToMetadataSet() {
+		
+		Location location1 = locationService.getLocation(1);
+		Location location2 = locationService.getLocation(2);
+		Location location5 = locationService.getLocation(5);
+		
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		metadataList.add(location1);
+		metadataList.add(location2);
+		metadataList.add(location5);
+		
+		MetadataTermMapping existingMapping = service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1",
+		    "location-set");
+		Assert.assertThat(existingMapping.getUuid(), is("3bd2888a-80ea-496a-ada5-cf6e6c5c02b0"));
+		
+		Context.flushSession();
+		
+		MetadataSet metadataSet = service.getMetadataItem(MetadataSet.class, "Integration Test Metadata Source 1",
+		    "location-set");
+		
+		Assert.assertNotNull(metadataSet);
+		Assert.assertThat(metadataSet.getUuid(), is("efad9246-8346-4288-9d74-fd81dda3568b"));
+		
+		List<Location> locations = service.getMetadataSetItems(Location.class, metadataSet);
+		Assert.assertNotNull(locations);
+		Assert.assertThat(locations.size(), is(3));
+		Assert.assertTrue(locations.contains(location1));
+		Assert.assertTrue(locations.contains(location2));
+		Assert.assertTrue(locations.contains(location5));
+	}
+	
+	@Test
+	@Verifies(value = "should retire items from metadata set", method = "mapMetadataItem")
+	public void mapMetadataItems_shouldRetireItemsFromMetadataSet() {
+		
+		Location location2 = locationService.getLocation(2);
+		
+		// create list with only location 2
+		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
+		metadataList.add(location2);
+		
+		MetadataTermMapping existingMapping = service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1",
+		    "location-set");
+		Assert.assertThat(existingMapping.getUuid(), is("3bd2888a-80ea-496a-ada5-cf6e6c5c02b0"));
+		
+		MetadataSet metadataSet = service.getMetadataItem(MetadataSet.class, "Integration Test Metadata Source 1",
+		    "location-set");
+		Assert.assertNotNull(metadataSet);
+		Assert.assertThat(metadataSet.getUuid(), is("efad9246-8346-4288-9d74-fd81dda3568b"));
+		
+		List<Location> members = service.getMetadataSetItems(Location.class, metadataSet);
+		Assert.assertNotNull(members);
+		Assert.assertThat(members.size(), is(1));
+		Assert.assertTrue(members.contains(location2));
+		
+		// confirm the old mapping (for location 5) is there but retired
+		MetadataSetMember retiredMember = service.getMetadataSetMemberByUuid("58c0cf9d-c883-45e3-884e-92fc2e73566c");
+		Assert.assertTrue(retiredMember.isRetired());
+	}
+	
+	@Test
 	@Verifies(value = "save valid new object", method = "saveMetadataTermMapping(MetadataTermMapping)")
 	public void saveMetadataTermMapping_shouldSaveValidNewObject() {
 		// given
@@ -656,14 +830,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		// when
 		List<MetadataTermMapping> termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(8, termMappings.size());
+		Assert.assertEquals(9, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setIncludeAll(true);
 		// when
 		termMappings = service.getMetadataTermMappings(searchCriteriaBuilder.build());
 		// then
-		Assert.assertEquals(10, termMappings.size());
+		Assert.assertEquals(11, termMappings.size());
 		
 		// given
 		searchCriteriaBuilder.setMaxResults(2);
@@ -763,7 +937,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		
 		// then
 		Assert.assertNotNull(metadataTermMappings);
-		Assert.assertEquals(4, metadataTermMappings.size());
+		Assert.assertEquals(5, metadataTermMappings.size());
 		
 		for (MetadataTermMapping metadataTermMapping : metadataTermMappings) {
 			Assert.assertFalse("MetadataTermMapping " + metadataTermMapping.getId() + " is not retired", metadataTermMapping
@@ -983,7 +1157,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetMembers() {
 			
 			@Override
-			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults) {
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults) {
 				return service.getMetadataSetMembers(metadataSet, firstResult, maxResults, RetiredHandlingMode.ONLY_ACTIVE);
 			}
 		}.run();
@@ -995,7 +1169,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetMembers() {
 			
 			@Override
-			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults) {
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults) {
 				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults,
 				    RetiredHandlingMode.ONLY_ACTIVE);
 			}
@@ -1009,7 +1183,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetMembersInRetireModes() {
 			
 			@Override
-			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 			        RetiredHandlingMode retiredHandlingMode) {
 				return service.getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
 			}
@@ -1023,7 +1197,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetMembersInRetireModes() {
 			
 			@Override
-			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+			protected List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 			        RetiredHandlingMode retiredHandlingMode) {
 				return service.getMetadataSetMembers(metadataSet.getUuid(), firstResult, maxResults, retiredHandlingMode);
 			}
@@ -1036,8 +1210,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetItems() {
 			
 			@Override
-			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-			        int maxResults) {
+			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, Integer firstResult,
+			        Integer maxResults) {
 				return service.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 			}
 		}.run();
@@ -1049,8 +1223,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		new TestCase_getMetadataSetItems() {
 			
 			@Override
-			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-			        int maxResults) {
+			<T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, Integer firstResult,
+			        Integer maxResults) {
 				return service.getMetadataSetItems(type, metadataSet, firstResult, maxResults);
 			}
 		}.run();
@@ -1134,16 +1308,34 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("testing the retire method", member.getRetireReason());
 	}
 	
+	@Test
+	public void getMetadataSetMembers_shouldGetAllMembersBySet() {
+		
+		// given
+		MetadataSet set = service.getMetadataSet(4);
+		
+		Assert.assertThat(service.getMetadataSetMembers(set, RetiredHandlingMode.INCLUDE_RETIRED).size(), is(2));
+		Assert.assertThat(service.getMetadataSetMembers(set, RetiredHandlingMode.ONLY_ACTIVE).size(), is(1));
+	}
+	
+	@Test
+	public void getMetadataSetMembers_shouldGetAllMembersBySetUuid() {
+		Assert.assertThat(service.getMetadataSetMembers("efad9246-8346-4288-9d74-fd81dda3568b",
+		    RetiredHandlingMode.INCLUDE_RETIRED).size(), is(2));
+		Assert.assertThat(service.getMetadataSetMembers("efad9246-8346-4288-9d74-fd81dda3568b",
+		    RetiredHandlingMode.ONLY_ACTIVE).size(), is(1));
+	}
+	
 	private abstract class TestCase_getMetadataSetMembers {
 		
-		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults);
+		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults);
 		
 		void run() {
 			// given
 			MetadataSet metadataSet = service.getMetadataSet(1);
 			
 			// when
-			List<MetadataSetMember> members = getMembers(metadataSet, 0, 1000);
+			List<MetadataSetMember> members = getMembers(metadataSet, null, null);
 			
 			// then
 			Assert.assertEquals(5, members.size());
@@ -1159,7 +1351,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
 	private abstract class TestCase_getMetadataSetMembersInRetireModes {
 		
-		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+		abstract List<MetadataSetMember> getMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 		        RetiredHandlingMode retiredHandlingMode);
 		
 		void run() {
@@ -1185,8 +1377,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	
 	private abstract class TestCase_getMetadataSetItems {
 		
-		abstract <T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-		        int maxResults);
+		abstract <T extends OpenmrsMetadata> List<T> getItems(Class<T> type, MetadataSet metadataSet, Integer firstResult,
+		        Integer maxResults);
 		
 		void run() {
 			// given

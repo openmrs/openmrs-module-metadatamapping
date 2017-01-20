@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.metadatamapping.api.db;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.openmrs.Concept;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
@@ -23,10 +20,13 @@ import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
-import org.openmrs.module.metadatamapping.RetiredHandlingMode;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * The DAO.
@@ -185,12 +185,12 @@ public interface MetadataMappingDAO {
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order 
 	 * will be unpredictable, if there are null sort weights in the set.
 	 * @param metadataSet metadata set
-	 * @param firstResult zero based index of first result to get 
-	 * @param maxResults maximum number of results to get
+	 * @param firstResult zero based index of first result to get  (null = 0)
+	 * @param maxResults maximum number of results to get (null = get all)
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
 	 */
-	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
@@ -198,12 +198,12 @@ public interface MetadataMappingDAO {
 	 * in ascending order according to said weight. Note that due to differences in database implementations, the order
 	 * will be unpredictable, if there are null sort weights in the set.
 	 * @param metadataSetUuid metadata set uuid
-	 * @param firstResult zero based index of first result to get
-	 * @param maxResults maximum number of results to get
+	 * @param firstResult zero based index of first result to get (null = 0)
+	 * @param maxResults maximum number of results to get (null = get all)
 	 * @param retiredHandlingMode handle retired objects using this mode
 	 * @return list of members in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
 	 */
-	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode);
 	
 	/**
@@ -212,13 +212,13 @@ public interface MetadataMappingDAO {
 	 * the order  will be unpredictable, if there are null sort weights in the set.
 	 * @param type type of the metadata items
 	 * @param metadataSet metadata set
-	 * @param firstResult zero based index of first result to get
-	 * @param maxResults maximum number of results to get
+	 * @param firstResult zero based index of first result to get (null = 0)
+	 * @param maxResults maximum number of results to get (null = get all)
 	 * @param <T> type of the metadata items
 	 * @return list of items in the order defined by the optional {@link MetadataSetMember#getSortWeight()} values
 	 */
-	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-	        int maxResults);
+	<T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, Integer firstResult,
+	        Integer maxResults);
 	
 	/**
 	 * Get unretired metadata items in the set. If set members have {@link MetadataSetMember#getSortWeight()} set they will

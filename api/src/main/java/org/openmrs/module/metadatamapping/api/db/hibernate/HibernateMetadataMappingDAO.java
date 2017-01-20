@@ -13,14 +13,7 @@
  */
 package org.openmrs.module.metadatamapping.api.db.hibernate;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -31,22 +24,23 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
-import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
+import org.openmrs.module.metadatamapping.RetiredHandlingMode;
 import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataSourceSearchCriteria;
 import org.openmrs.module.metadatamapping.api.MetadataTermMappingSearchCriteria;
-import org.openmrs.module.metadatamapping.RetiredHandlingMode;
-
 import org.openmrs.module.metadatamapping.api.db.MetadataMappingDAO;
 import org.openmrs.module.metadatamapping.api.exception.InvalidMetadataTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Hibernate DAO implementation.
@@ -293,7 +287,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, int firstResult, int maxResults,
+	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSetMember.class);
 		criteria.addOrder(Order.desc("sortWeight"));
@@ -303,22 +297,26 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 		}
 		criteria.add(Restrictions.eq("metadataSet", metadataSet));
 		
-		criteria.setFirstResult(firstResult);
-		criteria.setMaxResults(maxResults);
+		if (firstResult != null) {
+			criteria.setFirstResult(firstResult);
+		}
+		if (maxResults != null) {
+			criteria.setMaxResults(maxResults);
+		}
 		return criteria.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, int firstResult, int maxResults,
+	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
 		MetadataSet metadataSet = getMetadataSetByUuid(metadataSetUuid);
 		return getMetadataSetMembers(metadataSet, firstResult, maxResults, retiredHandlingMode);
 	}
 	
 	@Override
-	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet, int firstResult,
-	        int maxResults) {
+	public <T extends OpenmrsMetadata> List<T> getMetadataSetItems(Class<T> type, MetadataSet metadataSet,
+	        Integer firstResult, Integer maxResults) {
 		return internalGetMetadataSetItems(type, metadataSet, firstResult, maxResults);
 	}
 	

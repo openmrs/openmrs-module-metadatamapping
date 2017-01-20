@@ -167,6 +167,8 @@
 								  creator="1"
 								  date_created="2015-11-18 22:02:00.0"
 								  retired="false" />
+
+	<!-- location 20, defined below -->
 	<metadatamapping_metadata_set_member metadata_set_member_id="4"
 										 metadata_set_id="3"
 										 sort_weight="3.0"
@@ -176,6 +178,8 @@
 										 creator="1"
 										 date_created="2015-11-18 22:02:00.0"
 										 retired="false" />
+
+	<!-- location 2, Xanadu (but member is retired) -->
 	<metadatamapping_metadata_set_member metadata_set_member_id="5"
 										 metadata_set_id="3"
 										 sort_weight="1.0"
@@ -188,6 +192,48 @@
 										 retired_by="1"
 										 retire_reason="Invalid code"
 										 date_retired="2015-11-18 22:20:00.0" />
+
+	<metadatamapping_metadata_set metadata_set_id="4"
+								  uuid="efad9246-8346-4288-9d74-fd81dda3568b"
+								  creator="1"
+								  date_created="2015-11-18 22:02:00.0"
+								  retired="false" />
+
+	<!-- location 5, defined below -->
+	<metadatamapping_metadata_set_member metadata_set_member_id="10"
+										 metadata_set_id="4"
+										 sort_weight="3.0"
+										 uuid="58c0cf9d-c883-45e3-884e-92fc2e73566c"
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="d3d180c6-d5fb-4202-b1a6-80a06273c158"
+										 creator="1"
+										 date_created="2015-11-18 22:02:00.0"
+										 retired="false" />
+
+	<!-- location 2, Xanadu (but member is retired) -->
+	<metadatamapping_metadata_set_member metadata_set_member_id="11"
+										 metadata_set_id="4"
+										 sort_weight="1.0"
+										 uuid="41f994e0-dec7-40dc-8ca2-c08c6b9aa88d"
+										 metadata_class="org.openmrs.Location"
+										 metadata_uuid="9356400c-a5a2-4532-8f2b-2361b3446eb8"
+										 creator="1"
+										 date_created="2015-11-18 22:02:00.0"
+										 retired="true"
+										 retired_by="1"
+										 retire_reason="Invalid code"
+										 date_retired="2015-11-18 22:20:00.0" />
+
+	<metadatamapping_metadata_term_mapping metadata_term_mapping_id="20"
+										   uuid="3bd2888a-80ea-496a-ada5-cf6e6c5c02b0"
+										   name="Location Set"
+										   metadata_source_id="1"
+										   code="location-set"
+										   metadata_class="org.openmrs.module.metadatamapping.MetadataSet"
+										   metadata_uuid="efad9246-8346-4288-9d74-fd81dda3568b"
+										   creator="1"
+										   date_created="2015-11-22 17:01:00.0"
+										   retired="false" />
 	
 	<!-- ############################################################################################################## -->
 	<!-- Metadata terms for source 2 -->
