@@ -1,12 +1,5 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,6 +12,12 @@ import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceContr
 import org.openmrs.module.webservices.validation.ValidationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test different REST api operations on {@link org.openmrs.module.metadatamapping.MetadataTermMapping}.
@@ -166,14 +165,14 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// when
 		List<SimpleObject> results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("default parameters", 8, results.size());
+		assertEquals("default parameters", 9, results.size());
 		
 		// given
 		request.setParameter(RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, String.valueOf(true));
 		// when
 		results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("include all", 10, results.size());
+		assertEquals("include all", 11, results.size());
 		
 		// given
 		request.setParameter("limit", "2");
@@ -266,7 +265,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	
 	@Override
 	public long getAllCount() {
-		return 8;
+		return 9;
 	}
 	
 	private String getMetadataSourceNameProperty(Object metadataTermResult) throws Exception {

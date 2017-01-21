@@ -41,7 +41,7 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 	
 	@Override
 	public long getAllCount() {
-		return 2;
+		return 3;
 	}
 	
 	@Test
