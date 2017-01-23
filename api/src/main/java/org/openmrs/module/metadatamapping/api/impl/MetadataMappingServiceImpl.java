@@ -389,14 +389,15 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	@Transactional
 	public MetadataTermMapping mapMetadataItem(OpenmrsMetadata referredObject, String sourceName, String mappingCode) {
 		
-		MetadataSource source = Context.getService(MetadataMappingService.class).getMetadataSourceByName(sourceName);
+		MetadataMappingService service = Context.getService(MetadataMappingService.class);
+		MetadataSource source = getMetadataSourceByName(sourceName);
+		
 		if (source == null) {
 			throw new IllegalArgumentException("No source with name " + sourceName);
 		}
 		
 		// create mapping if necessary
-		MetadataTermMapping mapping = Context.getService(MetadataMappingService.class).getMetadataTermMapping(source,
-		    mappingCode);
+		MetadataTermMapping mapping = getMetadataTermMapping(source, mappingCode);
 		if (mapping == null) {
 			mapping = new MetadataTermMapping();
 			mapping.setMetadataSource(source);
@@ -405,7 +406,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		
 		// update & save
 		mapping.setMappedObject(referredObject);
-		Context.getService(MetadataMappingService.class).saveMetadataTermMapping(mapping);
+		service.saveMetadataTermMapping(mapping);
 		return mapping;
 	}
 	
@@ -418,37 +419,36 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			throw new IllegalArgumentException("List of objects to map null or empty");
 		}
 		
-		MetadataSource source = Context.getService(MetadataMappingService.class).getMetadataSourceByName(sourceName);
+		MetadataMappingService service = Context.getService(MetadataMappingService.class);
+		MetadataSource source = getMetadataSourceByName(sourceName);
+		
 		if (source == null) {
 			throw new IllegalArgumentException("No source with name " + sourceName);
 		}
 		
-		MetadataTermMapping mapping = Context.getService(MetadataMappingService.class).getMetadataTermMapping(source,
-		    mappingCode);
+		MetadataTermMapping mapping = getMetadataTermMapping(source, mappingCode);
 		
 		// create new set
 		if (mapping == null) {
 			
 			MetadataSet set = new MetadataSet();
-			Context.getService(MetadataMappingService.class).saveMetadataSet(set);
+			service.saveMetadataSet(set);
 			
 			for (OpenmrsMetadata obj : referredObjects) {
-				Context.getService(MetadataMappingService.class).saveMetadataSetMember(new MetadataSetMember(obj, set));
+				service.saveMetadataSetMember(new MetadataSetMember(obj, set));
 			}
 			
 			mapping = new MetadataTermMapping();
 			mapping.setMetadataSource(source);
 			mapping.setCode(mappingCode);
 			mapping.setMappedObject(set);
-			Context.getService(MetadataMappingService.class).saveMetadataTermMapping(mapping);
+			service.saveMetadataTermMapping(mapping);
 			return mapping;
 		}
 		// find and modify existing set
 		else {
-			MetadataSet existingSet = Context.getService(MetadataMappingService.class).getMetadataItem(MetadataSet.class,
-			    sourceName, mappingCode);
-			List<MetadataSetMember> existingSetMembers = Context.getService(MetadataMappingService.class)
-			        .getMetadataSetMembers(existingSet, RetiredHandlingMode.ONLY_ACTIVE);
+			MetadataSet existingSet = getMetadataItem(MetadataSet.class, sourceName, mappingCode);
+			List<MetadataSetMember> existingSetMembers = getMetadataSetMembers(existingSet, RetiredHandlingMode.ONLY_ACTIVE);
 			
 			List<String> existingSetMemberUuids = mapToMemberUuids(existingSetMembers);
 			List<String> newSetMemberUuids = mapToUuids(referredObjects);
@@ -456,15 +456,14 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 			// remove any items that are no longer there
 			for (MetadataSetMember member : existingSetMembers) {
 				if (!newSetMemberUuids.contains(member.getMetadataUuid())) {
-					Context.getService(MetadataMappingService.class).retireMetadataSetMember(member, "removed from set");
+					service.retireMetadataSetMember(member, "removed from set");
 				}
 			}
 			
 			// add any missing items
 			for (OpenmrsMetadata obj : referredObjects) {
 				if (!existingSetMemberUuids.contains(obj.getUuid())) {
-					Context.getService(MetadataMappingService.class).saveMetadataSetMember(
-					    new MetadataSetMember(obj, existingSet));
+					service.saveMetadataSetMember(new MetadataSetMember(obj, existingSet));
 				}
 			}
 			
