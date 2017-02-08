@@ -387,7 +387,8 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	
 	@Override
 	@Transactional
-	public MetadataTermMapping mapMetadataItem(OpenmrsMetadata referredObject, String sourceName, String mappingCode) {
+	public MetadataTermMapping mapMetadataItem(String referredObjectUuid, String referredObjectClassName, String sourceName,
+	        String mappingCode) {
 		
 		MetadataMappingService service = Context.getService(MetadataMappingService.class);
 		MetadataSource source = getMetadataSourceByName(sourceName);
@@ -405,9 +406,20 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 		}
 		
 		// update & save
-		mapping.setMappedObject(referredObject);
+		mapping.setMetadataUuid(referredObjectUuid);
+		mapping.setMetadataClass(referredObjectClassName);
 		service.saveMetadataTermMapping(mapping);
 		return mapping;
+	}
+	
+	@Override
+	@Transactional
+	public MetadataTermMapping mapMetadataItem(OpenmrsMetadata referredObject, String sourceName, String mappingCode) {
+		if (referredObject == null) {
+			throw new IllegalArgumentException("Referred object is null");
+		}
+		return mapMetadataItem(referredObject.getUuid(), referredObject.getClass().getCanonicalName(), sourceName,
+		    mappingCode);
 	}
 	
 	@Override

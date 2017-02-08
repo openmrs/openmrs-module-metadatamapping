@@ -297,6 +297,22 @@ public interface MetadataMappingService {
 	/**
 	 * Creates or updates a metadata mapping for an object
 	 *
+	 * @param referredObjectUuid uuid of object to map
+	 * @param referredObjectClassName class name of object to map
+	 * @param sourceName name of source
+	 * @param mappingCode name of mapping
+	 * @return created or updated MetadataTermMapping
+	 * @should create new MetadataTermMapping if none exists within the existing source with the given mappingName
+	 * @should update existing MetadataTermMapping if a mapping with that name already exists within the given source
+	 * @should fail if no source with the give sourceName
+	 */
+	@Authorized(MetadataMapping.PRIVILEGE_MANAGE)
+	MetadataTermMapping mapMetadataItem(String referredObjectUuid, String referredObjectClassName, String sourceName,
+	        String mappingCode);
+	
+	/**
+	 * Creates or updates a metadata mapping for an object
+	 *
 	 * @param referredObject object to map
 	 * @param sourceName name of source
 	 * @param mappingCode name of mapping
