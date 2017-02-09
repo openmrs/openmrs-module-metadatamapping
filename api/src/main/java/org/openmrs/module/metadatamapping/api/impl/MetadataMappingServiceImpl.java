@@ -651,6 +651,7 @@ public class MetadataMappingServiceImpl extends BaseOpenmrsService implements Me
 	}
 	
 	@Override
+	@Transactional
 	public MetadataSetMember saveMetadataSetMember(MetadataSet metadataSet, OpenmrsMetadata metadata) {
 		MetadataSetMember setMember = new MetadataSetMember(metadata, metadataSet);
 		return saveMetadataSetMember(setMember);
