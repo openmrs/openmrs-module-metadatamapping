@@ -57,18 +57,18 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		Object metadataSource = getResponseData.get("metadataSource");
 		assertEquals("df29a160-0add-4598-8ac2-b11a9eb3cdb8", PropertyUtils.getProperty(metadataSource, "uuid"));
 	}
-
+	
 	@Test(expected = ValidationException.class)
 	@Ignore("Will this load classes from modules which are not in config.xml? like org.openmrs.module.providermanagement.Provider")
 	public void create_shouldGetValidationErrorWhenInvalidClass() throws Exception {
 		// given
 		SimpleObject postData = new SimpleObject().add("code", "term-123").add("name", "Test Term Mapping 123").add(
-				"metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8").add("metadataClass", "NOTCLAZZ").add(
-				"metadataUuid", "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
-
+		    "metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8").add("metadataClass", "NOTCLAZZ").add("metadataUuid",
+		    "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
+		
 		// when
 		SimpleObject postResponseData = deserialize(handle(newPostRequest(getURI(), postData)));
-
+		
 		//then expect exception
 	}
 	
