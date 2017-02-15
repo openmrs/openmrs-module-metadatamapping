@@ -110,7 +110,7 @@
 
 					<execution>
 						<id>include-owa</id>
-						<phase>process-resources</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy</goal>
 						</goals>
