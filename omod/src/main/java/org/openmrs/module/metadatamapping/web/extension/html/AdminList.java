@@ -60,6 +60,8 @@ public class AdminList extends AdministrationSectionExt {
 			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
 		}
 		
+		map.put(MetadataMapping.MODULE_PATH + "/configuretest.form", MetadataMapping.MODULE_ID + ".configuretest");
+		
 		return map;
 	}
 	
