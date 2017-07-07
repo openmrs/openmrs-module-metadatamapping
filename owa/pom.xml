@@ -31,7 +31,7 @@
                         <goals>
                             <goal>build</goal>
                         </goals>
-                        <phase>compile</phase>
+                        <phase>generate-resources</phase>
                     </execution>
                 </executions>
             </plugin>
