@@ -18,8 +18,8 @@ Copyright (C) OpenMRS, LLC.  All Rights Reserved.
 <hibernate-mapping>
 	<class name="org.openmrs.module.metadatamapping.MetadataSetMember" table="metadatamapping_metadata_set_member"
 		   batch-size="25">
-		<id name="metadataSetMemberId" type="java.lang.Integer" column="metadata_set_member_id" unsaved-value="undefined">
-			<generator class="org.openmrs.api.db.hibernate.NativeIfNotAssignedIdentityGenerator" />
+		<id name="metadataSetMemberId" type="java.lang.Integer" column="metadata_set_member_id">
+			<generator class="native" />
 		</id>
 		<many-to-one name="metadataSet" class="org.openmrs.module.metadatamapping.MetadataSet" not-null="true">
 			<column name="metadata_set_id" />

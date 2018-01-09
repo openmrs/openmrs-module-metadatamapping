@@ -17,8 +17,8 @@ Copyright (C) OpenMRS, LLC.  All Rights Reserved.
 		"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.openmrs.module.metadatamapping">
 	<class name="MetadataSource" table="metadatamapping_metadata_source" batch-size="25">
-		<id name="metadataSourceId" type="java.lang.Integer" column="metadata_source_id" unsaved-value="undefined">
-			<generator class="org.openmrs.api.db.hibernate.NativeIfNotAssignedIdentityGenerator" />
+		<id name="metadataSourceId" type="java.lang.Integer" column="metadata_source_id">
+			<generator class="native" />
 		</id>
 		
 		<!-- BaseOpenmrsMetadata -->
