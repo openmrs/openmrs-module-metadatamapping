@@ -14,6 +14,6 @@ Developers and implementers can refer to metadata by its more human-friendly map
 Implementations with multiple servers no longer need to synchronize metadata UUIDs across systems; rather, tools can be designed to use metadata mappings to define sameness of metadata across servers.
 Modules can use metadata mappings to allow administrators to create new metadata or map to existing metadata as needed.
 
-Happy coding!!!!!!!
 
+Happy coding!!!!!!!
 
