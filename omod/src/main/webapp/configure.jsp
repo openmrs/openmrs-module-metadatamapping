@@ -37,7 +37,7 @@
 	<spring:message code="metadatamapping.configure" />
 </h3>
 
-<springform:form commandName="configureForm">
+<springform:form modelAttribute="configureForm">
 	
 		<fieldset>
  		<legend><spring:message code="metadatamapping.configure.exporting"/></legend>
