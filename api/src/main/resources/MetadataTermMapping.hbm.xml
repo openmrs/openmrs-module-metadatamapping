@@ -19,7 +19,9 @@ Copyright (C) OpenMRS, LLC.  All Rights Reserved.
 	<class name="org.openmrs.module.metadatamapping.MetadataTermMapping" table="metadatamapping_metadata_term_mapping"
 		   batch-size="25">
 		<id name="metadataTermMappingId" type="java.lang.Integer" column="metadata_term_mapping_id">
-			<generator class="native" />
+			<generator class="native">
+				<param name="sequence">metadatamapping_metadata_term_mapping_metadata_term_mapping_id_seq</param>
+			</generator>
 		</id>
 		<many-to-one name="metadataSource" class="org.openmrs.module.metadatamapping.MetadataSource" not-null="true">
 			<column name="metadata_source_id" />
