@@ -19,7 +19,9 @@ Copyright (C) OpenMRS, LLC.  All Rights Reserved.
 	<class name="org.openmrs.module.metadatamapping.MetadataSetMember" table="metadatamapping_metadata_set_member"
 		   batch-size="25">
 		<id name="metadataSetMemberId" type="java.lang.Integer" column="metadata_set_member_id">
-			<generator class="native" />
+			<generator class="native">
+				<param name="sequence">metadatamapping_metadata_set_member_metadata_set_member_id_seq</param>
+			</generator>
 		</id>
 		<many-to-one name="metadataSet" class="org.openmrs.module.metadatamapping.MetadataSet" not-null="true">
 			<column name="metadata_set_id" />
