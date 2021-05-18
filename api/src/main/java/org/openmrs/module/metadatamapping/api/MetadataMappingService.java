@@ -19,6 +19,7 @@ import org.openmrs.OpenmrsMetadata;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
@@ -35,7 +36,7 @@ import java.util.Set;
 /**
  * The service.
  */
-public interface MetadataMappingService {
+public interface MetadataMappingService extends OpenmrsService {
 	
 	/**
 	 * Creates a local concept source from the implementation Id.
