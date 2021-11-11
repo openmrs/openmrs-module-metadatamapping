@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 @SubResource(parent = MetadataSetResource.class, path = "members", supportedClass = MetadataSetMember.class, supportedOpenmrsVersions = {
-        "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*" })
+        "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*", "2.5.*" })
 public class MetadataSetMemberResource extends DelegatingSubResource<MetadataSetMember, MetadataSet, MetadataSetResource> {
 	
 	@Override
