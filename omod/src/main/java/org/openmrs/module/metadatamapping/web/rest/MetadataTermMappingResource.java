@@ -25,8 +25,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.MetadataDelegatingC
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 
-@Resource(name = RestConstants.VERSION_1 + MetadataMappingRestController.METADATA_MAPPING_REST_NAMESPACE + "/termmapping", supportedClass = MetadataTermMapping.class, supportedOpenmrsVersions = {
-        "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*", "2.5.*" })
+@Resource(name = RestConstants.VERSION_1 + MetadataMappingRestController.METADATA_MAPPING_REST_NAMESPACE + "/termmapping", supportedClass = MetadataTermMapping.class, supportedOpenmrsVersions = { "1.9.* - 9.*" })
 public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<MetadataTermMapping> {
 	
 	public static final String PARAM_TERM_CODE = "code";

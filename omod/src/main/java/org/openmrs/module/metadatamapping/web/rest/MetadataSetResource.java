@@ -21,8 +21,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import java.util.Arrays;
 import java.util.List;
 
-@Resource(name = RestConstants.VERSION_1 + MetadataMappingRestController.METADATA_MAPPING_REST_NAMESPACE + "/metadataset", supportedClass = MetadataSet.class, supportedOpenmrsVersions = {
-        "1.9.*", "1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*", "2.2.*", "2.3.*", "2.4.*", "2.5.*" })
+@Resource(name = RestConstants.VERSION_1 + MetadataMappingRestController.METADATA_MAPPING_REST_NAMESPACE + "/metadataset", supportedClass = MetadataSet.class, supportedOpenmrsVersions = { "1.9.* - 9.*" })
 public class MetadataSetResource extends MetadataDelegatingCrudResource<MetadataSet> {
 	
 	@Override
