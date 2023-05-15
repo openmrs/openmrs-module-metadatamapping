@@ -64,7 +64,7 @@ public class ConfigureController {
 		}
 	}
 	
-	@RequestMapping(value = CONFIGURE_PATH, method = RequestMethod.GET)
+	@RequestMapping(value = CONFIGURE_PATH + ".form", method = RequestMethod.GET)
 	public void configureGet(Model model) {
 		AdministrationService adminService = Context.getAdministrationService();
 		ConfigureForm configureForm = new ConfigureForm();
@@ -80,7 +80,7 @@ public class ConfigureController {
 		model.addAttribute(configureForm);
 	}
 	
-	@RequestMapping(value = CONFIGURE_PATH, method = RequestMethod.POST)
+	@RequestMapping(value = CONFIGURE_PATH + ".form", method = RequestMethod.POST)
 	public String configurePost(ConfigureForm configureForm, Errors errors, Model model, HttpSession session,
 	        HttpServletRequest request) {
 		validator.validate(configureForm, errors);
