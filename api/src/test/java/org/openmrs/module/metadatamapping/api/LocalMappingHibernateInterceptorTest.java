@@ -13,12 +13,15 @@
  */
 package org.openmrs.module.metadatamapping.api;
 
-import java.util.*;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.ConceptDescription;
+import org.openmrs.ConceptName;
+import org.openmrs.ConceptReferenceTerm;
+import org.openmrs.ConceptSource;
+import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
 import org.openmrs.module.metadatamapping.MetadataMapping;
@@ -26,6 +29,10 @@ import org.openmrs.module.metadatamapping.api.db.hibernate.interceptor.LocalMapp
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 

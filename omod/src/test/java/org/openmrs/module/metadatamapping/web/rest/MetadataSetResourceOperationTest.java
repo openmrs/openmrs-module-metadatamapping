@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.openmrs.module.metadatamapping.web.rest.MetadataSourceResourceOperationTest.propertyValueEqualsTrue;
