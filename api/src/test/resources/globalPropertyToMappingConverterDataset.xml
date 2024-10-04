@@ -43,8 +43,7 @@
                                            metadata_uuid = "1a339fe9-38bc-4ab3-b180-320988c0b968" metadata_class = "org.openmrs.PatientIdentifierType"
     />
     <patient_identifier_type patient_identifier_type_id="1" uuid="87c67899-ae36-4535-a69f-b30ac1110c65" creator="1"
-                             date_created="2012-10-23 18:04:14" retired="0" required="false" check_digit="true"
-                             name="IDENT" description="TEST DESCRIPTION"
+                             date_created="2012-10-23 18:04:14" retired="0" required="false" name="IDENT" description="TEST DESCRIPTION"
     />
 
 </dataset>

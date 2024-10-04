@@ -51,7 +51,7 @@ public class ConfigureController {
 		try {
 			ConceptService service = Context.getConceptService();
 			try {
-				return service.getAllConceptSources();
+				return service.getAllConceptSources(false);
 			}
 			catch (NoSuchMethodError ex) {
 				Method method = Context.getConceptService().getClass().getMethod("getAllConceptSources",

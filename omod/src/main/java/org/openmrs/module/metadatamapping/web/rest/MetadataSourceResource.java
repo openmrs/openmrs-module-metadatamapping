@@ -2,6 +2,10 @@ package org.openmrs.module.metadatamapping.web.rest;
 
 import java.util.List;
 
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.StringProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -70,6 +74,18 @@ public class MetadataSourceResource extends MetadataDelegatingCrudResource<Metad
 		}
 		
 		return description;
+	}
+	
+	@Override
+	public Model getGETModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
+			model.property("uuid", new StringProperty().example("uuid")).property("name", new StringProperty()).property(
+			    "description", new StringProperty()).property("retired", new BooleanProperty());
+		} else {
+			model.property("auditInfo", new StringProperty());
+		}
+		return model;
 	}
 	
 	@Override
