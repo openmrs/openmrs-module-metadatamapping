@@ -77,10 +77,17 @@
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
 		<webservices.rest-omod.version>2.21.0</webservices.rest-omod.version>
+		<legacyUiVersion>1.3.3</legacyUiVersion>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>legacyui-omod</artifactId>
+				<version>${legacyUiVersion}</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
