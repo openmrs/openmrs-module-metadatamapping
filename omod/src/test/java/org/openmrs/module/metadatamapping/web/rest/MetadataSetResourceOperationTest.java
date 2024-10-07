@@ -10,14 +10,13 @@ import org.openmrs.module.webservices.rest.web.response.ConversionException;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.annotation.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.openmrs.module.metadatamapping.web.rest.MetadataSourceResourceOperationTest.propertyValueEqualsTrue;
@@ -165,8 +164,7 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 		assertEquals(Boolean.TRUE, PropertyUtils.getProperty(retired, "retired"));
 	}
 	
-	@Test
-	@ExpectedException(ConversionException.class)
+	@Test(expected = ConversionException.class)
 	public void updateMember_shouldNotAllowUpdatingMappedObject() throws Exception {
 		//given
 		String uuid = "2fb06283-befc-4273-9448-2fcbbe4c99d5";

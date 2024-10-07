@@ -1,5 +1,8 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.StringProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
@@ -78,6 +81,11 @@ public class MetadataSetResource extends MetadataDelegatingCrudResource<Metadata
 		description.addProperty("description");
 		
 		return description;
+	}
+	
+	@Override
+	public Model getCREATEModel(Representation rep) {
+		return new ModelImpl().property("name", new StringProperty()).property("description", new StringProperty());
 	}
 	
 	@Override

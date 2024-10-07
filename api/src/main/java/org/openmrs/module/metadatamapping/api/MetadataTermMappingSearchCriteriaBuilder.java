@@ -1,6 +1,5 @@
 package org.openmrs.module.metadatamapping.api;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.module.metadatamapping.MetadataSource;
 

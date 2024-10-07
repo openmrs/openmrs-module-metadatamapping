@@ -3,6 +3,11 @@ package org.openmrs.module.metadatamapping.web.rest;
 import java.util.Collections;
 import java.util.List;
 
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -123,6 +128,47 @@ public class MetadataTermMappingResource extends MetadataDelegatingCrudResource<
 		description.addProperty("metadataClass");
 		
 		return description;
+	}
+	
+	@Override
+	public Model getGETModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
+			// metadata
+			model.property("uuid", new StringProperty().example("uuid"));
+			model.property("name", new StringProperty());
+			model.property("description", new StringProperty());
+			model.property("retired", new BooleanProperty());
+			
+			model.property("metadataSource", new RefProperty("#/definitions/MetadatamappingSourceGetRef"));
+			model.property("code", new StringProperty());
+			model.property("metadataClass", new StringProperty());
+			model.property("metadataUuid", new StringProperty());
+		}
+		return model;
+	}
+	
+	@Override
+	public Model getCREATEModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getCREATEModel(rep);
+		model.property("code", new StringProperty());
+		model.property("name", new StringProperty());
+		model.property("description", new StringProperty());
+		model.property("metadataSource", new RefProperty("#/definitions/MetadatamappingSourceCreate"));
+		model.property("metadataClass", new StringProperty());
+		model.property("metadataUuid", new StringProperty());
+		return model;
+	}
+	
+	@Override
+	public Model getUPDATEModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getUPDATEModel(rep);
+		model.property("code", new StringProperty());
+		model.property("name", new StringProperty());
+		model.property("description", new StringProperty());
+		model.property("metadataClass", new StringProperty());
+		model.property("metadataUuid", new StringProperty());
+		return model;
 	}
 	
 	@Override

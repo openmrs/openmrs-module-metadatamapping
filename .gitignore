@@ -73,3 +73,6 @@ owa/node
 owa/*.zip
 owa/etc
 ###########
+
+.DS_Store
+

@@ -40,7 +40,6 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -568,16 +567,14 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("testing the retire method", metadataSource.getRetireReason());
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw exception if no matching source", method = "mapMetadataItem")
-	@ExpectedException(IllegalArgumentException.class)
 	public void mapMetadataItem_shouldThrowExceptionIfNoMatchingSource() {
 		service.mapMetadataItem(locationService.getLocation(1), "non-existing-source", "some-mapping");
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw exception if referredObject is null", method = "mapMetadataItem")
-	@ExpectedException(IllegalArgumentException.class)
 	public void mapMetadataItem_shouldThrowExceptionIfReferredObjectIsNull() {
 		service.mapMetadataItem(null, "Integration Test Metadata Source 1", "some-mapping");
 	}
@@ -612,25 +609,22 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertThat(updatedMapping.getMetadataUuid(), is(xanadu.getUuid()));
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw exception if no matching source", method = "mapMetadataItems")
-	@ExpectedException(IllegalArgumentException.class)
 	public void mapMetadataItems_shouldThrowExceptionIfNoMatchingSource() {
 		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
 		metadataList.add(locationService.getLocation(1));
 		service.mapMetadataItems(metadataList, "non-existing-source", "some-mapping");
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw exception if referredObjects is null", method = "mapMetadataItems")
-	@ExpectedException(IllegalArgumentException.class)
 	public void mapMetadataItems_shouldThrowExceptionIfReferredObjectsIsNull() {
 		service.mapMetadataItems(null, "Integration Test Metadata Source 1", "some-mapping");
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw exception if referredObjects is empty list", method = "mapMetadataItems")
-	@ExpectedException(IllegalArgumentException.class)
 	public void mapMetadataItems_shouldThrowExceptionIfReferredObjectsIsEmptyList() {
 		List<OpenmrsMetadata> metadataList = new ArrayList<OpenmrsMetadata>();
 		service.mapMetadataItems(metadataList, "Integration Test Metadata Source 1", "some-mapping");
@@ -665,9 +659,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertTrue(locations.contains(location2));
 	}
 	
-	@Test
+	@Test(expected = InvalidMetadataTypeException.class)
 	@Verifies(value = "should throw exception if existing metadata mapping is not set", method = "mapMetadataItem")
-	@ExpectedException(InvalidMetadataTypeException.class)
 	public void mapMetadataItems_shouldThrowExceptionIfExistingMetadataMappingIsNotSet() {
 		
 		Location xanadu = locationService.getLocation(1);
@@ -1002,9 +995,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertNull("requesting a metadata item for a retired metadata term returns null", xanadu);
 	}
 	
-	@Test
+	@Test(expected = InvalidMetadataTypeException.class)
 	@Verifies(value = "fail on type mismatch", method = "getMetadataItem(Class, String, String)")
-	@ExpectedException(InvalidMetadataTypeException.class)
 	public void getMetadataItem_shouldFailOnTypeMismatch() {
 		// given
 		// data in the test data set, and the following
@@ -1230,9 +1222,8 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		}.run();
 	}
 	
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	@Verifies(value = "throw IllegalArgumentException if set does not exist", method = "getMetadataSetItems(Class, MetadataSet, int, int)")
-	@ExpectedException(IllegalArgumentException.class)
 	public void getMetadataSetItems_shouldThrowExceptionIfMetadataSetDoesNotExist() throws Exception {
 		// given
 		

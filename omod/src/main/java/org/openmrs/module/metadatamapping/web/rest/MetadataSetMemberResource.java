@@ -1,6 +1,10 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import org.apache.commons.lang.StringUtils;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.properties.BooleanProperty;
+import io.swagger.models.properties.RefProperty;
+import io.swagger.models.properties.StringProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
@@ -9,7 +13,6 @@ import org.openmrs.module.metadatamapping.api.MetadataMappingService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.RepHandler;
 import org.openmrs.module.webservices.rest.web.annotation.SubResource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -23,7 +26,6 @@ import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingSubResour
 import org.openmrs.module.webservices.rest.web.response.ConversionException;
 import org.openmrs.module.webservices.rest.web.response.ResourceDoesNotSupportOperationException;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.util.Date;
 import java.util.List;
@@ -153,5 +155,33 @@ public class MetadataSetMemberResource extends DelegatingSubResource<MetadataSet
 		description.addProperty("name");
 		description.addProperty("description");
 		return description;
+	}
+	
+	@Override
+	public Model getGETModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
+			model.property("uuid", new StringProperty().example("uuid"));
+			model.property("metadataSet", new RefProperty("#/definitions/MetadatamappingMetadatasetGetRef"));
+			model.property("metadataClass", new StringProperty());
+			model.property("metadataUuid", new StringProperty());
+			model.property("name", new StringProperty());
+			model.property("description", new StringProperty());
+			model.property("retired", new BooleanProperty());
+		}
+		return model;
+	}
+	
+	@Override
+	public Model getCREATEModel(Representation rep) {
+		return new ModelImpl().property("metadataUuid", new StringProperty())
+		        .property("metadataClass", new StringProperty()).property("name", new StringProperty()).property(
+		            "description", new StringProperty());
+	}
+	
+	@Override
+	public Model getUPDATEModel(Representation rep) {
+		ModelImpl model = (ModelImpl) super.getUPDATEModel(rep);
+		return model.property("name", new StringProperty()).property("description", new StringProperty());
 	}
 }

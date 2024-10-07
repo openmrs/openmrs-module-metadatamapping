@@ -28,47 +28,47 @@ import org.openmrs.module.web.extension.AdministrationSectionExt;
  * /metadata/config.xml file.
  */
 public class AdminList extends AdministrationSectionExt {
-	
-	/**
-	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getMediaType()
-	 */
-	@Override
-	public Extension.MEDIA_TYPE getMediaType() {
-		return Extension.MEDIA_TYPE.html;
-	}
-	
-	/**
-	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getTitle()
-	 */
-	@Override
-	public String getTitle() {
-		return MetadataMapping.MODULE_ID + ".title";
-	}
-	
-	/**
-	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getLinks()
-	 */
-	@Override
-	public Map<String, String> getLinks() {
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		
-		MetadataMappingService service = Context.getService(MetadataMappingService.class);
-		
-		if (service.isAddLocalMappingToConceptOnExport() && !service.isLocalConceptSourceConfigured()) {
-			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure.rec");
-		} else {
-			map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
-		}
-		
-		return map;
-	}
-	
-	/**
-	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getRequiredPrivilege()
-	 */
-	@Override
-	public String getRequiredPrivilege() {
-		return "";
-	}
-	
+
+    /**
+     * @see org.openmrs.module.web.extension.AdministrationSectionExt#getMediaType()
+     */
+    @Override
+    public Extension.MEDIA_TYPE getMediaType() {
+        return Extension.MEDIA_TYPE.html;
+    }
+
+    /**
+     * @see org.openmrs.module.web.extension.AdministrationSectionExt#getTitle()
+     */
+    @Override
+    public String getTitle() {
+        return MetadataMapping.MODULE_ID + ".title";
+    }
+
+    /**
+     * @see org.openmrs.module.web.extension.AdministrationSectionExt#getLinks()
+     */
+    @Override
+    public Map<String, String> getLinks() {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+
+        MetadataMappingService service = Context.getService(MetadataMappingService.class);
+
+        if (service.isAddLocalMappingToConceptOnExport() && !service.isLocalConceptSourceConfigured()) {
+            map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure.rec");
+        } else {
+            map.put(MetadataMapping.MODULE_PATH + "/configure.form", MetadataMapping.MODULE_ID + ".configure");
+        }
+
+        return map;
+    }
+
+    /**
+     * @see org.openmrs.module.web.extension.AdministrationSectionExt#getRequiredPrivilege()
+     */
+    @Override
+    public String getRequiredPrivilege() {
+        return "";
+    }
+
 }

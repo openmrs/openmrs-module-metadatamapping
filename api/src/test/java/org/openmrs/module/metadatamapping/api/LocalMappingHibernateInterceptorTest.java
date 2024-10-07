@@ -13,12 +13,11 @@
  */
 package org.openmrs.module.metadatamapping.api;
 
-import java.util.Locale;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Concept;
+import org.openmrs.ConceptDescription;
 import org.openmrs.ConceptName;
 import org.openmrs.ConceptReferenceTerm;
 import org.openmrs.ConceptSource;
@@ -30,6 +29,12 @@ import org.openmrs.module.metadatamapping.api.db.hibernate.interceptor.LocalMapp
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests {@link LocalMappingHibernateInterceptor}
@@ -67,6 +72,16 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 		concept.setConceptClass(conceptService.getConceptClass(1));
 		concept.setDatatype(conceptService.getConceptDatatype(1));
 		concept.addName(new ConceptName("my-dict-concept", Locale.ENGLISH));
+		
+		//description(s)
+		ConceptDescription description = new ConceptDescription();
+		assertNotNull(description);
+		description.setDescription("my-dict-concept-description");
+		
+		Set<ConceptDescription> descriptions = new HashSet<ConceptDescription>();
+		descriptions.add(description);
+		
+		concept.setDescriptions(descriptions);
 		conceptService.saveConcept(concept);
 		Integer id = concept.getId();
 		
