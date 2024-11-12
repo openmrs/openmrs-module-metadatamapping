@@ -1,10 +1,9 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
@@ -156,32 +155,36 @@ public class MetadataSetMemberResource extends DelegatingSubResource<MetadataSet
 		description.addProperty("description");
 		return description;
 	}
-	
+
 	@Override
-	public Model getGETModel(Representation rep) {
-		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+	public Schema<?> getGETSchema(Representation rep) {
+		Schema<?> model = super.getGETSchema(rep);
 		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
-			model.property("uuid", new StringProperty().example("uuid"));
-			model.property("metadataSet", new RefProperty("#/definitions/MetadatamappingMetadatasetGetRef"));
-			model.property("metadataClass", new StringProperty());
-			model.property("metadataUuid", new StringProperty());
-			model.property("name", new StringProperty());
-			model.property("description", new StringProperty());
-			model.property("retired", new BooleanProperty());
+			model.addProperty("uuid", new StringSchema().example("uuid"))
+					.addProperty("metadataSet", new Schema<>().$ref("#/components/schemas/MetadatamappingMetadatasetGetRef"))
+					.addProperty("metadataClass", new StringSchema())
+					.addProperty("metadataUuid", new StringSchema())
+					.addProperty("name", new StringSchema())
+					.addProperty("description", new StringSchema())
+					.addProperty("retired", new BooleanSchema());
 		}
 		return model;
 	}
-	
+
 	@Override
-	public Model getCREATEModel(Representation rep) {
-		return new ModelImpl().property("metadataUuid", new StringProperty())
-		        .property("metadataClass", new StringProperty()).property("name", new StringProperty()).property(
-		            "description", new StringProperty());
+	public Schema<?> getCREATESchema(Representation rep) {
+		return new Schema<>()
+				.addProperty("metadataUuid", new UUIDSchema())
+				.addProperty("metadataClass", new StringSchema())
+				.addProperty("name", new StringSchema())
+				.addProperty("description", new StringSchema());
 	}
-	
+
 	@Override
-	public Model getUPDATEModel(Representation rep) {
-		ModelImpl model = (ModelImpl) super.getUPDATEModel(rep);
-		return model.property("name", new StringProperty()).property("description", new StringProperty());
+	public Schema<?> getUPDATESchema(Representation rep) {
+		Schema<?> model = super.getUPDATESchema(rep);
+		return model
+				.addProperty("name", new StringSchema())
+				.addProperty("description", new StringSchema());
 	}
 }

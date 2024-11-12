@@ -1,8 +1,8 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
@@ -10,10 +10,7 @@ import org.openmrs.module.metadatamapping.api.MetadataSetSearchCriteria;
 import org.openmrs.module.metadatamapping.web.controller.MetadataMappingRestController;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
-import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
-import org.openmrs.module.webservices.rest.web.representation.FullRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.AlreadyPaged;
@@ -84,8 +81,8 @@ public class MetadataSetResource extends MetadataDelegatingCrudResource<Metadata
 	}
 	
 	@Override
-	public Model getCREATEModel(Representation rep) {
-		return new ModelImpl().property("name", new StringProperty()).property("description", new StringProperty());
+	public Schema<?> getCREATESchema(Representation rep) {
+		return new ObjectSchema().addProperty("name", new StringSchema()).addProperty("description", new StringSchema());
 	}
 	
 	@Override

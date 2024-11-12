@@ -2,10 +2,10 @@ package org.openmrs.module.metadatamapping.web.rest;
 
 import java.util.List;
 
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.v3.oas.models.media.BooleanSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -75,15 +75,17 @@ public class MetadataSourceResource extends MetadataDelegatingCrudResource<Metad
 		
 		return description;
 	}
-	
+
 	@Override
-	public Model getGETModel(Representation rep) {
-		ModelImpl model = (ModelImpl) super.getGETModel(rep);
+	public Schema<?> getGETSchema(Representation rep) {
+		Schema<?> model = super.getGETSchema(rep);
 		if (rep instanceof DefaultRepresentation || rep instanceof FullRepresentation) {
-			model.property("uuid", new StringProperty().example("uuid")).property("name", new StringProperty()).property(
-			    "description", new StringProperty()).property("retired", new BooleanProperty());
+			model.addProperty("uuid", new UUIDSchema().example("uuid"))
+					.addProperty("name", new StringSchema())
+					.addProperty("description", new StringSchema())
+					.addProperty("retired", new BooleanSchema());
 		} else {
-			model.property("auditInfo", new StringProperty());
+			model.addProperty("auditInfo", new StringSchema());
 		}
 		return model;
 	}
