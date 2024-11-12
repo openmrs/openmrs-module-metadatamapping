@@ -76,7 +76,7 @@
 		<MODULE_NAME>${project.parent.name}</MODULE_NAME>
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
-		<webservices.rest-omod.version>2.46.0-SNAPSHOT</webservices.rest-omod.version>
+		<WEBSERVICES_VERSION>2.46.0-SNAPSHOT</WEBSERVICES_VERSION>
 		<legacyUiVersion>1.3.3</legacyUiVersion>
 	</properties>
 
@@ -102,21 +102,6 @@
 				<version>${openMRSVersion}</version>
 				<type>jar</type>
 				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>webservices.rest-omod</artifactId>
-				<version>${webservices.rest-omod.version}</version>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>webservices.rest-omod-common</artifactId>
-				<version>${webservices.rest-omod.version}</version>
-				<classifier>tests</classifier>
-				<scope>test</scope>
 			</dependency>
 
 			<dependency>
@@ -153,18 +138,56 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>2.13.4.2</version>
+			</dependency>
+
+			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>webservices.rest-omod-1.8</artifactId>
-				<version>${webservices.rest-omod.version}</version>
+				<version>${WEBSERVICES_VERSION}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-2.0</artifactId>
+				<version>${WEBSERVICES_VERSION}</version>
 				<classifier>tests</classifier>
 				<scope>test</scope>
 			</dependency>
 
 			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>2.13.4.2</version>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-2.0</artifactId>
+				<version>${WEBSERVICES_VERSION}</version>
+				<scope>provided</scope>
 			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-1.8</artifactId>
+				<version>${WEBSERVICES_VERSION}</version>
+				<classifier>tests</classifier>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${WEBSERVICES_VERSION}</version>
+				<classifier>tests</classifier>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod-common</artifactId>
+				<version>${WEBSERVICES_VERSION}</version>
+				<scope>provided</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -184,6 +207,17 @@
 			<groupId>org.openmrs.test</groupId>
 			<artifactId>openmrs-test</artifactId>
 			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.web</groupId>
+			<artifactId>openmrs-web</artifactId>
+			<classifier>tests</classifier>
 		</dependency>
 
 		<dependency>
