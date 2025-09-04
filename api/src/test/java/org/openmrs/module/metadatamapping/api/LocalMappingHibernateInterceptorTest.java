@@ -59,6 +59,7 @@ public class LocalMappingHibernateInterceptorTest extends BaseModuleContextSensi
 	public void setupLocalConceptSource() {
 		localConceptSource = new ConceptSource();
 		localConceptSource.setName("my-dict");
+		localConceptSource.setDescription("Description");
 		conceptService.saveConceptSource(localConceptSource);
 		
 		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localConceptSource
