@@ -93,18 +93,8 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 		//We need to get sessionFactory lazily here, because when the interceptor is instantiated Hibenate is not yet ready to work.
 		FlushMode previousFlushMode = null;
 		org.hibernate.Session session = getCurrentSession();
-		try {
-			previousFlushMode = session.getFlushMode();
-		}
-		catch (NoSuchMethodError ex) {
-			try {
-				Method method = session.getClass().getMethod("getHibernateFlushMode", null);
-				previousFlushMode = (FlushMode) method.invoke(session);
-			}
-			catch (Exception e) {
-				throw new RuntimeException("Failed to get the hibernate flush mode", e);
-			}
-		}
+		previousFlushMode = session.getFlushMode();
+
 		session.setFlushMode(flushMode);
 		return previousFlushMode;
 	}

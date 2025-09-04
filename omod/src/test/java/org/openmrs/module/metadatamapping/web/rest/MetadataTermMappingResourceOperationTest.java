@@ -10,10 +10,10 @@ import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
 import org.openmrs.module.webservices.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -24,8 +24,8 @@ import static org.junit.Assert.assertNotNull;
  */
 @SuppressWarnings("Duplicates")
 public class MetadataTermMappingResourceOperationTest extends MainResourceControllerTest {
-	
-	@Resource
+
+	@Autowired
 	private LocationService locationService;
 	
 	@Before

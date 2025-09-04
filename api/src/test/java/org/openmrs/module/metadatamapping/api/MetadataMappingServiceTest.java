@@ -79,6 +79,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	public void setupLocalConceptSource() throws Exception {
 		localConceptSource = new ConceptSource();
 		localConceptSource.setName("my-dict");
+		localConceptSource.setDescription("Description");
 		conceptService.saveConceptSource(localConceptSource);
 		
 		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_LOCAL_SOURCE_UUID, localConceptSource
@@ -301,9 +302,11 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		ConceptSource source2 = new ConceptSource();
 		source2.setName("their-2nd-dict");
+		source2.setDescription("Description");
 		conceptService.saveConceptSource(source2);
 		
 		adminService.saveGlobalProperty(new GlobalProperty(MetadataMapping.GP_SUBSCRIBED_TO_SOURCE_UUIDS, source1.getUuid()
@@ -342,8 +345,10 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		ConceptSource source2 = new ConceptSource();
+		source2.setDescription("Description");
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
@@ -368,8 +373,10 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		ConceptSource source2 = new ConceptSource();
+		source2.setDescription("Description");
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
@@ -395,6 +402,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		
 		Set<ConceptSource> subscribedConceptSources = service.getSubscribedConceptSources();
@@ -421,6 +429,7 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		
 		service.addSubscribedConceptSource(source1);
@@ -450,9 +459,11 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		ConceptSource source2 = new ConceptSource();
 		source2.setName("their-2nd-dict");
+		source2.setDescription("Description");
 		conceptService.saveConceptSource(source2);
 		
 		service.addSubscribedConceptSource(source1);
@@ -484,8 +495,10 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		//given
 		ConceptSource source1 = new ConceptSource();
 		source1.setName("their-dict");
+		source1.setDescription("Description");
 		conceptService.saveConceptSource(source1);
 		ConceptSource source2 = new ConceptSource();
+		source2.setDescription("Description");
 		source2.setName("their-2nd-dict");
 		conceptService.saveConceptSource(source2);
 		
