@@ -76,8 +76,8 @@
 		<MODULE_NAME>${project.parent.name}</MODULE_NAME>
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
-		<webservices.rest-omod.version>3.0.0-SNAPSHOT</webservices.rest-omod.version>
-		<legacyUiVersion>2.0.0-SNAPSHOT</legacyUiVersion>
+		<webservices.rest-omod.version>3.0.0</webservices.rest-omod.version>
+		<legacyUiVersion>2.0.0</legacyUiVersion>
 		<javaXVersion>4.0.1</javaXVersion>
 	</properties>
 
