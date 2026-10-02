@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>metadatamapping</artifactId>
-	<version>2.1.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Metadata Mapping Module</name>
 	<description />
@@ -69,20 +69,26 @@
 	</modules>
 
 	<properties>
-		<openMRSVersion>2.7.4</openMRSVersion>
+		<openMRSVersion>3.0.0-SNAPSHOT</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javaComplianceVersion>1.8</javaComplianceVersion>
+		<javaComplianceVersion>21</javaComplianceVersion>
 		<MODULE_ID>${project.parent.artifactId}</MODULE_ID>
 		<MODULE_NAME>${project.parent.name}</MODULE_NAME>
 		<MODULE_VERSION>${project.parent.version}</MODULE_VERSION>
 		<MODULE_PACKAGE>${project.parent.groupId}.${project.parent.artifactId}</MODULE_PACKAGE>
-		<webservices.rest-omod.version>3.0.0</webservices.rest-omod.version>
-		<legacyUiVersion>2.0.0</legacyUiVersion>
-		<javaXVersion>4.0.1</javaXVersion>
+		<webservices.rest-omod.version>5.0.0-SNAPSHOT</webservices.rest-omod.version>
+		<legacyUiVersion>3.0.0-SNAPSHOT</legacyUiVersion>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.openmrs</groupId>
+				<artifactId>openmrs-bom</artifactId>
+				<version>${openMRSVersion}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>legacyui-omod</artifactId>
@@ -103,12 +109,6 @@
 				<version>${openMRSVersion}</version>
 				<type>jar</type>
 				<scope>provided</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>javax.servlet</groupId>
-						<artifactId>servlet-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -158,16 +158,6 @@
 				<version>${openMRSVersion}</version>
 				<type>pom</type>
 				<scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<groupId>org.powermock</groupId>
-						<artifactId>powermock-api-mockito</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.powermock</groupId>
-						<artifactId>powermock-api-mockito2</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 
@@ -176,13 +166,6 @@
 				<artifactId>webservices.rest-omod-common</artifactId>
 				<classifier>tests</classifier>
 				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>javax.servlet-api</artifactId>
-				<version>${javaXVersion}</version>
-				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -297,9 +280,10 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.15.0</version>
 					<configuration>
-						<target>${javaComplianceVersion}</target>
-						<source>${javaComplianceVersion}</source>
+						<release>${javaComplianceVersion}</release>
+						<parameters>true</parameters>
 					</configuration>
 				</plugin>
 
@@ -383,7 +367,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.12</version>
+					<version>3.5.4</version>
 				</plugin>
 
 				<plugin>

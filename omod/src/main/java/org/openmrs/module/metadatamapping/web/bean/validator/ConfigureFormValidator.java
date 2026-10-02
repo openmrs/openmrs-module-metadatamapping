@@ -13,7 +13,7 @@
  */
 package org.openmrs.module.metadatamapping.web.bean.validator;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.ConceptSource;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;

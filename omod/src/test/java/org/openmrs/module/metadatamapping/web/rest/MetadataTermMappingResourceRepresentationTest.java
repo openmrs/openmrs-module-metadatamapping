@@ -1,8 +1,8 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
@@ -14,7 +14,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResou
  */
 public class MetadataTermMappingResourceRepresentationTest extends BaseDelegatingResourceTest<MetadataTermMappingResource, MetadataTermMapping> {
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}

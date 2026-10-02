@@ -16,8 +16,8 @@ package org.openmrs.module.metadatamapping.api.db.hibernate.interceptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.hibernate.EmptyInterceptor;
 import org.hibernate.FlushMode;
+import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.Type;
 import org.openmrs.Concept;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
  * Retires/unretires/purges local mappings with concepts.
  */
 @Component("metadatamapping.LocalMappingHibernateInterceptor")
-public class LocalMappingHibernateInterceptor extends EmptyInterceptor implements ApplicationContextAware {
+public class LocalMappingHibernateInterceptor implements Interceptor, Serializable, ApplicationContextAware {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -44,11 +44,11 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 	}
 	
 	/**
-	 * @see org.hibernate.EmptyInterceptor#onDelete(java.lang.Object, java.io.Serializable,
-	 *      java.lang.Object[], java.lang.String[], org.hibernate.type.Type[])
+	 * @see org.hibernate.Interceptor#onDelete(java.lang.Object, java.lang.Object, java.lang.Object[],
+	 *      java.lang.String[], org.hibernate.type.Type[])
 	 */
 	@Override
-	public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+	public void onDelete(Object entity, Object id, Object[] state, String[] propertyNames, Type[] types) {
 		if (!(entity instanceof Concept)) {
 			return;
 		}
@@ -66,7 +66,7 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 	}
 	
 	@Override
-	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
+	public boolean onFlushDirty(Object entity, Object id, Object[] currentState, Object[] previousState,
 	        String[] propertyNames, Type[] types) {
 		if (!(entity instanceof Concept)) {
 			return false;
@@ -95,7 +95,7 @@ public class LocalMappingHibernateInterceptor extends EmptyInterceptor implement
 		org.hibernate.Session session = getCurrentSession();
 		previousFlushMode = session.getHibernateFlushMode();
 
-		session.setFlushMode(flushMode);
+		session.setHibernateFlushMode(flushMode);
 		return previousFlushMode;
 	}
 	

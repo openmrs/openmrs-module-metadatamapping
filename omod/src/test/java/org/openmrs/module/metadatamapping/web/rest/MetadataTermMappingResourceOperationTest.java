@@ -1,9 +1,9 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Location;
 import org.openmrs.api.LocationService;
 import org.openmrs.module.webservices.rest.SimpleObject;
@@ -13,11 +13,12 @@ import org.openmrs.module.webservices.validation.ValidationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test different REST api operations on {@link org.openmrs.module.metadatamapping.MetadataTermMapping}.
@@ -28,7 +29,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	@Resource
 	private LocationService locationService;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}
@@ -58,18 +59,20 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		assertEquals("df29a160-0add-4598-8ac2-b11a9eb3cdb8", PropertyUtils.getProperty(metadataSource, "uuid"));
 	}
 	
-	@Test(expected = ValidationException.class)
-	@Ignore("Will this load classes from modules which are not in config.xml? like org.openmrs.module.providermanagement.Provider")
+	@Test
+	@Disabled("Will this load classes from modules which are not in config.xml? like org.openmrs.module.providermanagement.Provider")
 	public void create_shouldGetValidationErrorWhenInvalidClass() throws Exception {
-		// given
-		SimpleObject postData = new SimpleObject().add("code", "term-123").add("name", "Test Term Mapping 123").add(
-		    "metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8").add("metadataClass", "NOTCLAZZ").add("metadataUuid",
-		    "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
+		assertThrows(ValidationException.class, () -> {
+			// given
+			SimpleObject postData = new SimpleObject().add("code", "term-123").add("name", "Test Term Mapping 123").add(
+			    "metadataSource", "df29a160-0add-4598-8ac2-b11a9eb3cdb8").add("metadataClass", "NOTCLAZZ").add("metadataUuid",
+			    "3cfcf118-931c-46f7-8ff6-7b876f0d4202");
 		
-		// when
-		SimpleObject postResponseData = deserialize(handle(newPostRequest(getURI(), postData)));
+			// when
+			SimpleObject postResponseData = deserialize(handle(newPostRequest(getURI(), postData)));
 		
-		//then expect exception
+			//then expect exception
+		});
 	}
 	
 	@Test
@@ -165,14 +168,14 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 		// when
 		List<SimpleObject> results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("default parameters", 9, results.size());
+		assertEquals(9, results.size(), "default parameters");
 		
 		// given
 		request.setParameter(RestConstants.REQUEST_PROPERTY_FOR_INCLUDE_ALL, String.valueOf(true));
 		// when
 		results = deserialize(handle(request)).get("results");
 		// then
-		assertEquals("include all", 11, results.size());
+		assertEquals(11, results.size(), "include all");
 		
 		// given
 		request.setParameter("limit", "2");
@@ -255,7 +258,7 @@ public class MetadataTermMappingResourceOperationTest extends MainResourceContro
 	
 	@Override
 	public String getURI() {
-		return "/metadatamapping/termmapping";
+		return "metadatamapping/termmapping";
 	}
 	
 	@Override

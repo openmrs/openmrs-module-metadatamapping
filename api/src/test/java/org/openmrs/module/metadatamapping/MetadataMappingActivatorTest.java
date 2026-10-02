@@ -1,15 +1,15 @@
 package org.openmrs.module.metadatamapping;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
 import org.openmrs.api.UserService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MetadataMappingActivatorTest extends BaseModuleContextSensitiveTest {
 	
