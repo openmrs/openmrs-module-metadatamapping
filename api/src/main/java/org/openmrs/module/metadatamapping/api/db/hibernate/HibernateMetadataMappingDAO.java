@@ -100,7 +100,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataSource getMetadataSource(Integer metadataSourceId) {
-		return getCurrentSession().get(MetadataSource.class, metadataSourceId);
+		return getCurrentSession().find(MetadataSource.class, metadataSourceId);
 	}
 	
 	@Override
@@ -116,15 +116,16 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public Collection<MetadataTermMapping> saveMetadataTermMappings(Collection<MetadataTermMapping> metadataTermMappings) {
+		List<MetadataTermMapping> savedMetadataTermMappings = new LinkedList<MetadataTermMapping>();
 		for (MetadataTermMapping metadataTermMapping : metadataTermMappings) {
-			internalSaveMetadataTermMapping(metadataTermMapping);
+			savedMetadataTermMappings.add(internalSaveMetadataTermMapping(metadataTermMapping));
 		}
-		return metadataTermMappings;
+		return savedMetadataTermMappings;
 	}
 	
 	@Override
 	public MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId) {
-		return getCurrentSession().get(MetadataTermMapping.class, metadataTermMappingId);
+		return getCurrentSession().find(MetadataTermMapping.class, metadataTermMappingId);
 	}
 	
 	@Override
@@ -240,7 +241,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataSet getMetadataSet(Integer metadataSetId) {
-		return getCurrentSession().get(MetadataSet.class, metadataSetId);
+		return getCurrentSession().find(MetadataSet.class, metadataSetId);
 	}
 	
 	@Override
@@ -272,15 +273,16 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers) {
+		List<MetadataSetMember> savedMetadataSetMembers = new LinkedList<MetadataSetMember>();
 		for (MetadataSetMember metadataSetMember : metadataSetMembers) {
-			internalSaveMetadataSetMember(metadataSetMember);
+			savedMetadataSetMembers.add(internalSaveMetadataSetMember(metadataSetMember));
 		}
-		return metadataSetMembers;
+		return savedMetadataSetMembers;
 	}
 	
 	@Override
 	public MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId) {
-		return getCurrentSession().get(MetadataSetMember.class, metadataSetMemberId);
+		return getCurrentSession().find(MetadataSetMember.class, metadataSetMemberId);
 	}
 	
 	@Override
@@ -331,9 +333,7 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	private <T extends OpenmrsObject> T internalGetByUuid(Class<T> openmrsObjectClass, String uuid) {
-		return getCurrentSession()
-		        .createQuery("from " + openmrsObjectClass.getName() + " o where o.uuid = :uuid", openmrsObjectClass)
-		        .setParameter("uuid", uuid).uniqueResult();
+		return HibernateUtil.getUniqueEntityByUUID(sessionFactory, openmrsObjectClass, uuid);
 	}
 	
 	private Query<MetadataTermMapping> createSourceMetadataTermQuery(String metadataSourceName, Class<?> metadataClass,

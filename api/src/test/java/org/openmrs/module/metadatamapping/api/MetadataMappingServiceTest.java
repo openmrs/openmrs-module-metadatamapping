@@ -808,6 +808,28 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@Verifies(value = "return the saved objects for detached mappings", method = "saveMetadataTermMappings(Collection)")
+	public void saveMetadataTermMappings_shouldReturnTheSavedObjectsForDetachedMappings() {
+		// given
+		MetadataTermMapping metadataTermMapping = service
+		        .getMetadataTermMappingByUuid("2d93cda0-1316-4ed1-82ff-47f78068efaa");
+		Context.evictFromSession(metadataTermMapping);
+		metadataTermMapping.setName("renamed while detached");
+		
+		// when
+		MetadataTermMapping savedMetadataTermMapping = service.saveMetadataTermMappings(
+		    Arrays.asList(metadataTermMapping)).iterator().next();
+		savedMetadataTermMapping.setDescription("changed after saving");
+		Context.flushSession();
+		Context.clearSession();
+		
+		// then
+		MetadataTermMapping reloaded = service.getMetadataTermMappingByUuid("2d93cda0-1316-4ed1-82ff-47f78068efaa");
+		Assertions.assertEquals("renamed while detached", reloaded.getName());
+		Assertions.assertEquals("changed after saving", reloaded.getDescription());
+	}
+	
+	@Test
 	@Verifies(value = "fail if code is not unique within source", method = "saveMetadataTermMapping(MetadataTermMapping)")
 	public void saveMetadataTermMapping_shouldFailIfCodeIsNotUniqueWithinSource() throws Exception {
 		// This case only serves a documentation purpose: the constraint is enforced in the database schema
@@ -1087,6 +1109,24 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
+	@Verifies(value = "skip terms without a referred object", method = "getMetadataItems(Class, String)")
+	public void getMetadataItems_shouldSkipTermsWithoutAReferredObject() {
+		// given
+		// data in the test data set, and the following
+		MetadataSource metadataSource = service.getMetadataSourceByUuid("9cace0bd-6f2a-4cc3-a26d-6fa292f1f2c1");
+		MetadataTermMapping termWithoutReferredObject = new MetadataTermMapping(metadataSource,
+		        "location without metadataUuid", Location.class.getName());
+		termWithoutReferredObject.setName("location term without metadataUuid");
+		service.saveMetadataTermMapping(termWithoutReferredObject);
+		
+		// when
+		List<Location> locations = service.getMetadataItems(Location.class, metadataSource.getName());
+		
+		// then
+		Assertions.assertEquals(2, locations.size());
+	}
+	
+	@Test
 	@Verifies(value = "save valid new object", method = "saveMetadataSet(MetadataSet)")
 	public void saveMetadataSet_shouldSaveValidNewObject() {
 		// given
@@ -1317,6 +1357,28 @@ public class MetadataMappingServiceTest extends BaseModuleContextSensitiveTest {
 		Location metadataItem = service.getMetadataItem(Location.class, null);
 		// then
 		Assertions.assertNull(metadataItem);
+	}
+	
+	@Test
+	@Verifies(value = "return the saved objects for detached members", method = "saveMetadataSetMembers(Collection)")
+	public void saveMetadataSetMembers_shouldReturnTheSavedObjectsForDetachedMembers() {
+		// given
+		MetadataSetMember metadataSetMember = service.getMetadataSetMember(1);
+		String uuid = metadataSetMember.getUuid();
+		Context.evictFromSession(metadataSetMember);
+		metadataSetMember.setName("renamed while detached");
+		
+		// when
+		MetadataSetMember savedMetadataSetMember = service.saveMetadataSetMembers(Arrays.asList(metadataSetMember))
+		        .iterator().next();
+		savedMetadataSetMember.setDescription("changed after saving");
+		Context.flushSession();
+		Context.clearSession();
+		
+		// then
+		MetadataSetMember reloaded = service.getMetadataSetMemberByUuid(uuid);
+		Assertions.assertEquals("renamed while detached", reloaded.getName());
+		Assertions.assertEquals("changed after saving", reloaded.getDescription());
 	}
 	
 	@Test

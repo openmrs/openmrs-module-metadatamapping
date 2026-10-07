@@ -168,7 +168,7 @@ public interface MetadataMappingDAO {
 	/**
 	 * Save a collection of new metadata set members or update an existing ones.
 	 * @param metadataSetMembers collection of objects to save
-	 * @return the same collection with saved objects
+	 * @return collection of saved objects
 	 * @see #saveMetadataSetMember(MetadataSetMember)
 	 */
 	Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers);
