@@ -1,9 +1,9 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.response.ConversionException;
@@ -14,23 +14,24 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.openmrs.module.metadatamapping.web.rest.MetadataSourceResourceOperationTest.propertyValueEqualsTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MetadataSetResourceOperationTest extends MainResourceControllerTest {
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}
 	
 	@Override
 	public String getURI() {
-		return "/metadatamapping/metadataset";
+		return "metadatamapping/metadataset";
 	}
 	
 	@Override
@@ -92,7 +93,7 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 		MockHttpServletResponse deleteResponse = handle(newDeleteRequest(getURI() + "/" + getUuid()));
 		
 		// then
-		Assert.assertNotNull(deleteResponse);
+		Assertions.assertNotNull(deleteResponse);
 		SimpleObject retired = deserialize(handle(newGetRequest(getURI() + "/" + getUuid())));
 		assertEquals(Boolean.TRUE, PropertyUtils.getProperty(retired, "retired"));
 	}
@@ -107,7 +108,7 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 		SimpleObject responseData = deserialize(handle(request));
 		
 		// then
-		Assert.assertNotNull(responseData);
+		Assertions.assertNotNull(responseData);
 		List<Object> hits = responseData.get("results");
 		assertThat(hits, hasItem(propertyValueEqualsTrue("retired")));
 	}
@@ -151,7 +152,7 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 		//when
 		MockHttpServletResponse deleteResponse = handle(newDeleteRequest(getURI() + "/" + uuid
 		        + "/members/b0c99f16-14b8-49b2-8d14-1e7447ad6aa9"));
-		Assert.assertNotNull(deleteResponse);
+		Assertions.assertNotNull(deleteResponse);
 		
 		//then
 		SimpleObject newGetListResponseBody = deserialize(handle(newGetRequest(getURI() + "/" + uuid + "/members")));
@@ -164,16 +165,18 @@ public class MetadataSetResourceOperationTest extends MainResourceControllerTest
 		assertEquals(Boolean.TRUE, PropertyUtils.getProperty(retired, "retired"));
 	}
 	
-	@Test(expected = ConversionException.class)
+	@Test
 	public void updateMember_shouldNotAllowUpdatingMappedObject() throws Exception {
-		//given
-		String uuid = "2fb06283-befc-4273-9448-2fcbbe4c99d5";
-		SimpleObject postRequestBody = new SimpleObject().add("metadataClass", "org.openmrs.Encounter");
+		assertThrows(ConversionException.class, () -> {
+			//given
+			String uuid = "2fb06283-befc-4273-9448-2fcbbe4c99d5";
+			SimpleObject postRequestBody = new SimpleObject().add("metadataClass", "org.openmrs.Encounter");
 		
-		//when
-		deserialize(handle(newPostRequest(getURI() + "/" + uuid + "/members/b0c99f16-14b8-49b2-8d14-1e7447ad6aa9",
-		    postRequestBody)));
+			//when
+			deserialize(handle(newPostRequest(getURI() + "/" + uuid + "/members/b0c99f16-14b8-49b2-8d14-1e7447ad6aa9",
+			    postRequestBody)));
 		
-		//then expect exception
+			//then expect exception
+		});
 	}
 }

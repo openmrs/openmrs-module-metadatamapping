@@ -1,13 +1,13 @@
 package org.openmrs.module.metadatamapping.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSource;
 import org.openmrs.module.metadatamapping.MetadataTermMapping;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +25,7 @@ public class GlobalPropertyToMappingConverterTest extends BaseModuleContextSensi
 	
 	private MetadataSource source;
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("globalPropertyToMappingConverterDataset.xml");
 		source = metadataMappingService.getMetadataSource(1);

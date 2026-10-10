@@ -1,6 +1,6 @@
 package org.openmrs.module.metadatamapping.web.rest;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.api.MetadataMappingService;
@@ -8,7 +8,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.BaseDelegatingResou
 
 public class MetadataSetMemberResourceRepresentationTest extends BaseDelegatingResourceTest<MetadataSetMemberResource, MetadataSetMember> {
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}

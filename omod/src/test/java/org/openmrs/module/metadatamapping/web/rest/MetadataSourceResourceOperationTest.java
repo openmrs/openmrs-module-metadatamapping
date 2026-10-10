@@ -2,8 +2,8 @@ package org.openmrs.module.metadatamapping.web.rest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.v1_0.controller.MainResourceControllerTest;
@@ -25,7 +25,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 @SuppressWarnings("Duplicates")
 public class MetadataSourceResourceOperationTest extends MainResourceControllerTest {
 	
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		executeDataSet("metadataMappingInMemoryTestDataSet.xml");
 	}
@@ -136,7 +136,7 @@ public class MetadataSourceResourceOperationTest extends MainResourceControllerT
 	
 	@Override
 	public String getURI() {
-		return "/metadatamapping/source";
+		return "metadatamapping/source";
 	}
 	
 	@Override

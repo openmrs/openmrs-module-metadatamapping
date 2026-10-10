@@ -555,7 +555,7 @@ public interface MetadataMappingService extends OpenmrsService {
 	/**
 	 * Save a collection of new metadata set members or update an existing ones.
 	 * @param metadataSetMembers collection of objects to save
-	 * @return the same collection with saved objects
+	 * @return collection of saved objects
 	 * @since 1.1
 	 * @see #saveMetadataSetMember(MetadataSetMember)
 	 */

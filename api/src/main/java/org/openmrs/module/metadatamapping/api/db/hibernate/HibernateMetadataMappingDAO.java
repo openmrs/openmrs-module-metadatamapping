@@ -13,17 +13,13 @@
  */
 package org.openmrs.module.metadatamapping.api.db.hibernate;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.openmrs.Concept;
 import org.openmrs.OpenmrsMetadata;
 import org.openmrs.OpenmrsObject;
-import org.openmrs.api.db.hibernate.DbSession;
-import org.openmrs.api.db.hibernate.DbSessionFactory;
+import org.openmrs.api.db.hibernate.HibernateUtil;
 import org.openmrs.module.metadatamapping.MetadataSet;
 import org.openmrs.module.metadatamapping.MetadataSetMember;
 import org.openmrs.module.metadatamapping.MetadataSource;
@@ -39,8 +35,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Hibernate DAO implementation.
@@ -49,9 +47,9 @@ import java.util.List;
 public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Autowired
-	private DbSessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 	
-	public DbSession getCurrentSession() {
+	public Session getCurrentSession() {
 		return sessionFactory.getCurrentSession();
 	}
 	
@@ -61,58 +59,54 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Concept> getConcepts(final int firstResult, final int maxResults) {
-		final Criteria criteria = getCurrentSession().createCriteria(Concept.class);
-		criteria.addOrder(Order.asc("conceptId"));
-		criteria.setMaxResults(maxResults);
-		criteria.setFirstResult(firstResult);
+		final Query<Concept> query = getCurrentSession().createQuery("from Concept c order by c.conceptId asc", Concept.class);
+		query.setMaxResults(maxResults);
+		query.setFirstResult(firstResult);
 		
-		@SuppressWarnings("unchecked")
-		final List<Concept> list = criteria.list();
-		return list;
+		return query.list();
 	}
 	
 	@Override
 	public MetadataSource saveMetadataSource(MetadataSource metadataSource) {
-		getCurrentSession().saveOrUpdate(metadataSource);
-		return metadataSource;
+		return HibernateUtil.saveOrUpdate(getCurrentSession(), metadataSource);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<MetadataSource> getMetadataSources(MetadataSourceSearchCriteria searchCriteria) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataSource.class);
+		StringBuilder hql = new StringBuilder("from MetadataSource s where 1 = 1");
+		Map<String, Object> params = new HashMap<String, Object>();
 		
 		if (!searchCriteria.isIncludeAll()) {
-			criteria.add(Restrictions.eq("retired", false));
+			hql.append(" and s.retired = false");
 		}
 		
 		if (searchCriteria.getSourceName() != null) {
-			criteria.add(Restrictions.eq("name", searchCriteria.getSourceName()));
+			hql.append(" and s.name = :name");
+			params.put("name", searchCriteria.getSourceName());
 		}
 		
-		criteria.addOrder(Order.asc("name"));
-		criteria.addOrder(Order.asc("id"));
+		hql.append(" order by s.name asc, s.metadataSourceId asc");
 		
+		Query<MetadataSource> query = createQuery(hql.toString(), MetadataSource.class, params);
 		if (searchCriteria.getFirstResult() != null) {
-			criteria.setFirstResult(searchCriteria.getFirstResult());
+			query.setFirstResult(searchCriteria.getFirstResult());
 		}
 		if (searchCriteria.getMaxResults() != null) {
-			criteria.setMaxResults(searchCriteria.getMaxResults());
+			query.setMaxResults(searchCriteria.getMaxResults());
 		}
 		
-		return criteria.list();
+		return query.list();
 	}
 	
 	@Override
 	public MetadataSource getMetadataSource(Integer metadataSourceId) {
-		return (MetadataSource) getCurrentSession().get(MetadataSource.class, metadataSourceId);
+		return getCurrentSession().find(MetadataSource.class, metadataSourceId);
 	}
 	
 	@Override
 	public MetadataSource getMetadataSourceByName(String metadataSourceName) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataSource.class);
-		criteria.add(Restrictions.eq("name", metadataSourceName));
-		return (MetadataSource) criteria.uniqueResult();
+		return getCurrentSession().createQuery("from MetadataSource s where s.name = :name", MetadataSource.class)
+		        .setParameter("name", metadataSourceName).uniqueResult();
 	}
 	
 	@Override
@@ -122,15 +116,16 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public Collection<MetadataTermMapping> saveMetadataTermMappings(Collection<MetadataTermMapping> metadataTermMappings) {
+		List<MetadataTermMapping> savedMetadataTermMappings = new LinkedList<MetadataTermMapping>();
 		for (MetadataTermMapping metadataTermMapping : metadataTermMappings) {
-			internalSaveMetadataTermMapping(metadataTermMapping);
+			savedMetadataTermMappings.add(internalSaveMetadataTermMapping(metadataTermMapping));
 		}
-		return metadataTermMappings;
+		return savedMetadataTermMappings;
 	}
 	
 	@Override
 	public MetadataTermMapping getMetadataTermMapping(Integer metadataTermMappingId) {
-		return (MetadataTermMapping) getCurrentSession().get(MetadataTermMapping.class, metadataTermMappingId);
+		return getCurrentSession().find(MetadataTermMapping.class, metadataTermMappingId);
 	}
 	
 	@Override
@@ -139,75 +134,81 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	@Override
-	@SuppressWarnings(value = "unchecked")
 	public List<MetadataTermMapping> getMetadataTermMappings(MetadataTermMappingSearchCriteria searchCriteria) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
+		StringBuilder hql = new StringBuilder("from MetadataTermMapping m where 1 = 1");
+		Map<String, Object> params = new HashMap<String, Object>();
 		
 		// Filtering on metadataClass should be redundant as uuids should be globally unique but better be on the safe
 		// side.
 		if (searchCriteria.getReferredObject() != null) {
-			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getReferredObject().getUuid()));
-			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getReferredObject().getClass().getCanonicalName()));
+			hql.append(" and m.metadataUuid = :referredUuid and m.metadataClass = :referredClass");
+			params.put("referredUuid", searchCriteria.getReferredObject().getUuid());
+			params.put("referredClass", searchCriteria.getReferredObject().getClass().getCanonicalName());
 		}
 		
 		if (searchCriteria.getMetadataUuid() != null) {
-			criteria.add(Restrictions.eq("metadataUuid", searchCriteria.getMetadataUuid()));
+			hql.append(" and m.metadataUuid = :metadataUuid");
+			params.put("metadataUuid", searchCriteria.getMetadataUuid());
 		}
 		
 		if (searchCriteria.getMetadataClass() != null) {
-			criteria.add(Restrictions.eq("metadataClass", searchCriteria.getMetadataClass()));
+			hql.append(" and m.metadataClass = :metadataClass");
+			params.put("metadataClass", searchCriteria.getMetadataClass());
 		}
 		
 		if (!searchCriteria.isIncludeAll()) {
-			criteria.add(Restrictions.eq("retired", false));
+			hql.append(" and m.retired = false");
 		}
 		
 		if (searchCriteria.getMapped() != null) {
 			if (searchCriteria.getMapped()) {
-				criteria.add(Restrictions.isNotNull("metadataUuid"));
+				hql.append(" and m.metadataUuid is not null");
 			} else {
-				criteria.add(Restrictions.isNull("metadataUuid"));
+				hql.append(" and m.metadataUuid is null");
 			}
 		}
 		
 		if (searchCriteria.getMetadataSource() != null) {
-			criteria.add(Restrictions.eq("metadataSource", searchCriteria.getMetadataSource()));
+			hql.append(" and m.metadataSource = :metadataSource");
+			params.put("metadataSource", searchCriteria.getMetadataSource());
 		}
 		
 		if (searchCriteria.getMetadataTermCode() != null) {
-			criteria.add(Restrictions.eq("code", searchCriteria.getMetadataTermCode()));
+			hql.append(" and m.code = :code");
+			params.put("code", searchCriteria.getMetadataTermCode());
 		}
 		
 		if (searchCriteria.getMetadataTermName() != null) {
-			criteria.add(Restrictions.eq("name", searchCriteria.getMetadataTermName()));
+			hql.append(" and m.name = :name");
+			params.put("name", searchCriteria.getMetadataTermName());
 		}
 		
 		// Set ordering so as to ensure a consistent ordering of the results on consecutive invocations
-		criteria.addOrder(Order.asc("metadataSource"));
-		criteria.addOrder(Order.asc("metadataTermMappingId"));
+		hql.append(" order by m.metadataSource.metadataSourceId asc, m.metadataTermMappingId asc");
 		
+		Query<MetadataTermMapping> query = createQuery(hql.toString(), MetadataTermMapping.class, params);
 		if (searchCriteria.getFirstResult() != null) {
-			criteria.setFirstResult(searchCriteria.getFirstResult());
+			query.setFirstResult(searchCriteria.getFirstResult());
 		}
 		if (searchCriteria.getMaxResults() != null) {
-			criteria.setMaxResults(searchCriteria.getMaxResults());
+			query.setMaxResults(searchCriteria.getMaxResults());
 		}
 		
-		return criteria.list();
+		return query.list();
 	}
 	
 	@Override
 	public MetadataTermMapping getMetadataTermMapping(MetadataSource metadataSource, String metadataTermCode) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class);
-		criteria.add(Restrictions.eq("metadataSource", metadataSource));
-		criteria.add(Restrictions.eq("code", metadataTermCode));
-		return (MetadataTermMapping) criteria.uniqueResult();
+		return getCurrentSession()
+		        .createQuery("from MetadataTermMapping m where m.metadataSource = :metadataSource and m.code = :code",
+		            MetadataTermMapping.class).setParameter("metadataSource", metadataSource)
+		        .setParameter("code", metadataTermCode).uniqueResult();
 	}
 	
 	@Override
 	public <T extends OpenmrsMetadata> T getMetadataItem(Class<T> type, String metadataSourceName, String metadataTermCode) {
-		Criteria criteria = createSourceMetadataTermCriteria(metadataSourceName, null, metadataTermCode);
-		MetadataTermMapping metadataTermMapping = (MetadataTermMapping) criteria.uniqueResult();
+		Query<MetadataTermMapping> query = createSourceMetadataTermQuery(metadataSourceName, null, metadataTermCode);
+		MetadataTermMapping metadataTermMapping = query.uniqueResult();
 		
 		T metadataItem = null;
 		if (metadataTermMapping != null) {
@@ -221,11 +222,10 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T extends OpenmrsMetadata> List<T> getMetadataItems(Class<T> type, String metadataSourceName) {
 		List<T> metadataItems = new LinkedList<T>();
-		Criteria metadataTermCriteria = createSourceMetadataTermCriteria(metadataSourceName, type, null);
-		for (MetadataTermMapping metadataTermMapping : (List<MetadataTermMapping>) metadataTermCriteria.list()) {
+		Query<MetadataTermMapping> metadataTermQuery = createSourceMetadataTermQuery(metadataSourceName, type, null);
+		for (MetadataTermMapping metadataTermMapping : metadataTermQuery.list()) {
 			T metadataItem = internalGetByUuid(type, metadataTermMapping.getMetadataUuid());
 			if (metadataItem != null) {
 				metadataItems.add(metadataItem);
@@ -236,30 +236,29 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public MetadataSet saveMetadataSet(MetadataSet metadataSet) {
-		sessionFactory.getCurrentSession().saveOrUpdate(metadataSet);
-		return metadataSet;
+		return HibernateUtil.saveOrUpdate(getCurrentSession(), metadataSet);
 	}
 	
 	@Override
 	public MetadataSet getMetadataSet(Integer metadataSetId) {
-		return (MetadataSet) sessionFactory.getCurrentSession().get(MetadataSet.class, metadataSetId);
+		return getCurrentSession().find(MetadataSet.class, metadataSetId);
 	}
 	
 	@Override
 	public List<MetadataSet> getMetadataSet(MetadataSetSearchCriteria searchCriteria) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataSet.class);
-		
+		String hql = "from MetadataSet s";
 		if (!searchCriteria.isIncludeAll()) {
-			criteria.add(Restrictions.eq("retired", false));
+			hql += " where s.retired = false";
 		}
+		Query<MetadataSet> query = getCurrentSession().createQuery(hql, MetadataSet.class);
 		
 		if (searchCriteria.getFirstResult() != null) {
-			criteria.setFirstResult(searchCriteria.getFirstResult());
+			query.setFirstResult(searchCriteria.getFirstResult());
 		}
 		if (searchCriteria.getMaxResults() != null) {
-			criteria.setMaxResults(searchCriteria.getMaxResults());
+			query.setMaxResults(searchCriteria.getMaxResults());
 		}
-		return criteria.list();
+		return query.list();
 	}
 	
 	@Override
@@ -274,40 +273,40 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	
 	@Override
 	public Collection<MetadataSetMember> saveMetadataSetMembers(Collection<MetadataSetMember> metadataSetMembers) {
+		List<MetadataSetMember> savedMetadataSetMembers = new LinkedList<MetadataSetMember>();
 		for (MetadataSetMember metadataSetMember : metadataSetMembers) {
-			internalSaveMetadataSetMember(metadataSetMember);
+			savedMetadataSetMembers.add(internalSaveMetadataSetMember(metadataSetMember));
 		}
-		return metadataSetMembers;
+		return savedMetadataSetMembers;
 	}
 	
 	@Override
 	public MetadataSetMember getMetadataSetMember(Integer metadataSetMemberId) {
-		return (MetadataSetMember) sessionFactory.getCurrentSession().get(MetadataSetMember.class, metadataSetMemberId);
+		return getCurrentSession().find(MetadataSetMember.class, metadataSetMemberId);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<MetadataSetMember> getMetadataSetMembers(MetadataSet metadataSet, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MetadataSetMember.class);
-		criteria.addOrder(Order.desc("sortWeight"));
-		
+		String hql = "from MetadataSetMember m where m.metadataSet = :metadataSet";
 		if (RetiredHandlingMode.ONLY_ACTIVE.equals(retiredHandlingMode)) {
-			criteria.add(Restrictions.eq("retired", false));
+			hql += " and m.retired = false";
 		}
-		criteria.add(Restrictions.eq("metadataSet", metadataSet));
+		hql += " order by m.sortWeight desc";
+		
+		Query<MetadataSetMember> query = getCurrentSession().createQuery(hql, MetadataSetMember.class);
+		query.setParameter("metadataSet", metadataSet);
 		
 		if (firstResult != null) {
-			criteria.setFirstResult(firstResult);
+			query.setFirstResult(firstResult);
 		}
 		if (maxResults != null) {
-			criteria.setMaxResults(maxResults);
+			query.setMaxResults(maxResults);
 		}
-		return criteria.list();
+		return query.list();
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<MetadataSetMember> getMetadataSetMembers(String metadataSetUuid, Integer firstResult, Integer maxResults,
 	        RetiredHandlingMode retiredHandlingMode) {
 		MetadataSet metadataSet = getMetadataSetByUuid(metadataSetUuid);
@@ -326,36 +325,43 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 	}
 	
 	private MetadataTermMapping internalSaveMetadataTermMapping(MetadataTermMapping metadataTermMapping) {
-		getCurrentSession().saveOrUpdate(metadataTermMapping);
-		return metadataTermMapping;
+		return HibernateUtil.saveOrUpdate(getCurrentSession(), metadataTermMapping);
 	}
 	
 	private MetadataSetMember internalSaveMetadataSetMember(MetadataSetMember metadataSetMember) {
-		sessionFactory.getCurrentSession().saveOrUpdate(metadataSetMember);
-		return metadataSetMember;
+		return HibernateUtil.saveOrUpdate(getCurrentSession(), metadataSetMember);
 	}
 	
-	@SuppressWarnings(value = "unchecked")
 	private <T extends OpenmrsObject> T internalGetByUuid(Class<T> openmrsObjectClass, String uuid) {
-		Criteria criteria = getCurrentSession().createCriteria(openmrsObjectClass);
-		criteria.add(Restrictions.eq("uuid", uuid));
-		return (T) criteria.uniqueResult();
+		return HibernateUtil.getUniqueEntityByUUID(sessionFactory, openmrsObjectClass, uuid);
 	}
 	
-	private Criteria createSourceMetadataTermCriteria(String metadataSourceName, Class<?> metadataClass,
+	private Query<MetadataTermMapping> createSourceMetadataTermQuery(String metadataSourceName, Class<?> metadataClass,
 	        String metadataTermCode) {
-		Criteria criteria = getCurrentSession().createCriteria(MetadataTermMapping.class).add(
-		    Restrictions.eq("retired", false));
+		StringBuilder hql = new StringBuilder(
+		        "select m from MetadataTermMapping m join m.metadataSource s where m.retired = false");
+		Map<String, Object> params = new HashMap<String, Object>();
 		if (metadataClass != null) {
-			criteria.add(Restrictions.eq("metadataClass", metadataClass.getCanonicalName()));
+			hql.append(" and m.metadataClass = :metadataClass");
+			params.put("metadataClass", metadataClass.getCanonicalName());
 		}
 		if (metadataTermCode != null) {
-			criteria.add(Restrictions.eq("code", metadataTermCode));
+			hql.append(" and m.code = :code");
+			params.put("code", metadataTermCode);
 		}
 		
-		criteria = criteria.createCriteria("metadataSource").add(Restrictions.eq("name", metadataSourceName));
+		hql.append(" and s.name = :sourceName");
+		params.put("sourceName", metadataSourceName);
 		
-		return criteria;
+		return createQuery(hql.toString(), MetadataTermMapping.class, params);
+	}
+	
+	private <T> Query<T> createQuery(String hql, Class<T> resultClass, Map<String, Object> params) {
+		Query<T> query = getCurrentSession().createQuery(hql, resultClass);
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			query.setParameter(param.getKey(), param.getValue());
+		}
+		return query;
 	}
 	
 	private <T extends OpenmrsMetadata> List<T> internalGetMetadataSetItems(Class<T> type, MetadataSet metadataSet,
@@ -364,27 +370,21 @@ public class HibernateMetadataMappingDAO implements MetadataMappingDAO {
 			throw new IllegalArgumentException("To obtain MetadataSet items, reference to MetadataSet must be given");
 		}
 		
-		Criteria memberCriteria = sessionFactory.getCurrentSession().createCriteria(MetadataSetMember.class, "member");
-		memberCriteria.add(Restrictions.eq("member.retired", false));
-		memberCriteria.add(Restrictions.eq("member.metadataSet", metadataSet));
-		
-		DetachedCriteria metadataItemSubQuery = DetachedCriteria.forClass(type, "item");
-		metadataItemSubQuery.add(Restrictions.eqProperty("item.uuid", "member.metadataUuid"));
-		metadataItemSubQuery.add(Restrictions.eq("item.retired", false));
-		metadataItemSubQuery.setProjection(Projections.property("item.uuid"));
-		
-		memberCriteria.add(Subqueries.propertyIn("member.metadataUuid", metadataItemSubQuery));
-		
-		memberCriteria.setProjection(Projections.property("member.metadataUuid"));
+		Query<String> memberQuery = getCurrentSession().createQuery(
+		    "select member.metadataUuid from MetadataSetMember member"
+		            + " where member.retired = false and member.metadataSet = :metadataSet"
+		            + " and member.metadataUuid in (select item.uuid from " + type.getName() + " item"
+		            + " where item.uuid = member.metadataUuid and item.retired = false)"
+		            + " order by member.sortWeight desc", String.class);
+		memberQuery.setParameter("metadataSet", metadataSet);
 		if (firstResult != null) {
-			memberCriteria.setFirstResult(firstResult);
+			memberQuery.setFirstResult(firstResult);
 		}
 		if (maxResults != null) {
-			memberCriteria.setMaxResults(maxResults);
+			memberQuery.setMaxResults(maxResults);
 		}
-		memberCriteria.addOrder(Order.desc("member.sortWeight"));
 		
-		List<String> itemUuids = memberCriteria.list();
+		List<String> itemUuids = memberQuery.list();
 		
 		List<T> items = new LinkedList<T>();
 		for (String itemUuid : itemUuids) {
